@@ -6,9 +6,9 @@ import express from 'express';
 const client = new Discord.Client();
 const app = express();
 
-app.get("/", (req, res) => {
-  res.send("Works?");
-})
+app.get('/', (req, res) => {
+  res.sendFile(`${__dirname}/client/index.html`);
+});
 
 app.listen(process.env.PORT || 3000);
 
