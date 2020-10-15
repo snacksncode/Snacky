@@ -20,7 +20,7 @@ const parseMessage = (msg: Message, currentChannel: TextChannel): void => {
   //get currentChannel and check if user has put anything after a prefix if not send user an error
   const inputWithoutPrefix: string = msg.content.substr(prefix.length);
   const userInput: string[] = inputWithoutPrefix.split(" ");
-  const command: string = userInput.shift();
+  const command: string = userInput.shift().toLowerCase();
   const args: string[] = userInput.slice();
 
   if (inputWithoutPrefix.length === 0) {
