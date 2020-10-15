@@ -10,6 +10,10 @@ app.get('/', (req, res) => {
   res.sendFile(`${__dirname}/client/index.html`);
 });
 
+app.get('/style.css', (req, res) => {
+  res.sendFile(`${__dirname}/client/style.css`);
+});
+
 app.listen(process.env.PORT || 3000);
 
 client.on('ready', () => {
