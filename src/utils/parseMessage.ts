@@ -53,7 +53,7 @@ const parseMessage = (msg: Message, currentChannel: TextChannel): void => {
       clearCommand(msg, args, currentChannel);
       break;
     }
-    case 'rollDice': {
+    case 'rolldice': {
       rollDice(msg, inputWithoutPrefix, args, currentChannel);
       break;
     }
