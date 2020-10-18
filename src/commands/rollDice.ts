@@ -43,8 +43,16 @@ const rollDice = (
     return;
   }
   let dicesArray: diceObject[] = convertDices(dices);
+  let rolledSum: number = 0;
+  dicesArray.forEach((dice: diceObject) => {
+    let amountToRoll = new Array(dice.amount).fill(undefined);
+    amountToRoll.forEach((_) => {
+      let roll = getRandomInt(1, dice.dice);
+      rolledSum += roll;
+    });
+  });
   outputEmbedMessage(
-    `Detected and converted dices: ${dicesArray}`,
+    `You requested to roll dices: ${dicesArray}. You rolled: ${rolledSum}`,
     msg,
     "success"
   );
