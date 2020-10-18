@@ -14,8 +14,8 @@ const convertDices = (dices: string[]): diceObject[] => {
     let destructuredDice: number[] = dice
       .split("d")
       .map((dice) => Number(dice));
-    if (destructuredDice.length === 1) {
-      //their input is something like d6. Treat as 1d6
+    if (destructuredDice[0] === 0) {
+      //their input is something like d6 (maybe 0d6). Treat as 1d6
       convertedDices.push({
         amount: 1,
         dice: destructuredDice.shift(),
