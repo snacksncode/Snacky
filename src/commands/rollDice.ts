@@ -14,10 +14,19 @@ const convertDices = (dices: string[]): diceObject[] => {
     let destructuredDice: number[] = dice
       .split("d")
       .map((dice) => Number(dice));
-    convertedDices.push({
-      amount: isNaN(destructuredDice.shift()) ? 1 : destructuredDice.shift(),
-      dice: destructuredDice.shift(),
-    });
+    if (destructuredDice.length === 1) {
+      //their input is something like d6. Treat as 1d6
+      convertedDices.push({
+        amount: 1,
+        dice: destructuredDice.shift(),
+      });
+    } else {
+      convertedDices.push({
+        //their input is something like 2d6.
+        amount: destructuredDice.shift(),
+        dice: destructuredDice.shift(),
+      });
+    }
   });
   return convertedDices;
 };
@@ -28,7 +37,7 @@ const rollDice = (
   args: string[],
   channel: TextChannel
 ) => {
-  // let randomChance: number = getRandomInt(1, 6);
+  // let randomChance: number  Treat as 1d6= getRandomInt(1, 6);
   let dices: string[] = userInput.match(/\d?d\d{1,3}/g);
   let hasHelpFlag: boolean = !!userInput.match(/--help/g);
   if (hasHelpFlag) {
