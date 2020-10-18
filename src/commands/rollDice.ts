@@ -4,10 +4,11 @@ import getRandomInt from "../utils/getRandomInt";
 import outputEmbedMessage from "../utils/outputEmbedMessage";
 
 interface diceObject {
-  amount: number;
-  dice: number;
+  timesToRoll: number;
+  diceToRoll: number;
 }
 
+//helper functions
 const convertDices = (dices: string[]): diceObject[] => {
   let convertedDices: diceObject[] = [];
   dices.forEach((dice: string) => {
@@ -17,20 +18,32 @@ const convertDices = (dices: string[]): diceObject[] => {
     if (destructuredDice[0] === 0) {
       //their input is something like d6 (maybe 0d6). Treat as 1d6
       convertedDices.push({
-        amount: 1,
-        dice: destructuredDice[1],
+        timesToRoll: 1,
+        diceToRoll: destructuredDice[1],
       });
     } else {
       convertedDices.push({
         //their input is something like 2d6.
-        amount: destructuredDice[0],
-        dice: destructuredDice[1],
+        timesToRoll: destructuredDice[0],
+        diceToRoll: destructuredDice[1],
       });
     }
   });
   return convertedDices;
 };
 
+const rollDices = (dices: diceObject[]): number => {
+  let sum: number = 0;
+  dices.forEach((dice: diceObject) => {
+    for (let timesRolled = 0; timesRolled < dice.timesToRoll; timesRolled++) {
+      let roll: number = getRandomInt(1, dice.diceToRoll);
+      sum += roll;
+    }
+  });
+  return sum;
+};
+
+//actual command function
 const rollDice = (
   msg: Message,
   userInput: string,
@@ -53,17 +66,13 @@ const rollDice = (
   }
 
   let dicesArray: diceObject[] = convertDices(dices);
-  let rolledSum: number = 0;
-
-  dicesArray.forEach((dice: diceObject) => {
-    let amountToRoll = new Array(dice.amount);
-    amountToRoll.forEach((_) => {
-      let roll = getRandomInt(1, dice.dice);
-      rolledSum += roll;
-    });
-  });
+  let rolledSum: number = rollDices(dicesArray);
 
   console.log(dicesArray, dices, rolledSum);
-  outputEmbedMessage(`Check your console`, msg, "success");
+  outputEmbedMessage(
+    `Your request: ${dices}. Your roll: ${rolledSum}`,
+    msg,
+    "success"
+  );
 };
 export default rollDice;
