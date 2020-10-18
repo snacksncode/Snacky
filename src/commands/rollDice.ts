@@ -18,13 +18,13 @@ const convertDices = (dices: string[]): diceObject[] => {
       //their input is something like d6 (maybe 0d6). Treat as 1d6
       convertedDices.push({
         amount: 1,
-        dice: destructuredDice.shift(),
+        dice: destructuredDice[1],
       });
     } else {
       convertedDices.push({
         //their input is something like 2d6.
-        amount: destructuredDice.shift(),
-        dice: destructuredDice.shift(),
+        amount: destructuredDice[0],
+        dice: destructuredDice[1],
       });
     }
   });
