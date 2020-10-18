@@ -42,19 +42,19 @@ const rollDice = (
     );
     return;
   }
+
   let dicesArray: diceObject[] = convertDices(dices);
   let rolledSum: number = 0;
+
   dicesArray.forEach((dice: diceObject) => {
-    let amountToRoll = new Array(dice.amount).fill(undefined);
+    let amountToRoll = new Array(dice.amount);
     amountToRoll.forEach((_) => {
       let roll = getRandomInt(1, dice.dice);
       rolledSum += roll;
     });
   });
-  outputEmbedMessage(
-    `You requested to roll dices: ${dicesArray}. You rolled: ${rolledSum}`,
-    msg,
-    "success"
-  );
+
+  console.log(dicesArray, dices, rolledSum);
+  outputEmbedMessage(`Check your console`, msg, "success");
 };
 export default rollDice;
