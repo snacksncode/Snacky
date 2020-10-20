@@ -10,7 +10,7 @@ import outputEmbedMessage from "./outputEmbedMessage";
 
 const checkForPrefix = (input: string): boolean => {
   return input.startsWith(prefix);
-}
+};
 
 const parseMessage = (msg: Message, currentChannel: TextChannel): void => {
   //check if message contains a prefix, if not stop execution
@@ -27,33 +27,33 @@ const parseMessage = (msg: Message, currentChannel: TextChannel): void => {
     outputEmbedMessage(
       "This will give an error or prob output a help command ¯\\_(ツ)_/¯",
       msg,
-      'error'
+      "error"
     );
     return;
   }
 
   switch (command) {
-    case 'help': {
+    case "help": {
       helpCommand(currentChannel);
       break;
     }
-    case 'ping': {
+    case "ping": {
       pingCommand(msg, currentChannel);
       break;
     }
-    case 'cum': {
+    case "cum": {
       cumCommand(msg);
       break;
     }
-    case 'avatar': {
+    case "avatar": {
       avatarCommand(msg, msg.mentions.users);
       break;
     }
-    case 'clear': {
+    case "clear": {
       clearCommand(msg, args, currentChannel);
       break;
     }
-    case 'rolldice': {
+    case "rolldice": {
       rollDice(msg, inputWithoutPrefix, args, currentChannel);
       break;
     }
@@ -62,6 +62,6 @@ const parseMessage = (msg: Message, currentChannel: TextChannel): void => {
       break;
     }
   }
-}
+};
 
 export default parseMessage;
