@@ -5,7 +5,7 @@ const setCustomPresence = (client: Client) => {
   client.user.setPresence({
     activity: {
       name: `${prefix}help | ver. ${version}`,
-      type: "PLAYING",
+      type: "LISTENING",
     },
     status: "online",
   });

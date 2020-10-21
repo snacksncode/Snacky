@@ -1,4 +1,4 @@
-import { Message, TextChannel } from "discord.js";
+import { Message } from "discord.js";
 import { prefix } from "../config";
 import getRandomInt from "../utils/getRandomInt";
 import outputEmbedMessage from "../utils/outputEmbedMessage";
@@ -32,26 +32,46 @@ const convertDices = (dices: string[]): diceObject[] => {
   return convertedDices;
 };
 
-const rollDices = (dices: diceObject[]): number => {
-  let sum: number = 0;
+const mergeArrays = (arr: any[], secondArr: any[]): any[] => {
+  let longerArray = arr.length > secondArr.length ? arr : secondArr;
+  let shorterArray = arr.length > secondArr.length ? secondArr : arr;
+  let combinedArray = longerArray.map((item, index: number) => {
+    //any[] cause there's an error in TS
+    return [item, shorterArray[index]]
+      .filter((item) => item !== undefined)
+      .flat()
+      .join("");
+  });
+  return combinedArray;
+};
+
+const rollDices = (dices: diceObject[]): number[] => {
+  let rolls: number[] = [];
   dices.forEach((dice: diceObject) => {
     for (let timesRolled = 0; timesRolled < dice.timesToRoll; timesRolled++) {
       let roll: number = getRandomInt(1, dice.diceToRoll);
-      sum += roll;
+      rolls.push(roll);
     }
   });
-  return sum;
+  return rolls;
 };
 
 //actual command function
-const rollDice = (msg: Message, userInput: string) => {
-  // let randomChance: number  Treat as 1d6= getRandomInt(1, 6);
-  let dices: string[] = userInput.match(/\d?d\d{1,3}/g);
+const rollDice = (msg: Message, userInput: string): void => {
   let hasHelpFlag: boolean = !!userInput.match(/--help/g);
+  let diceRegex: RegExp = /\d?d\d{1,}/g;
+  let extractedDicesArray: string[] | null = userInput.match(diceRegex);
+  let emptiedString: string[] = userInput
+    .split(diceRegex)
+    .filter((item) => item !== "");
+  let diceObjectArray: diceObject[] = convertDices(extractedDicesArray);
+
+  //trigger help flag
   if (hasHelpFlag) {
     outputEmbedMessage(`Help for the thing coming right up`, msg, "info");
     return;
-  } else if (dices === null) {
+  } else if (extractedDicesArray === null) {
+    //if no dices matched
     outputEmbedMessage(
       `Sorry I couldn't find any valid dices in your message. Try using **${prefix}rollDice --help**`,
       msg,
@@ -60,14 +80,19 @@ const rollDice = (msg: Message, userInput: string) => {
     return;
   }
 
-  let dicesArray: diceObject[] = convertDices(dices);
-  let rolledSum: number = rollDices(dicesArray);
+  let diceRolls: number[] = rollDices(diceObjectArray);
+  let combinedArray: (string | number)[] = mergeArrays(
+    diceRolls,
+    emptiedString
+  );
+  let reconstructedInput: string = combinedArray.join("");
+  let calculatedSum: number = eval(reconstructedInput);
 
-  console.log(dicesArray, dices, rolledSum);
   outputEmbedMessage(
-    `Your request: ${dices}. Your roll: ${rolledSum}`,
+    `Your request: ${userInput} | Rolls: ${diceRolls} | Sum: ${calculatedSum}`,
     msg,
-    "success"
+    "success",
+    "Rolls"
   );
 };
 export default rollDice;

@@ -21,14 +21,9 @@ const parseMessage = (msg: Message, currentChannel: TextChannel): void => {
   const inputWithoutPrefix: string = msg.content.substr(prefix.length);
   const userInput: string[] = inputWithoutPrefix.split(" ");
   const command: string = userInput.shift().toLowerCase();
-  const args: string[] = userInput.slice();
 
   if (inputWithoutPrefix.length === 0) {
-    outputEmbedMessage(
-      "This will give an error or prob output a help command ¯\\_(ツ)_/¯",
-      msg,
-      "error"
-    );
+    helpCommand(currentChannel);
     return;
   }
 
