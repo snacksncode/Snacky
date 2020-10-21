@@ -17,7 +17,7 @@ const clearCommand = (
     return;
   }
   const clearTimeout = 10000;
-  let numberOfMessages: number = Number(userInput.match(/\d{1, 3}/g)[0]);
+  let numberOfMessages: number = Number(userInput.match(/\d{1,3}/g)[0]);
   if (isNaN(numberOfMessages)) {
     outputEmbedMessage(
       `Please provide the number of messages to delete after initializing command.`,
