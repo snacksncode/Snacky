@@ -1,11 +1,13 @@
 import Discord, { TextChannel } from "discord.js";
 import { token } from "./config";
 import parseMessage from "./utils/parseMessage";
+import setPresence from "./utils/setPresence";
 
 const client = new Discord.Client();
 
 client.on("ready", () => {
   console.log(`[ Ready ] Logged in as ${client.user.tag}!`);
+  setPresence(client);
 });
 
 client.on("message", (msg) => {
