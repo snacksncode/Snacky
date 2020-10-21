@@ -45,12 +45,19 @@ const mergeArrays = (arr: any[], secondArr: any[]): any[] => {
   return combinedArray;
 };
 
-const rollDices = (dices: diceObject[]): number[] => {
-  let rolls: number[] = [];
+const rollDices = (dices: diceObject[], emptiedString: string[]): string[] => {
+  console.log(dices);
+  let rolls: string[] = [];
   dices.forEach((dice: diceObject) => {
+    console.log(dice);
     for (let timesRolled = 0; timesRolled < dice.timesToRoll; timesRolled++) {
       let roll: number = getRandomInt(1, dice.diceToRoll);
-      rolls.push(roll);
+      rolls.push(roll.toString());
+      if (timesRolled > 0) {
+        //This is kinda a quickfix. If I don't push + to the array with the 'operators'
+        //in eval() function I'm gonna have "5 4" and not "5 + 4"
+        emptiedString.push("+");
+      }
     }
   });
   return rolls;
@@ -61,11 +68,10 @@ const rollDice = (msg: Message, userInput: string): void => {
   let hasHelpFlag: boolean = !!userInput.match(/--help/g);
   let diceRegex: RegExp = /\d?d\d{1,}/g;
   let extractedDicesArray: string[] | null = userInput.match(diceRegex);
-  let emptiedString: string[] = userInput
+  let args: string = userInput.substr(8);
+  let emptiedString: string[] = args
     .split(diceRegex)
     .filter((item) => item !== "");
-  let diceObjectArray: diceObject[] = convertDices(extractedDicesArray);
-
   //trigger help flag
   if (hasHelpFlag) {
     outputEmbedMessage(`Help for the thing coming right up`, msg, "info");
@@ -79,17 +85,19 @@ const rollDice = (msg: Message, userInput: string): void => {
     );
     return;
   }
+  let diceObjectArray: diceObject[] = convertDices(extractedDicesArray);
 
-  let diceRolls: number[] = rollDices(diceObjectArray);
-  let combinedArray: (string | number)[] = mergeArrays(
-    diceRolls,
-    emptiedString
-  );
+  let diceRolls: string[] = rollDices(diceObjectArray, emptiedString);
+  let combinedArray: string[] = mergeArrays(diceRolls, emptiedString);
   let reconstructedInput: string = combinedArray.join("");
   let calculatedSum: number = eval(reconstructedInput);
 
   outputEmbedMessage(
-    `Your request: ${userInput} | Rolls: ${diceRolls} | Sum: ${calculatedSum}`,
+    `Requested: **${args}** | ${
+      diceRolls.length > 1 ? "Rolls" : "Roll"
+    }: **${diceRolls}** ${
+      diceRolls.length > 1 ? `| Final output: **${calculatedSum}**` : ""
+    }`,
     msg,
     "success",
     "Rolls"
