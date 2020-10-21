@@ -4,8 +4,8 @@ import { prefix, version } from "../config";
 const setCustomPresence = (client: Client) => {
   client.user.setPresence({
     activity: {
-      name: `${prefix} | ${version}`,
-      type: "PLAYING",
+      name: `Prefix: ${prefix} | Version: ${version}`,
+      type: "CUSTOM_STATUS",
     },
     status: "online",
   });
