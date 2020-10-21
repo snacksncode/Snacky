@@ -50,11 +50,11 @@ const parseMessage = (msg: Message, currentChannel: TextChannel): void => {
       break;
     }
     case "clear": {
-      clearCommand(msg, args, currentChannel);
+      clearCommand(msg, inputWithoutPrefix, currentChannel);
       break;
     }
     case "rolldice": {
-      rollDice(msg, inputWithoutPrefix, args, currentChannel);
+      rollDice(msg, inputWithoutPrefix);
       break;
     }
     default: {

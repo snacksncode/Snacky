@@ -44,12 +44,7 @@ const rollDices = (dices: diceObject[]): number => {
 };
 
 //actual command function
-const rollDice = (
-  msg: Message,
-  userInput: string,
-  args: string[],
-  channel: TextChannel
-) => {
+const rollDice = (msg: Message, userInput: string) => {
   // let randomChance: number  Treat as 1d6= getRandomInt(1, 6);
   let dices: string[] = userInput.match(/\d?d\d{1,3}/g);
   let hasHelpFlag: boolean = !!userInput.match(/--help/g);

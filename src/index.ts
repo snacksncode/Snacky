@@ -1,20 +1,8 @@
 import Discord, { TextChannel } from "discord.js";
 import { token } from "./config";
 import parseMessage from "./utils/parseMessage";
-import express from "express";
 
 const client = new Discord.Client();
-// const app = express();
-
-// app.get("/", (req, res) => {
-//   res.sendFile(`${__dirname}/client/index.html`);
-// });
-
-// app.get("/style.css", (req, res) => {
-//   res.sendFile(`${__dirname}/client/style.css`);
-// });
-
-// app.listen(process.env.PORT || 3000);
 
 client.on("ready", () => {
   console.log(`[ Ready ] Logged in as ${client.user.tag}!`);
