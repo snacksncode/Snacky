@@ -32,32 +32,13 @@ const convertDices = (dices: string[]): diceObject[] => {
   return convertedDices;
 };
 
-const mergeArrays = (arr: any[], secondArr: any[]): any[] => {
-  let longerArray = arr.length > secondArr.length ? arr : secondArr;
-  let shorterArray = arr.length > secondArr.length ? secondArr : arr;
-  let combinedArray = longerArray.map((item, index: number) => {
-    //any[] cause there's an error in TS
-    return [item, shorterArray[index]]
-      .filter((item) => item !== undefined)
-      .flat()
-      .join("");
-  });
-  return combinedArray;
-};
-
-const rollDices = (dices: diceObject[], emptiedString: string[]): string[] => {
-  console.log(dices);
-  let rolls: string[] = [];
+//command itself
+const rollDices = (dices: diceObject[]): number[] => {
+  let rolls: number[] = [];
   dices.forEach((dice: diceObject) => {
-    console.log(dice);
     for (let timesRolled = 0; timesRolled < dice.timesToRoll; timesRolled++) {
       let roll: number = getRandomInt(1, dice.diceToRoll);
-      rolls.push(roll.toString());
-      if (timesRolled > 0) {
-        //This is kinda a quickfix. If I don't push + to the array with the 'operators'
-        //in eval() function I'm gonna have "5 4" and not "5 + 4"
-        emptiedString.push("+");
-      }
+      rolls.push(roll);
     }
   });
   return rolls;
@@ -67,16 +48,12 @@ const rollDices = (dices: diceObject[], emptiedString: string[]): string[] => {
 const rollDice = (msg: Message, userInput: string): void => {
   let hasHelpFlag: boolean = !!userInput.match(/--help/g);
   let diceRegex: RegExp = /\d?d\d{1,}/g;
-  let extractedDicesArray: string[] | null = userInput.match(diceRegex);
-  let args: string = userInput.substr(8);
-  let emptiedString: string[] = args
-    .split(diceRegex)
-    .filter((item) => item !== "");
+  let extractedDices: string[] | null = userInput.match(diceRegex);
   //trigger help flag
   if (hasHelpFlag) {
     outputEmbedMessage(`Help for the thing coming right up`, msg, "info");
     return;
-  } else if (extractedDicesArray === null) {
+  } else if (extractedDices === null) {
     //if no dices matched
     outputEmbedMessage(
       `Sorry I couldn't find any valid dices in your message. Try using **${prefix}rollDice --help**`,
@@ -85,15 +62,15 @@ const rollDice = (msg: Message, userInput: string): void => {
     );
     return;
   }
-  let diceObjectArray: diceObject[] = convertDices(extractedDicesArray);
+  let diceObjectArray: diceObject[] = convertDices(extractedDices);
 
-  let diceRolls: string[] = rollDices(diceObjectArray, emptiedString);
-  let combinedArray: string[] = mergeArrays(diceRolls, emptiedString);
-  let reconstructedInput: string = combinedArray.join("");
-  let calculatedSum: number = eval(reconstructedInput);
+  let diceRolls: number[] = rollDices(diceObjectArray);
+  let calculatedSum: number = diceRolls.reduce((acc: number, cur: number) => {
+    return acc + cur;
+  }, 0);
 
   outputEmbedMessage(
-    `Requested: **${args}** | ${
+    `Requested: **${extractedDices}** | ${
       diceRolls.length > 1 ? "Rolls" : "Roll"
     }: **${diceRolls}** ${
       diceRolls.length > 1 ? `| Final output: **${calculatedSum}**` : ""
