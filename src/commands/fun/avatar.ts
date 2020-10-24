@@ -10,13 +10,17 @@ const avatarCommand = (msg: Message, mentionedUsers?: Collection<string, User>) 
   if (matchedImageSize) {
     let matchedImageSizeAsNumber: number = Number(matchedImageSize.substring(7));
     if (isNaN(matchedImageSizeAsNumber)) {
-      outputEmbed(`Your **--size** flag is invalid. It's not a number`, msg, "error");
+      outputEmbed(
+        msg.channel,
+        `Your **--size** flag is invalid. It's not a number`,
+        "error"
+      );
       return;
     }
     if (![16, 32, 64, 128, 256, 512, 1024, 2048].includes(matchedImageSizeAsNumber)) {
       outputEmbed(
+        msg.channel,
         `Your **--size** flag is invalid. You can only request sizes: 16, 32, 64, 128, 256, 512, 1024, 2048`,
-        msg,
         "error"
       );
       return;

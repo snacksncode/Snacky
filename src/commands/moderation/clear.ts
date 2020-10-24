@@ -11,8 +11,8 @@ function clearCommand(
   //check for permissions
   if (!checkForPermissions(["ADMINISTRATOR", "MANAGE_MESSAGES"], msg.member)) {
     outputEmbed(
+      msg.channel,
       `You do not have sufficient permissions to use \`clear\` command.`,
-      msg,
       "error"
     );
     return;
@@ -22,11 +22,11 @@ function clearCommand(
   let hasHelpFlag: boolean = !!userInput.match(/--help/g);
   if (hasHelpFlag) {
     outputEmbed(
+      msg.channel,
       `Clear command is used to bulk delete some amount of messages.\n
       Usage: \`[prefix]clear <number>\`\n
       If you have permissions to manage messages bot will delete <number> amount of last messages in the channel\n
       Maximum number of messages you're allowed to delete is 100.`,
-      msg,
       "info",
       `Help | Clear Command`
     );
@@ -45,7 +45,7 @@ function clearCommand(
     if (mentionedUsers.size > 1) throw "You cannot clear messages of multiple users.";
     if (msgsToDel > 100) throw "You cannot clear more than 100 messages.";
   } catch (err) {
-    return outputEmbed(err, msg, "error");
+    return outputEmbed(msg.channel, err, "error");
   }
 
   //now that numberOfMessages is not null, clamp number
@@ -70,11 +70,14 @@ function clearCommand(
       .bulkDelete(filteredMessagesArray)
       .then((messages: Collection<string, Message>) => {
         msg.react("✅");
-        outputEmbed(`Deleted last ${messages.size} messages`, msg, "success").then(
-          (msg) => {
-            msg.delete({ timeout: successMsgDelTimeout });
-          }
-        );
+        outputEmbed(
+          msg.channel,
+          `Deleted last ${messages.size} messages`,
+          "success"
+        ).then((msg) => {
+          if (!msg) return;
+          msg.delete({ timeout: successMsgDelTimeout });
+        });
       });
   });
 }

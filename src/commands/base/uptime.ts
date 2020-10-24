@@ -4,7 +4,7 @@ import outputEmbed from "../../utils/outputEmbed";
 
 function uptimeCommand(msg: Message) {
   let upTime = formatMs(msg.client.uptime);
-  outputEmbed(upTime, msg, "info", "Uptime");
+  outputEmbed(msg.channel, upTime, "info", "Uptime");
 }
 
 export default uptimeCommand;

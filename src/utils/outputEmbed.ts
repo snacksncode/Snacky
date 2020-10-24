@@ -1,23 +1,26 @@
-import { Message, MessageEmbed } from "discord.js";
+import { TextChannel, DMChannel, NewsChannel, MessageEmbed, User } from "discord.js";
+import sendMsg from "./sendMsg";
+import { colors } from "../config";
 
 type EmbedType = "info" | "error" | "success";
+type ChannelType = TextChannel | DMChannel | NewsChannel | User;
 
-const outputEmbed = (
+function outputEmbed(
+  dest: ChannelType,
   message: string,
-  msg: Message,
   type: EmbedType,
-  embedCustomTitle?: string
-) => {
-  const bot = msg.client.user;
-  const embedColor = (type: EmbedType): string => {
-    if (type === "error") return "#ef5350";
-    else if (type === "info") return "#5C6BC0";
-    else if (type === "success") return "#66BB6A";
+  customTitle?: string
+) {
+  const bot = dest.client.user;
+  const embedColor = (type: EmbedType): number => {
+    if (type === "error") return colors.error;
+    else if (type === "info") return colors.info;
+    else if (type === "success") return colors.success;
   };
 
   const embedTitle = (type: EmbedType): string => {
-    if (embedCustomTitle) {
-      return embedCustomTitle;
+    if (customTitle) {
+      return customTitle;
     } else if (type === "error") return "Error!";
     else if (type === "info") return "Info";
     else if (type === "success") return "Success!";
@@ -29,6 +32,6 @@ const outputEmbed = (
     .setColor(embedColor(type))
     .setDescription(message);
 
-  return msg.reply(embed);
-};
+  return sendMsg(dest, embed);
+}
 export default outputEmbed;

@@ -6,7 +6,7 @@ function helpCommand(channel: TextChannel, msg: Message, userInput: string): voi
   //help flag
   let hasHelpFlag: boolean = !!userInput.match(/--help/g);
   if (hasHelpFlag) {
-    outputEmbed(`Really?`, msg, "info", `Help | Help Command`);
+    outputEmbed(msg.channel, `Really?`, "info", `Help | Help Command`);
     return;
   }
 

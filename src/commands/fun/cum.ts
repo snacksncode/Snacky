@@ -9,8 +9,8 @@ const cumCommand = (msg: Message) => {
     })
     .catch((_) => {
       outputEmbed(
+        msg.channel,
         `Thou shall not changeth the nickname of a person whose highest rank is more elevated`,
-        msg,
         "error"
       );
     });

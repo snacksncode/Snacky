@@ -49,13 +49,13 @@ const rollDiceCommand = (msg: Message, userInput: string): void => {
   let extractedDices: string[] | null = userInput.match(diceRegex);
   //trigger help flag
   if (hasHelpFlag) {
-    outputEmbed(`Help for the thing coming right up`, msg, "info");
+    outputEmbed(msg.channel, `Help for the thing coming right up`, "info");
     return;
   } else if (extractedDices === null) {
     //if no dices matched
     outputEmbed(
+      msg.channel,
       `Sorry I couldn't find any valid dices in your message. Try using **${prefix}rollDice --help**`,
-      msg,
       "error"
     );
     return;
@@ -68,12 +68,12 @@ const rollDiceCommand = (msg: Message, userInput: string): void => {
   }, 0);
 
   outputEmbed(
+    msg.channel,
     `Requested: **${extractedDices}** | ${
       diceRolls.length > 1 ? "Rolls" : "Roll"
     }: **${diceRolls}** ${
       diceRolls.length > 1 ? `| Final output: **${calculatedSum}**` : ""
     }`,
-    msg,
     "success",
     "Rolls"
   );

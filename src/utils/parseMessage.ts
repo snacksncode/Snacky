@@ -56,7 +56,7 @@ function parseMessage(msg: Message, currentChannel: TextChannel): void {
       break;
     }
     default: {
-      outputEmbed("Command not found", msg, "error");
+      outputEmbed(msg.channel, "Command not found", "error");
       break;
     }
   }

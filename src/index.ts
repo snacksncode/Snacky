@@ -1,6 +1,6 @@
 import "dotenv/config";
-import Discord, { TextChannel } from "discord.js";
-import { token } from "./config";
+import Discord, { Message, TextChannel } from "discord.js";
+import { prefix, token } from "./config";
 import parseMessage from "./utils/parseMessage";
 import setPresence from "./utils/setPresence";
 
@@ -15,6 +15,17 @@ client.on("message", (msg) => {
   if (msg.author.bot || msg.system || msg.channel.type !== "text") return;
   let channel: TextChannel = msg.channel;
   parseMessage(msg, channel);
+});
+
+client.on("messageUpdate", (_, newMsg) => {
+  if (newMsg.author.bot || !newMsg.content.startsWith(prefix)) return;
+  if (newMsg.partial) {
+    newMsg.fetch().then((_msg) => {
+      client.emit("message", _msg);
+    });
+  } else {
+    client.emit("message", newMsg as any);
+  }
 });
 
 if (!token) {
