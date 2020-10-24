@@ -19,13 +19,9 @@ client.on("message", (msg) => {
 
 client.on("messageUpdate", (_, newMsg) => {
   if (newMsg.author.bot || !newMsg.content.startsWith(prefix)) return;
-  if (newMsg.partial) {
-    newMsg.fetch().then((_msg) => {
-      client.emit("message", _msg);
-    });
-  } else {
-    client.emit("message", newMsg as any);
-  }
+  newMsg.fetch().then((_msg) => {
+    client.emit("message", _msg);
+  });
 });
 
 if (!token) {
