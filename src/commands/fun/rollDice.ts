@@ -1,7 +1,7 @@
 import { Message } from "discord.js";
-import { prefix } from "../config";
-import getRandomInt from "../utils/getRandomInt";
-import outputEmbedMessage from "../utils/outputEmbedMessage";
+import { prefix } from "../../config";
+import getRandomInt from "../../utils/getRandomInt";
+import outputEmbed from "../../utils/outputEmbed";
 
 interface diceObject {
   timesToRoll: number;
@@ -12,9 +12,7 @@ interface diceObject {
 const convertDices = (dices: string[]): diceObject[] => {
   let convertedDices: diceObject[] = [];
   dices.forEach((dice: string) => {
-    let destructuredDice: number[] = dice
-      .split("d")
-      .map((dice) => Number(dice));
+    let destructuredDice: number[] = dice.split("d").map((dice) => Number(dice));
     if (destructuredDice[0] === 0) {
       //their input is something like d6 (maybe 0d6). Treat as 1d6
       convertedDices.push({
@@ -45,17 +43,17 @@ const rollDices = (dices: diceObject[]): number[] => {
 };
 
 //actual command function
-const rollDice = (msg: Message, userInput: string): void => {
+const rollDiceCommand = (msg: Message, userInput: string): void => {
   let hasHelpFlag: boolean = !!userInput.match(/--help/g);
   let diceRegex: RegExp = /\d?d\d{1,}/g;
   let extractedDices: string[] | null = userInput.match(diceRegex);
   //trigger help flag
   if (hasHelpFlag) {
-    outputEmbedMessage(`Help for the thing coming right up`, msg, "info");
+    outputEmbed(`Help for the thing coming right up`, msg, "info");
     return;
   } else if (extractedDices === null) {
     //if no dices matched
-    outputEmbedMessage(
+    outputEmbed(
       `Sorry I couldn't find any valid dices in your message. Try using **${prefix}rollDice --help**`,
       msg,
       "error"
@@ -69,7 +67,7 @@ const rollDice = (msg: Message, userInput: string): void => {
     return acc + cur;
   }, 0);
 
-  outputEmbedMessage(
+  outputEmbed(
     `Requested: **${extractedDices}** | ${
       diceRolls.length > 1 ? "Rolls" : "Roll"
     }: **${diceRolls}** ${
@@ -80,4 +78,4 @@ const rollDice = (msg: Message, userInput: string): void => {
     "Rolls"
   );
 };
-export default rollDice;
+export default rollDiceCommand;

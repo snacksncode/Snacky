@@ -1,39 +1,42 @@
 import { Message, TextChannel } from "discord.js";
 import { prefix } from "../config";
-import clearCommand from "../commands/clear";
-import helpCommand from "../commands/help";
-import pingCommand from "../commands/ping";
-import cumCommand from "../commands/cum";
-import rollDice from "../commands/rollDice";
-import avatarCommand from "../commands/avatar";
-import outputEmbedMessage from "./outputEmbedMessage";
+import {
+  avatarCommand,
+  clearCommand,
+  cumCommand,
+  helpCommand,
+  pingCommand,
+  rollDiceCommand,
+} from "../commands";
+import outputEmbed from "./outputEmbed";
+import uptimeCommand from "../commands/base/uptime";
 
-const checkForPrefix = (input: string): boolean => {
-  return input.startsWith(prefix);
-};
-
-const parseMessage = (msg: Message, currentChannel: TextChannel): void => {
+function parseMessage(msg: Message, currentChannel: TextChannel): void {
   //check if message contains a prefix, if not stop execution
-  const isCommand: boolean = checkForPrefix(msg.content);
+  const isCommand: boolean = msg.content.startsWith(prefix);
   if (!isCommand) return;
 
   //get currentChannel and check if user has put anything after a prefix if not send user an error
-  const inputWithoutPrefix: string = msg.content.substr(prefix.length);
-  const userInput: string[] = inputWithoutPrefix.split(" ");
-  const command: string = userInput.shift().toLowerCase();
+  const userInput: string = msg.content.substr(prefix.length);
+  const args: string[] = userInput.split(" ");
+  const command: string = args.shift().toLowerCase();
 
-  if (inputWithoutPrefix.length === 0) {
-    helpCommand(currentChannel);
+  if (userInput.length === 0) {
+    helpCommand(currentChannel, msg, userInput);
     return;
   }
 
   switch (command) {
     case "help": {
-      helpCommand(currentChannel);
+      helpCommand(currentChannel, msg, userInput);
       break;
     }
     case "ping": {
       pingCommand(msg, currentChannel);
+      break;
+    }
+    case "uptime": {
+      uptimeCommand(msg);
       break;
     }
     case "cum": {
@@ -45,18 +48,18 @@ const parseMessage = (msg: Message, currentChannel: TextChannel): void => {
       break;
     }
     case "clear": {
-      clearCommand(msg, inputWithoutPrefix, currentChannel);
+      clearCommand(msg, userInput, msg.mentions.users, currentChannel);
       break;
     }
     case "rolldice": {
-      rollDice(msg, inputWithoutPrefix);
+      rollDiceCommand(msg, userInput);
       break;
     }
     default: {
-      outputEmbedMessage("Command not found", msg, "error");
+      outputEmbed("Command not found", msg, "error");
       break;
     }
   }
-};
+}
 
 export default parseMessage;

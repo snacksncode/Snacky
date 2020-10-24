@@ -2,12 +2,13 @@ import { Message, MessageEmbed } from "discord.js";
 
 type EmbedType = "info" | "error" | "success";
 
-const outputEmbedMessage = (
+const outputEmbed = (
   message: string,
   msg: Message,
   type: EmbedType,
   embedCustomTitle?: string
 ) => {
+  const bot = msg.client.user;
   const embedColor = (type: EmbedType): string => {
     if (type === "error") return "#ef5350";
     else if (type === "info") return "#5C6BC0";
@@ -23,10 +24,11 @@ const outputEmbedMessage = (
   };
 
   const embed: MessageEmbed = new MessageEmbed()
+    .setAuthor(bot.tag, bot.avatarURL())
     .setTitle(embedTitle(type))
     .setColor(embedColor(type))
     .setDescription(message);
 
   return msg.reply(embed);
 };
-export default outputEmbedMessage;
+export default outputEmbed;

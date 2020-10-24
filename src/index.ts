@@ -1,3 +1,4 @@
+import "dotenv/config";
 import Discord, { TextChannel } from "discord.js";
 import { token } from "./config";
 import parseMessage from "./utils/parseMessage";
@@ -15,5 +16,12 @@ client.on("message", (msg) => {
   let channel: TextChannel = msg.channel;
   parseMessage(msg, channel);
 });
+
+if (!token) {
+  console.error(
+    "No token was provided. Make sure you've created .env file with your token assigned to TOKEN variable and that you've imported 'dotenv/config' at the top of your main file."
+  );
+  process.exit(1);
+}
 
 client.login(token);
