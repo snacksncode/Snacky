@@ -35,6 +35,7 @@ function clearCommand(
   }
 
   //parsing user input (amount of messages)
+  let withCommandFlag: boolean = !!userInput.match(/--include-command/g);
   let msgsToDel: number = userInput
     .match(/\s\d{1,}\s?/g)
     ?.map((match) => Number(match))
@@ -53,32 +54,35 @@ function clearCommand(
   const successMsgDelTimeout = 10000;
 
   //fetch messages
-  channel.messages.fetch({ limit: 100, before: msg.id }).then((messages) => {
-    let filteredMessagesArray: Message[] = [];
-    let mentionedUser = mentionedUsers.first();
+  channel.messages
+    .fetch({ limit: 100, before: withCommandFlag ? null : msg.id })
+    .then((messages) => {
+      let filteredMessagesArray: Message[] = [];
+      let mentionedUser = mentionedUsers.first();
+      msgsToDel = withCommandFlag ? msgsToDel + 1 : msgsToDel;
 
-    if (mentionedUsers.size === 0) {
-      filteredMessagesArray = messages.array().slice(0, msgsToDel);
-    } else {
-      filteredMessagesArray = messages
-        .filter((message) => message.author.id === mentionedUser.id)
-        .array()
-        .slice(0, msgsToDel);
-    }
+      if (mentionedUsers.size === 0) {
+        filteredMessagesArray = messages.array().slice(0, msgsToDel);
+      } else {
+        filteredMessagesArray = messages
+          .filter((message) => message.author.id === mentionedUser.id)
+          .array()
+          .slice(0, msgsToDel);
+      }
 
-    //trigger deletion of messages
-    channel
-      .bulkDelete(filteredMessagesArray)
-      .then((messages: Collection<string, Message>) => {
-        msg.react("✅");
-        outputEmbed(
-          msg.channel,
-          `Deleted last ${messages.size} messages`,
-          colors.success
-        ).then((msg) => {
-          msg.delete({ timeout: successMsgDelTimeout });
+      //trigger deletion of messages
+      channel
+        .bulkDelete(filteredMessagesArray)
+        .then((messages: Collection<string, Message>) => {
+          if (!withCommandFlag) msg.react("✅");
+          outputEmbed(
+            msg.channel,
+            `Deleted last ${messages.size} messages`,
+            colors.success
+          ).then((msg) => {
+            msg.delete({ timeout: successMsgDelTimeout });
+          });
         });
-      });
-  });
+    });
 }
 export default clearCommand;

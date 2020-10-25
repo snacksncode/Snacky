@@ -45,7 +45,7 @@ const rollDices = (dices: diceObject[]): number[] => {
 //actual command function
 const rollDiceCommand = (msg: Message, userInput: string): void => {
   let hasHelpFlag: boolean = !!userInput.match(/--help/g);
-  let diceRegex: RegExp = /\d?d\d{1,}/g;
+  let diceRegex: RegExp = /\d{1,2}?d\d{1,}/g;
   let extractedDices: string[] | null = userInput.match(diceRegex);
   //trigger help flag
   if (hasHelpFlag) {
@@ -67,14 +67,11 @@ const rollDiceCommand = (msg: Message, userInput: string): void => {
     return acc + cur;
   }, 0);
 
-  outputEmbed(
-    msg.channel,
-    `Rolling **${extractedDices}** | You've rolled: **${diceRolls}** ${
-      diceRolls.length > 1 ? `| Final output: **${calculatedSum}**` : ""
-    }`,
-    colors.info,
-    `Dice rolls`,
-    [{ name: "Requsted by", value: msg.author }]
-  );
+  outputEmbed(msg.channel, "", colors.info, `Rolling: **${extractedDices}**`, [
+    { name: "You've rolled", value: `${diceRolls}`, inline: true },
+    { name: "\u200B", value: "\u200B", inline: true },
+    { name: "Total", value: `${calculatedSum}`, inline: true },
+    { name: "Requsted by", value: msg.author },
+  ]);
 };
 export default rollDiceCommand;
