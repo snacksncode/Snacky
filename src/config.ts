@@ -1,6 +1,6 @@
 let token: string = process.env.TOKEN;
 let prefix: string = "s!";
-let version: string = "1.4";
+let version: string = "1.5";
 
 const colors = {
   default: "#1b1b1b",

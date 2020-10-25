@@ -5,8 +5,10 @@ import {
   clearCommand,
   cumCommand,
   helpCommand,
+  muteCommand,
   pingCommand,
   rollDiceCommand,
+  unmuteCommand,
 } from "../commands";
 import outputEmbed from "./outputEmbed";
 import uptimeCommand from "../commands/base/uptime";
@@ -33,6 +35,18 @@ function parseMessage(msg: Message, currentChannel: TextChannel): void {
     }
     case "ping": {
       pingCommand(msg, currentChannel);
+      break;
+    }
+    case "uptime": {
+      uptimeCommand(msg);
+      break;
+    }
+    case "mute": {
+      muteCommand(msg);
+      break;
+    }
+    case "unmute": {
+      unmuteCommand(msg);
       break;
     }
     case "uptime": {
