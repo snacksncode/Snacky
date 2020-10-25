@@ -4,6 +4,14 @@ import outputEmbed from "../../utils/outputEmbed";
 
 function unmuteCommand(msg: Message) {
   if (msg.mentions.members.size < 1) {
+    if (!!!msg.content.match(/<@\d{1,}>/g)) {
+      return outputEmbed(
+        msg.channel,
+        "You've mentioned someone not from this server",
+        colors.error,
+        `Invalid user mention.`
+      );
+    }
     return outputEmbed(
       msg.channel,
       "",
