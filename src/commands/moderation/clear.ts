@@ -80,7 +80,13 @@ function clearCommand(
             `Deleted last ${messages.size} messages`,
             colors.success
           ).then((msg) => {
-            msg.delete({ timeout: successMsgDelTimeout });
+            setTimeout(() => {
+              //prevent crash. If user deleted some more messages including bot's
+              //before timeout expires
+              if (msg.deleted) return;
+
+              msg.delete();
+            }, successMsgDelTimeout);
           });
         });
     });
