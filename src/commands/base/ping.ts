@@ -1,4 +1,5 @@
 import { Message, TextChannel } from "discord.js";
+import { colors } from "../../config";
 import outputEmbed from "../../utils/outputEmbed";
 
 const pingCommand = (msg: Message, channel: TextChannel): void => {
@@ -13,7 +14,7 @@ const pingCommand = (msg: Message, channel: TextChannel): void => {
   outputEmbed(
     msg.channel,
     `Bot latency **${botLatency}ms** | Discord Api latency **${apiLatency}ms**`,
-    "success",
+    colors.success,
     "Pong! Connection established!"
   );
 };

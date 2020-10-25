@@ -1,12 +1,12 @@
 import { Message, MessageEmbed, TextChannel } from "discord.js";
-import { prefix, version } from "../../config";
+import { colors, prefix, version } from "../../config";
 import outputEmbed from "../../utils/outputEmbed";
 
 function helpCommand(channel: TextChannel, msg: Message, userInput: string): void {
   //help flag
   let hasHelpFlag: boolean = !!userInput.match(/--help/g);
   if (hasHelpFlag) {
-    outputEmbed(msg.channel, `Really?`, "info", `Help | Help Command`);
+    outputEmbed(msg.channel, `Really?`, colors.info, `Help | Help Command`);
     return;
   }
 

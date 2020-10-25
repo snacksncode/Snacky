@@ -1,5 +1,5 @@
 import { Message, TextChannel } from "discord.js";
-import { prefix } from "../config";
+import { colors, prefix } from "../config";
 import {
   avatarCommand,
   clearCommand,
@@ -56,7 +56,7 @@ function parseMessage(msg: Message, currentChannel: TextChannel): void {
       break;
     }
     default: {
-      outputEmbed(msg.channel, "Command not found", "error");
+      outputEmbed(msg.channel, "Command not found", colors.error);
       break;
     }
   }

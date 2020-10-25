@@ -1,4 +1,5 @@
 import { Collection, ImageSize, Message, MessageEmbed, User } from "discord.js";
+import { colors } from "../../config";
 import outputEmbed from "../../utils/outputEmbed";
 
 const avatarCommand = (msg: Message, mentionedUsers?: Collection<string, User>) => {
@@ -13,7 +14,8 @@ const avatarCommand = (msg: Message, mentionedUsers?: Collection<string, User>) 
       outputEmbed(
         msg.channel,
         `Your **--size** flag is invalid. It's not a number`,
-        "error"
+        colors.error,
+        "Image size isn't a number"
       );
       return;
     }
@@ -21,7 +23,8 @@ const avatarCommand = (msg: Message, mentionedUsers?: Collection<string, User>) 
       outputEmbed(
         msg.channel,
         `Your **--size** flag is invalid. You can only request sizes: 16, 32, 64, 128, 256, 512, 1024, 2048`,
-        "error"
+        colors.error,
+        "Wrong image size"
       );
       return;
     }
@@ -40,11 +43,10 @@ const avatarCommand = (msg: Message, mentionedUsers?: Collection<string, User>) 
 
   const embed = new MessageEmbed()
     .setTitle(
-      `Avatar | ${
-        mentionedUsers.size ? mentionedUsers.values().next().value.tag : msg.author.tag
-      }`
+      `Avatar | ${mentionedUsers.size ? mentionedUsers.first().tag : msg.author.tag}`
     )
-    .setImage(avatarUrl);
+    .setImage(avatarUrl)
+    .setColor(colors.default);
 
   msg.channel.send(embed);
 };

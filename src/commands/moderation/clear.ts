@@ -1,4 +1,5 @@
 import { Collection, Message, TextChannel, User } from "discord.js";
+import { colors } from "../../config";
 import checkForPermissions from "../../utils/checkForPermissions";
 import outputEmbed from "../../utils/outputEmbed";
 
@@ -13,7 +14,7 @@ function clearCommand(
     outputEmbed(
       msg.channel,
       `You do not have sufficient permissions to use \`clear\` command.`,
-      "error"
+      colors.info
     );
     return;
   }
@@ -27,7 +28,7 @@ function clearCommand(
       Usage: \`[prefix]clear <number>\`\n
       If you have permissions to manage messages bot will delete <number> amount of last messages in the channel\n
       Maximum number of messages you're allowed to delete is 100.`,
-      "info",
+      colors.info,
       `Help | Clear Command`
     );
     return;
@@ -45,7 +46,7 @@ function clearCommand(
     if (mentionedUsers.size > 1) throw "You cannot clear messages of multiple users.";
     if (msgsToDel > 100) throw "You cannot clear more than 100 messages.";
   } catch (err) {
-    return outputEmbed(msg.channel, err, "error");
+    return outputEmbed(msg.channel, err, colors.error, "Error");
   }
 
   //now that numberOfMessages is not null, clamp number
@@ -73,9 +74,8 @@ function clearCommand(
         outputEmbed(
           msg.channel,
           `Deleted last ${messages.size} messages`,
-          "success"
+          colors.success
         ).then((msg) => {
-          if (!msg) return;
           msg.delete({ timeout: successMsgDelTimeout });
         });
       });

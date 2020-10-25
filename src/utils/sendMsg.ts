@@ -2,10 +2,8 @@ import { DMChannel, MessageEmbed, NewsChannel, TextChannel, User } from "discord
 
 type destType = TextChannel | DMChannel | NewsChannel | User;
 
-function sendMsg(dest: destType, msg: MessageEmbed | string, isDm?: boolean) {
-  return dest.send(msg).catch((err) => {
-    console.error(err);
-  });
+function sendMsg(dest: destType, msg: MessageEmbed | string) {
+  return dest.send(msg);
 }
 
 export default sendMsg;

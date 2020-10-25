@@ -1,5 +1,5 @@
 import { Message } from "discord.js";
-import { prefix } from "../../config";
+import { colors, prefix } from "../../config";
 import getRandomInt from "../../utils/getRandomInt";
 import outputEmbed from "../../utils/outputEmbed";
 
@@ -49,14 +49,14 @@ const rollDiceCommand = (msg: Message, userInput: string): void => {
   let extractedDices: string[] | null = userInput.match(diceRegex);
   //trigger help flag
   if (hasHelpFlag) {
-    outputEmbed(msg.channel, `Help for the thing coming right up`, "info");
+    outputEmbed(msg.channel, `Help for the thing coming right up`, colors.info);
     return;
   } else if (extractedDices === null) {
     //if no dices matched
     outputEmbed(
       msg.channel,
       `Sorry I couldn't find any valid dices in your message. Try using **${prefix}rollDice --help**`,
-      "error"
+      colors.error
     );
     return;
   }
@@ -69,13 +69,12 @@ const rollDiceCommand = (msg: Message, userInput: string): void => {
 
   outputEmbed(
     msg.channel,
-    `Requested: **${extractedDices}** | ${
-      diceRolls.length > 1 ? "Rolls" : "Roll"
-    }: **${diceRolls}** ${
+    `Rolling **${extractedDices}** | You've rolled: **${diceRolls}** ${
       diceRolls.length > 1 ? `| Final output: **${calculatedSum}**` : ""
     }`,
-    "success",
-    "Rolls"
+    colors.info,
+    `Dice rolls`,
+    [{ name: "Requsted by", value: msg.author }]
   );
 };
 export default rollDiceCommand;
