@@ -5,6 +5,10 @@ import parseMessage from "./utils/parseMessage";
 import setPresence from "./utils/setPresence";
 import colors from 'colors';
 
+if ( process.env.CONSOLE_COLORS === "false" ) {
+  colors.disable();
+}
+
 const client = new Discord.Client();
 
 client.on("ready", () => {

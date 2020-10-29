@@ -1,8 +1,9 @@
 import { Collection, ImageSize, Message, MessageEmbed, User } from "discord.js";
 import { colors } from "../../config";
+import Vibrant from 'node-vibrant';
 import outputEmbed from "../../utils/outputEmbed";
 
-const avatarCommand = (msg: Message, mentionedUsers?: Collection<string, User>) => {
+const avatarCommand = async (msg: Message, mentionedUsers?: Collection<string, User>) => {
   let defaultImageSize: ImageSize = 1024;
   let userRequestedSize: any = null;
   let avatarUrl: string = "";
@@ -34,19 +35,26 @@ const avatarCommand = (msg: Message, mentionedUsers?: Collection<string, User>) 
   if (mentionedUsers.size === 0) {
     avatarUrl = msg.author.avatarURL({
       size: userRequestedSize ? userRequestedSize : defaultImageSize,
+      format: "png"
     });
   } else {
     avatarUrl = mentionedUsers.first().avatarURL({
       size: userRequestedSize ? userRequestedSize : defaultImageSize,
+      format: "png"
     });
   }
+
+  let palette;
+  await Vibrant.from(avatarUrl).getPalette().then(_palette => {
+    palette = _palette;
+  })
 
   const embed = new MessageEmbed()
     .setTitle(
       `Avatar | ${mentionedUsers.size ? mentionedUsers.first().tag : msg.author.tag}`
     )
     .setImage(avatarUrl)
-    .setColor(colors.default);
+    .setColor(palette ? palette.Vibrant.hex : colors.default);
 
   msg.channel.send(embed);
 };
