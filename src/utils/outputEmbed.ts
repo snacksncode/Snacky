@@ -19,7 +19,6 @@ function outputEmbed(
   fields?: EmbedFieldData[]
 ) {
   const bot = dest.client.user;
-
   const embed: MessageEmbed = new MessageEmbed()
     .setAuthor(bot.tag, bot.avatarURL())
     .setTitle(title ? title : "")

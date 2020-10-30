@@ -7,12 +7,13 @@ interface diceObject {
   timesToRoll: number;
   diceToRoll: number;
 }
-
 //helper functions
 const convertDices = (dices: string[]): diceObject[] => {
   let convertedDices: diceObject[] = [];
   dices.forEach((dice: string) => {
-    let destructuredDice: number[] = dice.split("d").map((dice) => Number(dice));
+    let destructuredDice: number[] = dice
+      .split("d")
+      .map((dice) => Number(dice));
     if (destructuredDice[0] === 0) {
       //their input is something like d6 (maybe 0d6). Treat as 1d6
       convertedDices.push({
@@ -20,6 +21,9 @@ const convertDices = (dices: string[]): diceObject[] => {
         diceToRoll: destructuredDice[1],
       });
     } else {
+      if (destructuredDice[0] > 100) {
+        return null;
+      }
       convertedDices.push({
         //their input is something like 2d6.
         timesToRoll: destructuredDice[0],
@@ -45,7 +49,7 @@ const rollDices = (dices: diceObject[]): number[] => {
 //actual command function
 const rollDiceCommand = (msg: Message, userInput: string): void => {
   let hasHelpFlag: boolean = !!userInput.match(/--help/g);
-  let diceRegex: RegExp = /\d{1,2}?d\d{1,}/g;
+  let diceRegex: RegExp = /\d*?d\d{1,}/g;
   let extractedDices: string[] | null = userInput.match(diceRegex);
   //trigger help flag
   if (hasHelpFlag) {
@@ -61,6 +65,16 @@ const rollDiceCommand = (msg: Message, userInput: string): void => {
     return;
   }
   let diceObjectArray: diceObject[] = convertDices(extractedDices);
+
+  if (!diceObjectArray.length) {
+    outputEmbed(
+      msg.channel,
+      "You cannot roll more than 100 dices",
+      colors.error,
+      "Wrong input"
+    );
+    return;
+  }
 
   let diceRolls: number[] = rollDices(diceObjectArray);
   let calculatedSum: number = diceRolls.reduce((acc: number, cur: number) => {
