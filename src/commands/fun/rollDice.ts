@@ -1,5 +1,5 @@
 import { Message } from "discord.js";
-import { prefix } from "../../config";
+import { colors, prefix } from "../../config";
 import getRandomInt from "../../utils/getRandomInt";
 import outputEmbed from "../../utils/outputEmbed";
 
@@ -7,12 +7,13 @@ interface diceObject {
   timesToRoll: number;
   diceToRoll: number;
 }
-
 //helper functions
 const convertDices = (dices: string[]): diceObject[] => {
   let convertedDices: diceObject[] = [];
   dices.forEach((dice: string) => {
-    let destructuredDice: number[] = dice.split("d").map((dice) => Number(dice));
+    let destructuredDice: number[] = dice
+      .split("d")
+      .map((dice) => Number(dice));
     if (destructuredDice[0] === 0) {
       //their input is something like d6 (maybe 0d6). Treat as 1d6
       convertedDices.push({
@@ -20,6 +21,9 @@ const convertDices = (dices: string[]): diceObject[] => {
         diceToRoll: destructuredDice[1],
       });
     } else {
+      if (destructuredDice[0] > 100) {
+        return null;
+      }
       convertedDices.push({
         //their input is something like 2d6.
         timesToRoll: destructuredDice[0],
@@ -45,37 +49,43 @@ const rollDices = (dices: diceObject[]): number[] => {
 //actual command function
 const rollDiceCommand = (msg: Message, userInput: string): void => {
   let hasHelpFlag: boolean = !!userInput.match(/--help/g);
-  let diceRegex: RegExp = /\d?d\d{1,}/g;
+  let diceRegex: RegExp = /\d*?d\d{1,}/g;
   let extractedDices: string[] | null = userInput.match(diceRegex);
   //trigger help flag
   if (hasHelpFlag) {
-    outputEmbed(`Help for the thing coming right up`, msg, "info");
+    outputEmbed(msg.channel, `Help for the thing coming right up`, colors.info);
     return;
   } else if (extractedDices === null) {
     //if no dices matched
     outputEmbed(
+      msg.channel,
       `Sorry I couldn't find any valid dices in your message. Try using **${prefix}rollDice --help**`,
-      msg,
-      "error"
+      colors.error
     );
     return;
   }
   let diceObjectArray: diceObject[] = convertDices(extractedDices);
+
+  if (!diceObjectArray.length) {
+    outputEmbed(
+      msg.channel,
+      "You cannot roll more than 100 dices",
+      colors.error,
+      "Wrong input"
+    );
+    return;
+  }
 
   let diceRolls: number[] = rollDices(diceObjectArray);
   let calculatedSum: number = diceRolls.reduce((acc: number, cur: number) => {
     return acc + cur;
   }, 0);
 
-  outputEmbed(
-    `Requested: **${extractedDices}** | ${
-      diceRolls.length > 1 ? "Rolls" : "Roll"
-    }: **${diceRolls}** ${
-      diceRolls.length > 1 ? `| Final output: **${calculatedSum}**` : ""
-    }`,
-    msg,
-    "success",
-    "Rolls"
-  );
+  outputEmbed(msg.channel, "", colors.info, `Rolling: **${extractedDices}**`, [
+    { name: "You've rolled", value: `${diceRolls}`, inline: true },
+    { name: "\u200B", value: "\u200B", inline: true },
+    { name: "Total", value: `${calculatedSum}`, inline: true },
+    { name: "Requsted by", value: msg.author },
+  ]);
 };
 export default rollDiceCommand;

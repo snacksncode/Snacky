@@ -1,20 +1,32 @@
 import "dotenv/config";
-import Discord, { TextChannel } from "discord.js";
-import { token } from "./config";
+import Discord, { Message, TextChannel } from "discord.js";
+import { prefix, token } from "./config";
 import parseMessage from "./utils/parseMessage";
 import setPresence from "./utils/setPresence";
+import colors from 'colors';
+
+if ( process.env.CONSOLE_COLORS === "false" ) {
+  colors.disable();
+}
 
 const client = new Discord.Client();
 
 client.on("ready", () => {
-  console.log(`[ Ready ] Logged in as ${client.user.tag}!`);
+  console.log(`${colors.green.bold('[ Ready ]')} Logged in as ${colors.blue(client.user.tag)}!`);
   setPresence(client);
 });
 
-client.on("message", (msg) => {
+client.on("message", (msg: Message) => {
   if (msg.author.bot || msg.system || msg.channel.type !== "text") return;
   let channel: TextChannel = msg.channel;
   parseMessage(msg, channel);
+});
+
+client.on("messageUpdate", (_, newMsg) => {
+  if (newMsg.author.bot || !newMsg.content.startsWith(prefix)) return;
+  newMsg.fetch().then((_msg: Message) => {
+    client.emit("message", _msg);
+  });
 });
 
 if (!token) {

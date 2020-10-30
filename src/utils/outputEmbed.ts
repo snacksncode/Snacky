@@ -1,34 +1,32 @@
-import { Message, MessageEmbed } from "discord.js";
+import {
+  TextChannel,
+  DMChannel,
+  NewsChannel,
+  MessageEmbed,
+  User,
+  EmbedFieldData,
+} from "discord.js";
+import sendMsg from "./sendMsg";
+import { colors } from "../config";
 
-type EmbedType = "info" | "error" | "success";
+type ChannelType = TextChannel | DMChannel | NewsChannel | User;
 
-const outputEmbed = (
+function outputEmbed(
+  dest: ChannelType,
   message: string,
-  msg: Message,
-  type: EmbedType,
-  embedCustomTitle?: string
-) => {
-  const bot = msg.client.user;
-  const embedColor = (type: EmbedType): string => {
-    if (type === "error") return "#ef5350";
-    else if (type === "info") return "#5C6BC0";
-    else if (type === "success") return "#66BB6A";
-  };
-
-  const embedTitle = (type: EmbedType): string => {
-    if (embedCustomTitle) {
-      return embedCustomTitle;
-    } else if (type === "error") return "Error!";
-    else if (type === "info") return "Info";
-    else if (type === "success") return "Success!";
-  };
-
+  color?: string,
+  title?: string,
+  fields?: EmbedFieldData[]
+) {
+  const bot = dest.client.user;
   const embed: MessageEmbed = new MessageEmbed()
     .setAuthor(bot.tag, bot.avatarURL())
-    .setTitle(embedTitle(type))
-    .setColor(embedColor(type))
+    .setTitle(title ? title : "")
+    .setColor(color ? color : colors.default)
     .setDescription(message);
 
-  return msg.reply(embed);
-};
+  if (fields) embed.addFields(fields);
+
+  return sendMsg(dest, embed);
+}
 export default outputEmbed;

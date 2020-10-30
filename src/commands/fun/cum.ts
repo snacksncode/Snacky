@@ -1,4 +1,5 @@
 import { Message } from "discord.js";
+import { colors } from "../../config";
 import outputEmbed from "../../utils/outputEmbed";
 
 const cumCommand = (msg: Message) => {
@@ -9,9 +10,11 @@ const cumCommand = (msg: Message) => {
     })
     .catch((_) => {
       outputEmbed(
-        `Thou shall not changeth the nickname of a person whose highest rank is more elevated`,
-        msg,
-        "error"
+        msg.channel,
+        `> Thou shall not changeth the nickname of a person whose highest rank is more elevated
+        ~ Steeve Jobs`,
+        colors.error,
+        "Unable to change nickname"
       );
     });
 };

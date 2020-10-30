@@ -10,4 +10,5 @@ const setCustomPresence = (client: Client) => {
     status: "online",
   });
 };
+
 export default setCustomPresence;
