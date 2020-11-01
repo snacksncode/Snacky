@@ -6,13 +6,15 @@ const cumCommand = (msg: Message) => {
   msg.member
     .setNickname("cum")
     .then((_) => {
-      msg.channel.send(`:sweat_drops: I declare you the lord of **cum** :sweat_drops:`);
+      msg.channel.send(
+        `:sweat_drops: I declare you the lord of **cum** :sweat_drops:`
+      );
     })
     .catch((_) => {
       outputEmbed(
         msg.channel,
         `> Thou shall not changeth the nickname of a person whose highest rank is more elevated
-        ~ Steeve Jobs`,
+        ~ Steve Jobs`,
         colors.error,
         "Unable to change nickname"
       );

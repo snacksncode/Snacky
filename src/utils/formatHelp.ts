@@ -1,4 +1,4 @@
-import { ImportsNotUsedAsValues } from "typescript";
+import { EmbedFieldData } from "discord.js";
 
 interface helpObject {
   Description: string;
@@ -6,7 +6,12 @@ interface helpObject {
   Usage: string;
   Example?: string;
 }
-function formatHelp(input: helpObject) {
-  return "Help here lol";
+function formatHelp(input: helpObject): EmbedFieldData[] {
+  let output: EmbedFieldData[] = [];
+  let entriesArray: string[][] = Object.entries(input);
+  entriesArray.forEach(([_key, _value]) => {
+    output.push({ name: _key, value: _value });
+  });
+  return output;
 }
 export default formatHelp;

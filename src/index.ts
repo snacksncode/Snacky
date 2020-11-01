@@ -24,8 +24,7 @@ bot.on("ready", () => {
 
 bot.on("message", (msg: Message) => {
   if (msg.author.bot || msg.system || msg.channel.type !== "text") return;
-  let channel: TextChannel = msg.channel;
-  parseMessage(msg, channel);
+  parseMessage(msg);
 });
 
 bot.on("messageUpdate", (_, newMsg) => {

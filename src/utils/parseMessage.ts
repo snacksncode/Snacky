@@ -1,19 +1,22 @@
-import { Message, TextChannel } from "discord.js";
+import { Command, Message } from "discord.js";
 import { colors, prefix } from "../config";
 import outputEmbed from "./outputEmbed";
+import removePrefix from "./removePrefix";
 
-function parseMessage(msg: Message, currentChannel: TextChannel) {
-  //check if message contains a prefix, if not stop execution
+function parseMessage(msg: Message) {
+  //check if message contains a prefix, if not stop the execution
   const isCommand: boolean = msg.content.startsWith(prefix);
   if (!isCommand) return;
 
-  //get currentChannel and check if user has put anything after a prefix if not send user an error
-  const userInput: string = msg.content.substr(prefix.length);
+  const userInput: string = removePrefix(msg.content);
   const args: string[] = userInput.split(" ");
   const command: string = args.shift().toLowerCase();
-  const commandExists: boolean = msg.client.commands.has(command);
 
-  if (!commandExists) {
+  const commandObject: Command =
+    msg.client.commands.get(command) ||
+    msg.client.commands.find((cmd) => cmd.aliases && cmd.aliases.includes(command));
+
+  if (!commandObject) {
     return outputEmbed(
       msg.channel,
       `Command \`${command}\` doesn't exist`,
@@ -22,7 +25,7 @@ function parseMessage(msg: Message, currentChannel: TextChannel) {
     );
   }
 
-  msg.client.commands.get(command).exec(msg);
+  commandObject.exec(msg);
 
   // switch (command) {
   //   case "help": {

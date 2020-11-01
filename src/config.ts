@@ -11,4 +11,4 @@ const colors = {
   error: "#ef4949",
 };
 
-export { token, prefix, version, colors };
+export { token, prefix, version, colors, ownerId };
