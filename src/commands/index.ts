@@ -1,20 +1,45 @@
 //Commands exporter file
-import avatarCommand from "./fun/avatar";
-import clearCommand from "./moderation/clear";
-import cumCommand from "./fun/cum";
-import helpCommand from "./base/help";
+import { Commands, Message } from "discord.js";
+import { prefix } from "../config";
+import formatHelp from "../utils/formatHelp";
 import pingCommand from "./base/ping";
-import rollDiceCommand from "./fun/rollDice";
-import muteCommand from "./moderation/mute";
-import unmuteCommand from "./moderation/unmute";
+import cumCommand from "./fun/cum";
 
-export {
-  avatarCommand,
-  clearCommand,
-  cumCommand,
-  helpCommand,
-  pingCommand,
-  rollDiceCommand,
-  muteCommand,
-  unmuteCommand,
+// export {
+//   avatarCommand,
+//   clearCommand,
+//   cumCommand,
+//   helpCommand,
+//   pingCommand,
+//   rollDiceCommand,
+//   muteCommand,
+//   unmuteCommand,
+// };
+
+const commands: Commands = {
+  ping: {
+    commandName: "ping",
+    aliases: ["p"],
+    desc: "Check latency of Discord's API and Bot's respond time",
+    exec: (m: Message) => pingCommand(m),
+    get help() {
+      return formatHelp({
+        Description: this.desc,
+        Usage: `${prefix}ping`,
+      });
+    },
+  },
+  cum: {
+    commandName: "cum",
+    aliases: ["cummies"],
+    desc: "Sets your nickname to cum",
+    exec: (m: Message) => cumCommand(m),
+    get help() {
+      return formatHelp({
+        Description: this.desc,
+        Usage: `${prefix}cum`,
+      });
+    },
+  },
 };
+export default commands;

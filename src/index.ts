@@ -1,31 +1,37 @@
 import "dotenv/config";
-import Discord, { Message, TextChannel } from "discord.js";
+import Discord, { Client, Collection, Message, TextChannel } from "discord.js";
 import { prefix, token } from "./config";
 import parseMessage from "./utils/parseMessage";
 import setPresence from "./utils/setPresence";
-import colors from 'colors';
+import colors from "colors";
+import setUpCommands from "./utils/setUpCommands";
 
-if ( process.env.CONSOLE_COLORS === "false" ) {
+if (process.env.CONSOLE_COLORS === "false") {
   colors.disable();
 }
 
-const client = new Discord.Client();
+const bot = new Discord.Client();
 
-client.on("ready", () => {
-  console.log(`${colors.green.bold('[ Ready ]')} Logged in as ${colors.blue(client.user.tag)}!`);
-  setPresence(client);
+bot.on("ready", () => {
+  console.log(
+    `${colors.green.bold("[ Ready ]")} Logged in as ${colors.blue(
+      bot.user.tag
+    )}!`
+  );
+  setPresence(bot);
+  setUpCommands(bot);
 });
 
-client.on("message", (msg: Message) => {
+bot.on("message", (msg: Message) => {
   if (msg.author.bot || msg.system || msg.channel.type !== "text") return;
   let channel: TextChannel = msg.channel;
   parseMessage(msg, channel);
 });
 
-client.on("messageUpdate", (_, newMsg) => {
+bot.on("messageUpdate", (_, newMsg) => {
   if (newMsg.author.bot || !newMsg.content.startsWith(prefix)) return;
   newMsg.fetch().then((_msg: Message) => {
-    client.emit("message", _msg);
+    bot.emit("message", _msg);
   });
 });
 
@@ -36,4 +42,4 @@ if (!token) {
   process.exit(1);
 }
 
-client.login(token);
+bot.login(token);

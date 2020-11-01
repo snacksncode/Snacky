@@ -1,6 +1,7 @@
 let token: string = process.env.TOKEN;
 let prefix: string = "s!";
 let version: string = "1.5";
+let ownerId: string = "430795391265406990";
 
 const colors = {
   default: "#1b1b1b",
