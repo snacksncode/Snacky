@@ -1,16 +1,25 @@
-import { EmbedFieldData } from "discord.js";
+import { EmbedFieldData, FormatHelpInput } from "discord.js";
 
-interface helpObject {
-  Description: string;
-  Aliases?: string;
-  Usage: string;
-  Example?: string;
+function userFriendlyName(name: string) {
+  switch (name) {
+    case "desc":
+      return "Description";
+    case "aliases":
+      return "Avaible aliases";
+    case "usage":
+      return "Usage";
+    case "example":
+      return "Example";
+    case "reqPerms":
+      return "Required permissions";
+  }
 }
-function formatHelp(input: helpObject): EmbedFieldData[] {
+
+function formatHelp(input: FormatHelpInput): EmbedFieldData[] {
   let output: EmbedFieldData[] = [];
   let entriesArray: string[][] = Object.entries(input);
   entriesArray.forEach(([_key, _value]) => {
-    output.push({ name: _key, value: _value });
+    output.push({ name: userFriendlyName(_key), value: _value });
   });
   return output;
 }

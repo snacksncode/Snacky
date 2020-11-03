@@ -1,5 +1,5 @@
 import "dotenv/config";
-import Discord, { Client, Collection, Message, TextChannel } from "discord.js";
+import Discord, { Message } from "discord.js";
 import { prefix, token } from "./config";
 import parseMessage from "./utils/parseMessage";
 import setPresence from "./utils/setPresence";
@@ -13,11 +13,7 @@ if (process.env.CONSOLE_COLORS === "false") {
 const bot = new Discord.Client();
 
 bot.on("ready", () => {
-  console.log(
-    `${colors.green.bold("[ Ready ]")} Logged in as ${colors.blue(
-      bot.user.tag
-    )}!`
-  );
+  console.log(`${colors.green.bold("[ Ready ]")} Logged in as ${colors.blue(bot.user.tag)}!`);
   setPresence(bot);
   setUpCommands(bot);
 });

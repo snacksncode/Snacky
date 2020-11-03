@@ -26,53 +26,6 @@ function parseMessage(msg: Message) {
   }
 
   commandObject.exec(msg);
-
-  // switch (command) {
-  //   case "help": {
-  //     helpCommand(currentChannel, msg, userInput);
-  //     break;
-  //   }
-  //   case "ping": {
-  //     pingCommand(msg, currentChannel);
-  //     break;
-  //   }
-  //   case "uptime": {
-  //     uptimeCommand(msg);
-  //     break;
-  //   }
-  //   case "mute": {
-  //     muteCommand(msg);
-  //     break;
-  //   }
-  //   case "unmute": {
-  //     unmuteCommand(msg);
-  //     break;
-  //   }
-  //   case "uptime": {
-  //     uptimeCommand(msg);
-  //     break;
-  //   }
-  //   case "cum": {
-  //     cumCommand(msg);
-  //     break;
-  //   }
-  //   case "avatar": {
-  //     avatarCommand(msg, msg.mentions.users);
-  //     break;
-  //   }
-  //   case "clear": {
-  //     clearCommand(msg, userInput, msg.mentions.users, currentChannel);
-  //     break;
-  //   }
-  //   case "rolldice": {
-  //     rollDiceCommand(msg, userInput);
-  //     break;
-  //   }
-  //   default: {
-  //     outputEmbed(msg.channel, "Command not found", colors.error);
-  //     break;
-  //   }
-  // }
 }
 
 export default parseMessage;

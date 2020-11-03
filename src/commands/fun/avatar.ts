@@ -21,10 +21,10 @@ const avatarCommand = async (msg: Message) => {
       );
       return;
     }
-    if (![16, 32, 64, 128, 256, 512, 1024, 2048].includes(matchedImageSizeAsNumber)) {
+    if (![128, 256, 512, 1024, 2048].includes(matchedImageSizeAsNumber)) {
       outputEmbed(
         msg.channel,
-        `Your **--size** flag is invalid. You can only request sizes: 16, 32, 64, 128, 256, 512, 1024, 2048`,
+        `Your **--size** flag is invalid. You can only request sizes: 128, 256, 512, 1024, 2048`,
         colors.error,
         "Wrong image size"
       );
