@@ -1,7 +1,8 @@
-let token: string = process.env.TOKEN;
-let prefix: string = "s!";
-let version: string = "1.5";
-let ownerId: string = "430795391265406990";
+const token: string = process.env.TOKEN;
+const prefix: string = "s!";
+const version: string = "1.5";
+const ownerId: string = "430795391265406990";
+const catsChannelId: string = "764252519412137994";
 
 const colors = {
   default: "#1b1b1b",
@@ -11,4 +12,4 @@ const colors = {
   error: "#ef4949",
 };
 
-export { token, prefix, version, colors, ownerId };
+export { token, prefix, version, colors, ownerId, catsChannelId };

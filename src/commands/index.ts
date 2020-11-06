@@ -12,7 +12,6 @@ import cumCommand from "./fun/cum";
 import clearCommand from "./moderation/clear";
 
 // export {
-//   clearCommand,
 //   rollDiceCommand,
 //   muteCommand,
 //   unmuteCommand,
