@@ -26,6 +26,9 @@ function outputEmbed(
     .setDescription(message);
 
   if (fields) embed.addFields(fields);
+  if (!!process.env.LOCALHOST) {
+    embed.setFooter("I'm running on localhost", "https://i.imgur.com/sPnI3Se.png");
+  }
 
   return sendMsg(dest, embed);
 }

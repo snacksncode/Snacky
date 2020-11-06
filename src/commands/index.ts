@@ -9,11 +9,12 @@ import pingCommand from "./base/ping";
 import uptimeCommand from "./base/uptime";
 import avatarCommand from "./fun/avatar";
 import cumCommand from "./fun/cum";
+import rollDiceCommand from "./fun/rollDice";
 import clearCommand from "./moderation/clear";
+import muteCommand from "./moderation/mute";
+import unmuteCommand from "./moderation/unmute";
 
 // export {
-//   rollDiceCommand,
-//   muteCommand,
 //   unmuteCommand,
 // };
 
@@ -91,6 +92,48 @@ const commands: CommandsExporter = {
         usage: `${prefix}clear [user?] [--include-command?] [amount 1-100]`,
         reqPerms: this.requiredPermissions,
         example: `\n${prefix}clear 5\n${prefix}purge <@${ownerId}> 10\n${prefix}c 5 --include-command`,
+      });
+    },
+  },
+  roll: {
+    aliases: ["rolldice", "dice"],
+    commandName: "roll",
+    desc: "Rolls a virtual dice for you",
+    exec: (m: Message) => rollDiceCommand(m),
+    help: function () {
+      return formatHelp({
+        aliases: this.aliases,
+        desc: this.desc,
+        usage: `${prefix}roll [dice]`,
+        example: `\n${prefix}roll d6 2d10\n${prefix}rolldice 5d6\n${prefix}dice d100`,
+      });
+    },
+  },
+  mute: {
+    aliases: ["m", "silence"],
+    commandName: "mute",
+    desc: "Gives mentioned member(s) `muted` role",
+    exec: (m: Message) => muteCommand(m),
+    help: function () {
+      return formatHelp({
+        aliases: this.aliases,
+        desc: this.desc,
+        usage: `${prefix}mute [user(s)]`,
+        example: `\n${prefix}mute <@${ownerId}>`,
+      });
+    },
+  },
+  unmute: {
+    aliases: ["um", "unsilence"],
+    commandName: "unmute",
+    desc: "Removes `muted` role from mentioned member(s)",
+    exec: (m: Message) => unmuteCommand(m),
+    help: function () {
+      return formatHelp({
+        aliases: this.aliases,
+        desc: this.desc,
+        usage: `${prefix}unmute [user(s)]`,
+        example: `\n${prefix}unmute <@${ownerId}>`,
       });
     },
   },
