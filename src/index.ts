@@ -1,6 +1,6 @@
 import "dotenv/config";
 import Discord, { Message } from "discord.js";
-import { prefix, token, catsChannelId } from "./config";
+import { prefix, token, autoReactChannels } from "./config";
 import parseMessage from "./utils/parseMessage";
 import setPresence from "./utils/setPresence";
 import colors from "colors";
@@ -22,7 +22,7 @@ bot.on("ready", () => {
 bot.on("message", (msg: Message) => {
   if (msg.author.bot || msg.system || msg.channel.type !== "text") return;
   parseMessage(msg);
-  autoReact(msg, catsChannelId, "❤️", (m) => {
+  autoReact(msg, autoReactChannels, "❤️", (m) => {
     return m.attachments.size > 0 || m.embeds.length > 0;
   });
 });
