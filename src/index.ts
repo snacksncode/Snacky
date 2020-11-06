@@ -22,7 +22,9 @@ bot.on("ready", () => {
 bot.on("message", (msg: Message) => {
   if (msg.author.bot || msg.system || msg.channel.type !== "text") return;
   parseMessage(msg);
-  autoReact(msg, catsChannelId, "❤️", (m) => m.attachments.size > 0);
+  autoReact(msg, catsChannelId, "❤️", (m) => {
+    return m.attachments.size > 0 || m.embeds.length > 0;
+  });
 });
 
 bot.on("messageUpdate", (_, newMsg) => {
