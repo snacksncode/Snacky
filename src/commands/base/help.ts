@@ -1,35 +1,41 @@
-import { Message, MessageEmbed, TextChannel } from "discord.js";
-import { colors, prefix, version } from "../../config";
+import { Message } from "discord.js";
+import { colors, prefix } from "../../config";
+import listAllCommands from "../../utils/listAllCommands";
 import outputEmbed from "../../utils/outputEmbed";
 
-function helpCommand(channel: TextChannel, msg: Message, userInput: string): void {
+function helpCommand(msg: Message): Promise<Message> {
   //help flag
-  let hasHelpFlag: boolean = !!userInput.match(/--help/g);
-  if (hasHelpFlag) {
-    outputEmbed(msg.channel, `Really?`, colors.info, `Help | Help Command`);
-    return;
+  const userInput = msg.content;
+  const regExp: RegExp = new RegExp(`${prefix}help\\s?(\\w*)?`, "g");
+  const matches: IterableIterator<RegExpMatchArray> = userInput.matchAll(regExp);
+  const parsedValue: string | undefined = matches.next().value[1];
+  if (parsedValue === undefined) {
+    //user typed in <prefix>help
+    return outputEmbed(
+      msg.channel,
+      `Avaible commands:
+      ${listAllCommands(msg.client.commands)}\n
+      For more information about specific command type in **${prefix}help [command]**`,
+      colors.info,
+      "First time? Here's some information"
+    );
   }
-
-  const helpEmbed: MessageEmbed = new MessageEmbed()
-    .setTitle("First time? Here's some info")
-    .setColor("#5C6BC0")
-    .setDescription(
-      `Avaible commands:\n
-      \`help\`, \`ping\`, \`clear\`, \`avatar\`, \`cum\`\n
-      For more information about specific command type in **[prefix]<command> --help**`
-    )
-    .addField("Current prefix: ", `${prefix}`, true)
-    .addField("Current version: ", `${version}`, true);
-
-  channel.send(helpEmbed);
+  const commandExists: boolean = msg.client.commands.has(parsedValue);
+  if (!commandExists) {
+    return outputEmbed(
+      msg.channel,
+      `Command \`${parsedValue}\` doesn't exist`,
+      colors.error,
+      "Cannot get help for command"
+    );
+  }
+  const mentionedCommand = msg.client.commands.get(parsedValue);
+  return outputEmbed(
+    msg.channel,
+    "",
+    colors.info,
+    `Information | ${mentionedCommand.commandName}`,
+    mentionedCommand.help()
+  );
 }
 export default helpCommand;
-
-// .setDescription(
-//   `Avaible commands:\n
-//   \`help\` - outputs this\n
-//   \`ping\` - check connection & ping\n
-//   \`clear <number>\` - deletes last <number> of messages\n
-//   \`avatar <user?> --size?=<size>\` - shows mentioned user's avatar or if no one mentioned shows avatar of author of the message. **--size** flag is optional and accepts only values: 16, 32, 64, 128, 256, 512, 1024, 2048\n
-//   \`cum\` - sets your nickname to **cum**`
-// )

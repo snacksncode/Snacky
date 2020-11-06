@@ -4,7 +4,7 @@
   "description": "My first ever Discord Bot. His name is Snacky",
   "main": "src/index.ts",
   "scripts": {
-    "start": "ts-node ."
+    "start": "ts-node --files ."
   },
   "author": "snacksncode",
   "license": "ISC",

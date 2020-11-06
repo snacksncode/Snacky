@@ -1,39 +1,49 @@
 import "dotenv/config";
-import Discord, { Message, TextChannel } from "discord.js";
-import { prefix, token } from "./config";
+import Discord, { Message } from "discord.js";
+import { prefix, token, autoReactChannels } from "./config";
 import parseMessage from "./utils/parseMessage";
 import setPresence from "./utils/setPresence";
-import colors from 'colors';
+import consoleColors from "colors";
+import setUpCommands from "./utils/setUpCommands";
+import autoReact from "./utils/autoReact";
 
-if ( process.env.CONSOLE_COLORS === "false" ) {
-  colors.disable();
+if (process.env.CONSOLE_COLORS === "false") {
+  consoleColors.disable();
 }
 
-const client = new Discord.Client();
+const bot = new Discord.Client();
 
-client.on("ready", () => {
-  console.log(`${colors.green.bold('[ Ready ]')} Logged in as ${colors.blue(client.user.tag)}!`);
-  setPresence(client);
+bot.on("ready", () => {
+  console.log(
+    `${consoleColors.green.bold("[ Ready ]")} Logged in as ${consoleColors.blue(bot.user.tag)}!`
+  );
+  setPresence(bot);
+  setUpCommands(bot);
 });
 
-client.on("message", (msg: Message) => {
+bot.on("message", (msg: Message) => {
   if (msg.author.bot || msg.system || msg.channel.type !== "text") return;
-  let channel: TextChannel = msg.channel;
-  parseMessage(msg, channel);
+  parseMessage(msg);
+  autoReact(msg, autoReactChannels.imageChannels, "❤️", (m) => {
+    return m.attachments.size > 0 || m.embeds.length > 0;
+  });
+  autoReact(msg, autoReactChannels.todoChannel, "⏸️");
 });
 
-client.on("messageUpdate", (_, newMsg) => {
+bot.on("messageUpdate", (_, newMsg) => {
   if (newMsg.author.bot || !newMsg.content.startsWith(prefix)) return;
   newMsg.fetch().then((_msg: Message) => {
-    client.emit("message", _msg);
+    bot.emit("message", _msg);
   });
 });
 
 if (!token) {
   console.error(
-    "No token was provided. Make sure you've created .env file with your token assigned to TOKEN variable and that you've imported 'dotenv/config' at the top of your main file."
+    `${consoleColors.red.bold(
+      "[ Error ] No token was provided"
+    )}\nMake sure you've created .env file with your token assigned to TOKEN variable\nAlso don't forget to import 'dotenv/config' at the top of your main file`
   );
   process.exit(1);
 }
 
-client.login(token);
+bot.login(token);

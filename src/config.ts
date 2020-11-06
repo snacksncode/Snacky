@@ -1,7 +1,11 @@
-let token: string = process.env.TOKEN;
-let prefix: string = "s!";
-let version: string = "1.5";
-
+const token: string = process.env.TOKEN;
+const prefix: string = "s!";
+const version: string = "1.6";
+const ownerId: string = "430795391265406990";
+const autoReactChannels: { imageChannels: string[]; todoChannel: string[] } = {
+  imageChannels: ["764252519412137994", "764256491426283540"],
+  todoChannel: ["771880244905902090"],
+};
 const colors = {
   default: "#1b1b1b",
   info: "#3d5eeb",
@@ -10,4 +14,4 @@ const colors = {
   error: "#ef4949",
 };
 
-export { token, prefix, version, colors };
+export { token, prefix, version, colors, ownerId, autoReactChannels };
