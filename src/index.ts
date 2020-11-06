@@ -5,7 +5,7 @@ import parseMessage from "./utils/parseMessage";
 import setPresence from "./utils/setPresence";
 import colors from "colors";
 import setUpCommands from "./utils/setUpCommands";
-import autoEmote from "./utils/autoEmote";
+import autoReact from "./utils/autoReact";
 
 if (process.env.CONSOLE_COLORS === "false") {
   colors.disable();
@@ -22,7 +22,7 @@ bot.on("ready", () => {
 bot.on("message", (msg: Message) => {
   if (msg.author.bot || msg.system || msg.channel.type !== "text") return;
   parseMessage(msg);
-  autoEmote(msg, catsChannelId, "❤️", (m) => m.attachments.size > 0);
+  autoReact(msg, catsChannelId, "❤️", (m) => m.attachments.size > 0);
 });
 
 bot.on("messageUpdate", (_, newMsg) => {

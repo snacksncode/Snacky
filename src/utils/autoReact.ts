@@ -1,14 +1,14 @@
 import { Message } from "discord.js";
 
-function autoEmote(
+function autoReact(
   msg: Message,
   channelId: string,
-  emote: string,
+  reaction: string,
   filterFunction: (m: Message) => boolean
 ) {
   if (msg.channel.id !== channelId) return;
   if (!filterFunction(msg)) return;
-  msg.reactions.add(emote);
+  msg.react(reaction);
 }
 
-export default autoEmote;
+export default autoReact;
