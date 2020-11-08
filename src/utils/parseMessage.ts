@@ -27,7 +27,7 @@ function parseMessage(msg: Message) {
   //execute the requested command
   try {
     commandObject.exec(msg);
-  } catch {
+  } catch(_) {
       return outputEmbed(
           msg.channel,
           `An error occured.`,

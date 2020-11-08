@@ -15,6 +15,7 @@ import muteCommand from "./moderation/mute";
 import unmuteCommand from "./moderation/unmute";
 
 import join from './music/join';
+import play from "./music/play";
 
 const commands: CommandsExporter = {
   ping: {
@@ -141,7 +142,7 @@ const commands: CommandsExporter = {
           "j"
       ],
       commandName: "join",
-      desc: "Bot join your channel and plays music",
+      desc: "Bot join your channel",
       exec: join,
       help: function () {
         return formatHelp({
@@ -151,6 +152,22 @@ const commands: CommandsExporter = {
                 example: `\n${prefix}join`
             })
       }
-  }
+  },
+  play: {
+    aliases: [
+        "p"
+    ],
+    commandName: "play",
+    desc: "Bot join your channel and plays music",
+    exec: play,
+    help: function () {
+      return formatHelp({
+              aliases: this.aliases,
+              desc: this.desc,
+              usage: `${prefix}join`,
+              example: `\n${prefix}join`
+          })
+    }
+}
 };
 export default commands;

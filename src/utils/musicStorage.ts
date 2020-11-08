@@ -8,5 +8,8 @@ export const set = (index: string, data: Storage | string | number) => storage[i
 export const makeTemplate = (id: string) => storage[id] = Object.assign({}, {
     id,
     generated: new Date().toString(),
-    isPlaying: false
+    isPlaying: false,
+    channelId: null,
+    joined: false,
+    connection: null
 });
