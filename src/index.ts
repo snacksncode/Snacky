@@ -7,6 +7,8 @@ import consoleColors from "colors";
 import setUpCommands from "./utils/setUpCommands";
 import autoReact from "./utils/autoReact";
 
+import { makeTemplate, set } from './utils/musicStorage';
+
 if (process.env.CONSOLE_COLORS === "false") {
   consoleColors.disable();
 }
@@ -19,6 +21,13 @@ bot.on("ready", () => {
   );
   setPresence(bot);
   setUpCommands(bot);
+
+  bot.guilds.cache.forEach(g =>
+    makeTemplate(g.id) && 
+    console.log(
+        `${consoleColors.green.bold(`[ Ready ]`)} Registering new guild: ${g.name} (${g.id})`
+    )
+  );
 });
 
 bot.on("message", (msg: Message) => {
@@ -36,6 +45,9 @@ bot.on("messageUpdate", (_, newMsg) => {
     bot.emit("message", _msg);
   });
 });
+
+bot.on('guildCreate', guild => makeTemplate(guild.id) && console.log(`Joining ${guild.name} (${guild.id})`));
+bot.on('guildDelete', guild => set(guild.id, undefined) && console.log(`Got kicked from: ${guild.name} (${guild.id})`));
 
 if (!token) {
   console.error(

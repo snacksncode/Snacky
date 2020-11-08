@@ -25,7 +25,16 @@ function parseMessage(msg: Message) {
     );
   }
   //execute the requested command
-  commandObject.exec(msg);
+  try {
+    commandObject.exec(msg);
+  } catch {
+      return outputEmbed(
+          msg.channel,
+          `An error occured.`,
+          colors.error,
+          `Error`
+      );
+  }
 }
 
 export default parseMessage;
