@@ -11,5 +11,10 @@ export const makeTemplate = (id: string) => storage[id] = Object.assign({}, {
     isPlaying: false,
     channelId: null,
     joined: false,
-    connection: null
+    connection: null,
+    dispatcher: null,
+    bassBoost: false,
+    volume: 1.0,
+    loop: false,
+    queue: []
 });
