@@ -11,12 +11,7 @@ const hook = async (msg: Message, firstTime: boolean = false) => {
         if (!d.loop && !firstTime)
             d.queue.shift();
         
-        try {
-            const { videoDetails } = await ytdl.getBasicInfo(d.queue[0].url);
-            msg.channel.send(`now playing: ${videoDetails.title}`);
-        } catch(_) {
-
-        }
+        msg.channel.send(`now playing: ${d.queue[0].name} (${d.queue[0].length})`);
 
         d.dispatcher = d.connection.play(
             ytdl(
@@ -28,7 +23,7 @@ const hook = async (msg: Message, firstTime: boolean = false) => {
             {
                 volume: (d.bassBoost) ? 10.0 : d.volume
             }
-        );
+        ).on("finish", () => hook(msg));
     } else {
         d.isPlaying = false;
         d.dispatcher = null;

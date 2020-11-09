@@ -78,12 +78,11 @@ export default async (msg: Message) => {
     } else {
         try {
             let v = await searchYoutube(process.env.YTTOKEN, {
-                input,
+                q: input,
                 part: "snippet",
                 type: "video",
-                maxResults: 1
+                maxResults: 1,
             });
-            
 
             if (v?.error?.code === 403)
                 return msg.channel.send("quota exceeded")
