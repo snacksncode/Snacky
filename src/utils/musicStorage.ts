@@ -16,5 +16,6 @@ export const makeTemplate = (id: string) => storage[id] = Object.assign({}, {
     bassBoost: false,
     volume: 1.0,
     loop: false,
+    timeout: 0,
     queue: []
 });

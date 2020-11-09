@@ -11,7 +11,8 @@ export interface Storage {
     connection: VoiceConnection;
     bassBoost: boolean;
     volume: number;
-    queue: [ Song ];
+    timeout: any;
+    queue: Array<Song>;
 }
 
 export interface Song {
