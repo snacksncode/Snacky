@@ -20,14 +20,17 @@ function outputEmbed(
 ) {
   const bot = dest.client.user;
   const embed: MessageEmbed = new MessageEmbed()
-    .setAuthor(bot.tag, bot.avatarURL())
-    .setTitle(title ? title : "")
-    .setColor(color ? color : colors.default)
-    .setDescription(message);
+	.setAuthor(
+	  bot.tag.substring(0, bot.tag.indexOf("#")), 
+	  bot.avatarURL()
+	)
+	.setTitle(title ? title : "")
+	.setColor(color ? color : colors.default)
+	.setDescription(message);
 
   if (fields) embed.addFields(fields);
   if (!!process.env.LOCALHOST) {
-    embed.setFooter("I'm running on localhost", "https://i.imgur.com/sPnI3Se.png");
+	embed.setFooter("I'm running on localhost", "https://i.imgur.com/sPnI3Se.png");
   }
 
   return sendMsg(dest, embed);

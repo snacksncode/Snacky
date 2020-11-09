@@ -7,6 +7,10 @@ import consoleColors from "colors";
 import setUpCommands from "./utils/setUpCommands";
 import autoReact from "./utils/autoReact";
 
+import { get, makeTemplate, set } from './utils/musicStorage';
+
+let timeouts = [];
+
 if (process.env.CONSOLE_COLORS === "false") {
   consoleColors.disable();
 }
@@ -19,6 +23,13 @@ bot.on("ready", () => {
   );
   setPresence(bot);
   setUpCommands(bot);
+
+  bot.guilds.cache.forEach(g =>
+    makeTemplate(g.id) && 
+    console.log(
+        `${consoleColors.green.bold(`[ Ready ]`)} Registering new guild: ${g.name} (${g.id})`
+    )
+  );
 });
 
 bot.on("message", (msg: Message) => {
@@ -35,6 +46,39 @@ bot.on("messageUpdate", (_, newMsg) => {
   newMsg.fetch().then((_msg: Message) => {
     bot.emit("message", _msg);
   });
+});
+
+bot.on('guildCreate', guild => makeTemplate(guild.id) && console.log(`Joining ${guild.name} (${guild.id})`));
+bot.on('guildDelete', guild => set(guild.id, undefined) && console.log(`Got kicked from: ${guild.name} (${guild.id})`));
+
+bot.on('voiceStateUpdate', (oldState, newState) => {
+    let d = get(oldState.guild.id);
+    if (timeouts[oldState.guild.id]) 
+        clearTimeout(timeouts[oldState.guild.id]);
+
+    if (oldState.channelID === d.channelId && newState.channelID !== d.channelId) {
+        if (oldState.member.id === bot.user.id) {
+            if (newState.channelID === null) {
+                console.log(`Got disconnected from voice channel in server: ${oldState.guild.name}`);
+                d?.dispatcher?.end();
+                makeTemplate(oldState.guild.id);
+            } else {
+                console.log(`Got moved to another channel in server: ${oldState.guild.name}`);
+                d.channelId = newState.channel.id;
+                set(oldState.guild.id, d);
+            }
+        } else 
+            timeouts[oldState.guild.id] = setTimeout(() => {
+                let a = oldState.guild.channels.resolve(d.channelId).members;
+                if (a.size < 2) {
+                    oldState.channel.leave();
+                    makeTemplate(oldState.guild.id);
+
+                    timeouts[oldState.guild.id] = undefined;
+                    console.log(`Leaving channel, because 0 users is in channel on server ${oldState.guild.name}`);
+                }
+            }, 5000);
+    }
 });
 
 if (!token) {
