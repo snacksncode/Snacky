@@ -7,7 +7,7 @@ import { prefix, token, autoReactChannels, reactionEmojis } from "./config";
 import parseMessage from "./utils/parseMessage";
 import setupPresence from "./utils/setupPresence";
 import setupCommands from "./utils/setupCommands";
-import setupGuild from "./utils/setupGuild";
+import setupGuilds from "./utils/setupGuilds";
 import autoReact from "./utils/autoReact";
 import { get, makeTemplate, set } from "./utils/musicStorage";
 import getEmojiByName from "./utils/getEmojiByName";
@@ -28,7 +28,7 @@ bot.on("ready", () => {
   );
   setupPresence(bot);
   setupCommands(bot);
-  setupGuild(bot);
+  setupGuilds(bot);
 });
 
 bot.on("message", (msg: Message) => {

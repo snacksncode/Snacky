@@ -3,9 +3,9 @@ import { makeTemplate } from "./musicStorage";
 import consoleColors from "colors";
 import setupReactionEmojis from "./setupReactionEmojis";
 
-function setupGuild(client: Client) {
+function setupGuilds(client: Client) {
   const guilds = client.guilds;
-  console.log(`${consoleColors.dim.bold(`[ Started guilds initiation process ]`)}`);
+  console.log(`${consoleColors.dim.bold(`--- Started guilds initiation process ---`)}`);
   guilds.cache.forEach((guild) => {
     console.log(
       `${consoleColors.blue("[ Guild ]")} Configuring ${consoleColors.blue(
@@ -15,6 +15,7 @@ function setupGuild(client: Client) {
     makeTemplate(guild.id);
     setupReactionEmojis(guild);
   });
+  console.log(`${consoleColors.dim.bold(`--- Finished guilds initiation process ---`)}`);
 }
 
-export default setupGuild;
+export default setupGuilds;

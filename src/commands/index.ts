@@ -150,6 +150,7 @@ const commands: CommandsExporter = {
     commandName: "configureemojis",
     desc: "Configures needed reaction emojis Snacky uses",
     exec: (m: Message) => configureEmojis(m),
+    hidden: true,
     help: function () {
       return formatHelp({
         desc: this.desc,
