@@ -7,6 +7,7 @@ import stateReact from "../../utils/stateReact";
 function muteCommand(msg: Message) {
   if (msg.mentions.members.size < 1) {
     if (!!!msg.content.match(/<@\d{1,}>/g)) {
+      stateReact(msg, "error");
       return outputEmbed(
         msg.channel,
         "You've mentioned someone not from this server",
@@ -19,6 +20,7 @@ function muteCommand(msg: Message) {
   let mutedRole: Role = msg.guild.roles.cache.find((role) => role.name === "muted");
   msg.mentions.members.each((member: GuildMember) => {
     if (checkForPermissions(["ADMINISTRATOR"], member)) {
+      stateReact(msg, "error");
       return outputEmbed(
         msg.channel,
         `<@${member.id}> has administrator role on this server. Muting will have no effect`,

@@ -33,6 +33,7 @@ function clearCommand(msg: Message) {
     if (msgsToDel > 100) throw "You cannot clear more than 100 messages.";
     if (channel.type !== "text") throw "You cannot use this command in DM or news channels";
   } catch (err) {
+    stateReact(msg, "error");
     return outputEmbed(msg.channel, err, colors.error, "Error");
   }
 
@@ -54,18 +55,24 @@ function clearCommand(msg: Message) {
       }
 
       //trigger deletion of messages
-      channel.bulkDelete(filteredMessagesArray).then((messages: Collection<string, Message>) => {
-        if (!withCommandFlag) stateReact(msg, "success");
-        outputEmbed(msg.channel, `Deleted last ${messages.size} messages`, colors.success).then(
-          (msg) => {
-            setTimeout(() => {
-              //prevent crash. If user deleted some more messages including bot's
-              //before timeout expires
-              if (!msg.deleted) return msg.delete();
-            }, successMsgDelTimeout);
-          }
-        );
-      });
+      channel
+        .bulkDelete(filteredMessagesArray)
+        .then((messages: Collection<string, Message>) => {
+          if (!withCommandFlag) stateReact(msg, "success");
+          outputEmbed(msg.channel, `Deleted last ${messages.size} messages`, colors.success).then(
+            (msg) => {
+              setTimeout(() => {
+                //prevent crash. If user deleted some more messages including bot's
+                //before timeout expires
+                if (!msg.deleted) return msg.delete();
+              }, successMsgDelTimeout);
+            }
+          );
+        })
+        .catch((err) => {
+          stateReact(msg, "error");
+          console.error(err);
+        });
     });
 }
 export default clearCommand;

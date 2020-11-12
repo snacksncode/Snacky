@@ -6,6 +6,7 @@ import stateReact from "../../utils/stateReact";
 function unmuteCommand(msg: Message) {
   if (msg.mentions.members.size < 1) {
     if (!!!msg.content.match(/<@\d{1,}>/g)) {
+      stateReact(msg, "error");
       return outputEmbed(
         msg.channel,
         "You've mentioned someone not from this server",
