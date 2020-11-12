@@ -1,3 +1,5 @@
+import { CustomReactionEmoji } from "discord.js";
+
 const token: string = process.env.TOKEN;
 const prefix: string = "s!";
 const version: string = "1.6";
@@ -13,5 +15,15 @@ const colors = {
   warn: "#ffcc4d",
   error: "#ef4949",
 };
+const reactionEmojis: { success: CustomReactionEmoji; error: CustomReactionEmoji } = {
+  success: {
+    name: "snky_success",
+    url: "https://i.imgur.com/y9dhF8w.png",
+  },
+  error: {
+    name: "snky_error",
+    url: "https://i.imgur.com/iU5CiGs.png",
+  },
+};
 
-export { token, prefix, version, colors, ownerId, autoReactChannels };
+export { token, prefix, version, colors, ownerId, autoReactChannels, reactionEmojis };

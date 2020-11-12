@@ -7,7 +7,7 @@
     "start": "ts-node --files ."
   },
   "engines": {
-    "node": "14.x"
+    "node": "15.x"
   },
   "author": "snacksncode",
   "license": "ISC",

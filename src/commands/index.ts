@@ -3,6 +3,7 @@ import { CommandsExporter, Message } from "discord.js";
 
 import { prefix, ownerId } from "../config";
 import formatHelp from "../utils/formatHelp";
+import configureEmojis from "./base/configureEmojis";
 import helpCommand from "./base/help";
 
 import pingCommand from "./base/ping";
@@ -15,7 +16,7 @@ import muteCommand from "./moderation/mute";
 import unmuteCommand from "./moderation/unmute";
 import bassboost from "./music/bassboost";
 
-import join from './music/join';
+import join from "./music/join";
 import leave from "./music/leave";
 import loop from "./music/loop";
 import pause from "./music/pause";
@@ -23,7 +24,7 @@ import play from "./music/play";
 import queue from "./music/queue";
 import resume from "./music/resume";
 import skip from "./music/skip";
-import stop from './music/stop';
+import stop from "./music/stop";
 import volume from "./music/volume";
 
 const commands: CommandsExporter = {
@@ -145,178 +146,171 @@ const commands: CommandsExporter = {
       });
     },
   },
+  configureemojis: {
+    commandName: "configureemojis",
+    desc: "Configures needed reaction emojis Snacky uses",
+    exec: (m: Message) => configureEmojis(m),
+    help: function () {
+      return formatHelp({
+        desc: this.desc,
+        usage: `${prefix}configureEmojis`,
+      });
+    },
+  },
   // music section
   join: {
-      aliases: [
-          "j"
-      ],
-      commandName: "join",
-      desc: "Bot join your channel",
-      exec: join,
-      help: function () {
-            return formatHelp({
-                    aliases: this.aliases,
-                    desc: this.desc,
-                    usage: `${prefix}join`,
-                    example: `\n${prefix}join`
-                })
-      }
+    aliases: ["j"],
+    commandName: "join",
+    desc: "Bot join your channel",
+    exec: join,
+    help: function () {
+      return formatHelp({
+        aliases: this.aliases,
+        desc: this.desc,
+        usage: `${prefix}join`,
+        example: `\n${prefix}join`,
+      });
+    },
   },
   play: {
-        aliases: [
-            "p"
-        ],
-        commandName: "play",
-        desc: "Bot join your channel and plays music",
-        exec: play,
-        help: function () {
-            return formatHelp({
-                    aliases: this.aliases,
-                    desc: this.desc,
-                    usage: `${prefix}join <link or title>`,
-                    example: `\n${prefix}play thank u, next`
-                })
-        }
+    aliases: ["p"],
+    commandName: "play",
+    desc: "Bot join your channel and plays music",
+    exec: play,
+    help: function () {
+      return formatHelp({
+        aliases: this.aliases,
+        desc: this.desc,
+        usage: `${prefix}join <link or title>`,
+        example: `\n${prefix}play thank u, next`,
+      });
     },
-    leave: {
-        aliases: [
-            "l"
-        ],
-        commandName: "leave",
-        desc: "Bot leaves your channel",
-        exec: leave,
-        help: function () {
-            return formatHelp({
-                    aliases: this.aliases,
-                    desc: this.desc,
-                    usage: `${prefix}leave`,
-                    example: `\n${prefix}leave`
-                })
-        }
+  },
+  leave: {
+    aliases: ["l"],
+    commandName: "leave",
+    desc: "Bot leaves your channel",
+    exec: leave,
+    help: function () {
+      return formatHelp({
+        aliases: this.aliases,
+        desc: this.desc,
+        usage: `${prefix}leave`,
+        example: `\n${prefix}leave`,
+      });
     },
-    stop: {
-        aliases: [
-            "s"
-        ],
-        commandName: "stop",
-        desc: "Bot stops playing and remove all things from queue",
-        exec: stop,
-        help: function () {
-            return formatHelp({
-                    aliases: this.aliases,
-                    desc: this.desc,
-                    usage: `${prefix}stop`,
-                    example: `\n${prefix}stop`
-                })
-        }
+  },
+  stop: {
+    aliases: ["s"],
+    commandName: "stop",
+    desc: "Bot stops playing and remove all things from queue",
+    exec: stop,
+    help: function () {
+      return formatHelp({
+        aliases: this.aliases,
+        desc: this.desc,
+        usage: `${prefix}stop`,
+        example: `\n${prefix}stop`,
+      });
     },
-    pause: {
-        aliases: [],
-        commandName: "pause",
-        desc: "Bot pauses current song",
-        exec: pause,
-        help: function () {
-            return formatHelp({
-                    aliases: this.aliases,
-                    desc: this.desc,
-                    usage: `${prefix}pause`,
-                    example: `\n${prefix}pause`
-                })
-        }
+  },
+  pause: {
+    aliases: [],
+    commandName: "pause",
+    desc: "Bot pauses current song",
+    exec: pause,
+    help: function () {
+      return formatHelp({
+        aliases: this.aliases,
+        desc: this.desc,
+        usage: `${prefix}pause`,
+        example: `\n${prefix}pause`,
+      });
     },
-    resume: {
-        aliases: [
-            "r"
-        ],
-        commandName: "resume",
-        desc: "Bot resumes current song",
-        exec: resume,
-        help: function () {
-            return formatHelp({
-                    aliases: this.aliases,
-                    desc: this.desc,
-                    usage: `${prefix}resume`,
-                    example: `\n${prefix}resume`
-                })
-        }
+  },
+  resume: {
+    aliases: ["r"],
+    commandName: "resume",
+    desc: "Bot resumes current song",
+    exec: resume,
+    help: function () {
+      return formatHelp({
+        aliases: this.aliases,
+        desc: this.desc,
+        usage: `${prefix}resume`,
+        example: `\n${prefix}resume`,
+      });
     },
-    skip: {
-        aliases: [
-            "sk"
-        ],
-        commandName: "skip",
-        desc: "Bot skips selected song",
-        exec: skip,
-        help: function () {
-            return formatHelp({
-                    aliases: this.aliases,
-                    desc: this.desc,
-                    usage: `${prefix}skip [<id>]`,
-                    example: `\n${prefix}skip 5`
-                })
-        }
+  },
+  skip: {
+    aliases: ["sk"],
+    commandName: "skip",
+    desc: "Bot skips selected song",
+    exec: skip,
+    help: function () {
+      return formatHelp({
+        aliases: this.aliases,
+        desc: this.desc,
+        usage: `${prefix}skip [<id>]`,
+        example: `\n${prefix}skip 5`,
+      });
     },
-    queue: {
-        aliases: [
-            "q"
-        ],
-        commandName: "queue",
-        desc: "Bot displays current queue",
-        exec: queue,
-        help: function () {
-            return formatHelp({
-                    aliases: this.aliases,
-                    desc: this.desc,
-                    usage: `${prefix}queue`,
-                    example: `\n${prefix}queue`
-                })
-        }
+  },
+  queue: {
+    aliases: ["q"],
+    commandName: "queue",
+    desc: "Bot displays current queue",
+    exec: queue,
+    help: function () {
+      return formatHelp({
+        aliases: this.aliases,
+        desc: this.desc,
+        usage: `${prefix}queue`,
+        example: `\n${prefix}queue`,
+      });
     },
-    loop: {
-        aliases: [],
-        commandName: "loop",
-        desc: "Bot loops current song",
-        exec: loop,
-        help: function () {
-            return formatHelp({
-                    aliases: this.aliases,
-                    desc: this.desc,
-                    usage: `${prefix}loop`,
-                    example: `\n${prefix}loop`
-                })
-        }
+  },
+  loop: {
+    aliases: [],
+    commandName: "loop",
+    desc: "Bot loops current song",
+    exec: loop,
+    help: function () {
+      return formatHelp({
+        aliases: this.aliases,
+        desc: this.desc,
+        usage: `${prefix}loop`,
+        example: `\n${prefix}loop`,
+      });
     },
-    bassboost: {
-        aliases: [ 
-            "bb"
-        ],
-        commandName: "bassboost",
-        desc: "Bot bass boosts current song",
-        exec: bassboost,
-        help: function () {
-            return formatHelp({
-                    aliases: this.aliases,
-                    desc: this.desc,
-                    usage: `${prefix}bassboost`,
-                    example: `\n${prefix}bassboost`
-                })
-        }
+  },
+  bassboost: {
+    aliases: ["bb"],
+    commandName: "bassboost",
+    desc: "Bot bass boosts current song",
+    exec: bassboost,
+    help: function () {
+      return formatHelp({
+        aliases: this.aliases,
+        desc: this.desc,
+        usage: `${prefix}bassboost`,
+        example: `\n${prefix}bassboost`,
+      });
     },
-    volume: {
-        aliases: [ 
-            "v"
-        ],
-        commandName: "volume",
-        desc: "Bot change song volume",
-        exec: volume,
-        help: function () {
-            return formatHelp({
-                    aliases: this.aliases,
-                    desc: this.desc,
-                    usage: `${prefix}volume <0 - 2>`,
-                    example: `\n${prefix}volume 0.55`
-                })
-        }
-    }
+  },
+  volume: {
+    aliases: ["v"],
+    commandName: "volume",
+    desc: "Bot change song volume",
+    exec: volume,
+    help: function () {
+      return formatHelp({
+        aliases: this.aliases,
+        desc: this.desc,
+        usage: `${prefix}volume <0 - 2>`,
+        example: `\n${prefix}volume 0.55`,
+      });
+    },
+  },
 };
 export default commands;

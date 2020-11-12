@@ -1,6 +1,7 @@
 import { GuildMember, Message, Role } from "discord.js";
 import { colors } from "../../config";
 import outputEmbed from "../../utils/outputEmbed";
+import stateReact from "../../utils/stateReact";
 
 function unmuteCommand(msg: Message) {
   if (msg.mentions.members.size < 1) {
@@ -12,12 +13,7 @@ function unmuteCommand(msg: Message) {
         `Invalid user mention.`
       );
     }
-    return outputEmbed(
-      msg.channel,
-      "",
-      colors.error,
-      `Mention a user that you want to unmute`
-    );
+    return outputEmbed(msg.channel, "", colors.error, `Mention a user that you want to unmute`);
   }
   let mutedRole: Role = msg.guild.roles.cache.find((role) => role.name === "muted");
   msg.mentions.members.each((member: GuildMember) => {
@@ -33,14 +29,11 @@ function unmuteCommand(msg: Message) {
     member.roles
       .remove(mutedRole)
       .then((member) => {
-        outputEmbed(
-          msg.channel,
-          "",
-          colors.success,
-          `Member ${member.user.tag} is now unmuted.`
-        );
+        stateReact(msg, "success");
+        outputEmbed(msg.channel, "", colors.success, `Member ${member.user.tag} is now unmuted.`);
       })
       .catch((err) => {
+        stateReact(msg, "error");
         outputEmbed(msg.channel, "", colors.error, `Couldn't unmute ${member.user.tag}`);
         console.error(err);
       });

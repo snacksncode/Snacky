@@ -1,7 +1,7 @@
 import { Client } from "discord.js";
 import { prefix, version } from "../config";
 
-const setCustomPresence = (client: Client) => {
+const setupCustomPresence = (client: Client) => {
   client.user.setPresence({
     activity: {
       name: `${prefix}help | ver. ${version}`,
@@ -11,4 +11,4 @@ const setCustomPresence = (client: Client) => {
   });
 };
 
-export default setCustomPresence;
+export default setupCustomPresence;

@@ -1,14 +1,19 @@
 import "dotenv/config";
 import Discord, { Message } from "discord.js";
-import { prefix, token, autoReactChannels } from "./config";
-import parseMessage from "./utils/parseMessage";
-import setPresence from "./utils/setPresence";
 import consoleColors from "colors";
-import setUpCommands from "./utils/setUpCommands";
+
+import { prefix, token, autoReactChannels, reactionEmojis } from "./config";
+
+import parseMessage from "./utils/parseMessage";
+import setupPresence from "./utils/setupPresence";
+import setupCommands from "./utils/setupCommands";
+import setupGuild from "./utils/setupGuild";
 import autoReact from "./utils/autoReact";
-
 import { get, makeTemplate, set } from "./utils/musicStorage";
+import getEmojiByName from "./utils/getEmojiByName";
+import setupReactionEmojis from "./utils/setupReactionEmojis";
 
+//fujka @filip rewrite this ew
 let timeouts = [];
 
 if (process.env.CONSOLE_COLORS === "false") {
@@ -19,26 +24,25 @@ const bot = new Discord.Client();
 
 bot.on("ready", () => {
   console.log(
-    `${consoleColors.green.bold("[ Ready ]")} Logged in as ${consoleColors.blue(bot.user.tag)}!`
+    `${consoleColors.green("[ Ready ]")} Logged in as ${consoleColors.blue(bot.user.tag)}`
   );
-  setPresence(bot);
-  setUpCommands(bot);
-
-  bot.guilds.cache.forEach((guild) => {
-    makeTemplate(guild.id);
-    console.log(
-      `${consoleColors.green.bold(`[ Ready ]`)} Registering new guild: ${guild.name} (${guild.id})`
-    );
-  });
+  setupPresence(bot);
+  setupCommands(bot);
+  setupGuild(bot);
 });
 
 bot.on("message", (msg: Message) => {
+  //ignore DM's, messages from bot and system messages
   if (msg.author.bot || msg.system || msg.channel.type !== "text") return;
+  //normal message parsing
   parseMessage(msg);
-  autoReact(msg, autoReactChannels.imageChannels, "❤️", (m) => {
+  //auto react to messages
+  let successEmoji = getEmojiByName(reactionEmojis.success.name, msg.guild);
+  let heartEmoji = getEmojiByName("heart", msg.guild);
+  autoReact(msg, autoReactChannels.imageChannels, heartEmoji, (m) => {
     return m.attachments.size > 0 || m.embeds.length > 0;
   });
-  autoReact(msg, autoReactChannels.todoChannel, "⏸️");
+  autoReact(msg, autoReactChannels.todoChannel, successEmoji);
 });
 
 bot.on("messageUpdate", (_, newMsg) => {
@@ -50,6 +54,7 @@ bot.on("messageUpdate", (_, newMsg) => {
 
 bot.on("guildCreate", (guild) => {
   makeTemplate(guild.id);
+  setupReactionEmojis(guild);
   console.log(`Joining ${guild.name} (${guild.id})`);
 });
 
@@ -58,8 +63,10 @@ bot.on("guildDelete", (guild) => {
   console.log(`Got kicked from: ${guild.name} (${guild.id})`);
 });
 
+//ugh fix that
 bot.on("voiceStateUpdate", (oldState, newState) => {
-  let d = get(oldState.guild.id);
+  const voiceChannel = oldState;
+  let d = get(voiceChannel.guild.id); //TODO: change names to better ones :/
   if (timeouts[oldState.guild.id]) clearTimeout(timeouts[oldState.guild.id]);
 
   if (oldState.channelID === d.channelId && newState.channelID !== d.channelId) {
@@ -75,8 +82,8 @@ bot.on("voiceStateUpdate", (oldState, newState) => {
       }
     } else
       timeouts[oldState.guild.id] = setTimeout(() => {
-        let a = oldState.guild.channels.resolve(d.channelId).members;
-        if (a.size < 2) {
+        const voiceChannelMembers = oldState.guild.channels.resolve(oldState.channel.id).members;
+        if (voiceChannelMembers.size < 2) {
           oldState.channel.leave();
           makeTemplate(oldState.guild.id);
 

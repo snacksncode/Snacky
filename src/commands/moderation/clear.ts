@@ -2,6 +2,7 @@ import { Collection, Message, User } from "discord.js";
 import { colors } from "../../config";
 import checkForPermissions from "../../utils/checkForPermissions";
 import outputEmbed from "../../utils/outputEmbed";
+import stateReact from "../../utils/stateReact";
 
 function clearCommand(msg: Message) {
   //check for permissions
@@ -54,7 +55,7 @@ function clearCommand(msg: Message) {
 
       //trigger deletion of messages
       channel.bulkDelete(filteredMessagesArray).then((messages: Collection<string, Message>) => {
-        if (!withCommandFlag) msg.react("✅");
+        if (!withCommandFlag) stateReact(msg, "success");
         outputEmbed(msg.channel, `Deleted last ${messages.size} messages`, colors.success).then(
           (msg) => {
             setTimeout(() => {

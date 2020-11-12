@@ -2,6 +2,7 @@ import { GuildMember, Message, Role } from "discord.js";
 import { colors } from "../../config";
 import checkForPermissions from "../../utils/checkForPermissions";
 import outputEmbed from "../../utils/outputEmbed";
+import stateReact from "../../utils/stateReact";
 
 function muteCommand(msg: Message) {
   if (msg.mentions.members.size < 1) {
@@ -13,12 +14,7 @@ function muteCommand(msg: Message) {
         `Invalid user mention.`
       );
     }
-    return outputEmbed(
-      msg.channel,
-      "",
-      colors.error,
-      `Mention a user that you want to mute`
-    );
+    return outputEmbed(msg.channel, "", colors.error, `Mention a user that you want to mute`);
   }
   let mutedRole: Role = msg.guild.roles.cache.find((role) => role.name === "muted");
   msg.mentions.members.each((member: GuildMember) => {
@@ -42,14 +38,11 @@ function muteCommand(msg: Message) {
     member.roles
       .add(mutedRole)
       .then((member) => {
-        outputEmbed(
-          msg.channel,
-          "",
-          colors.success,
-          `Member ${member.user.tag} is now muted.`
-        );
+        stateReact(msg, "success");
+        outputEmbed(msg.channel, "", colors.success, `Member ${member.user.tag} is now muted.`);
       })
       .catch((err) => {
+        stateReact(msg, "error");
         outputEmbed(msg.channel, "", colors.error, `Couldn't mute ${member.user.tag}`);
         console.error(err);
       });

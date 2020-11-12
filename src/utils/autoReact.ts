@@ -1,9 +1,9 @@
-import { Message } from "discord.js";
+import { Message, EmojiResolvable } from "discord.js";
 
 function autoReact(
   msg: Message,
   channels: string[],
-  reaction: string,
+  reaction: EmojiResolvable,
   filterFunction?: (m: Message) => boolean
 ) {
   if (!channels.includes(msg.channel.id)) return;

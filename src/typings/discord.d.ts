@@ -9,9 +9,15 @@ declare module "discord.js" {
     readonly requiredPermissions?: string[];
     readonly exec: (msg: Message) => void;
     readonly help: () => EmbedFieldData[];
+    readonly hidden?: boolean;
   }
   export interface CommandsExporter {
     [key: string]: Command;
+  }
+
+  export interface CustomReactionEmoji {
+    name: string;
+    url: string;
   }
 
   export interface FormatHelpInput {

@@ -2,6 +2,7 @@ import { Collection, ImageSize, Message, MessageEmbed, User } from "discord.js";
 import { colors } from "../../config";
 import Vibrant from "node-vibrant";
 import outputEmbed from "../../utils/outputEmbed";
+import stateReact from "../../utils/stateReact";
 
 const avatarCommand = async (msg: Message) => {
   const mentionedUsers: Collection<string, User> = msg.mentions.users;
@@ -57,7 +58,14 @@ const avatarCommand = async (msg: Message) => {
     .setImage(avatarUrl)
     .setColor(palette ? palette.Vibrant.hex : colors.default);
 
-  msg.channel.send(embed);
+  msg.channel
+    .send(embed)
+    .then((_) => {
+      stateReact(msg, "success");
+    })
+    .catch((err) => {
+      stateReact(msg, "error");
+    });
 };
 
 export default avatarCommand;
