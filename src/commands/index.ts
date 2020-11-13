@@ -30,11 +30,12 @@ import volume from "./music/volume";
 const commands: CommandsExporter = {
   ping: {
     commandName: "ping",
-    aliases: ["latency", "p"],
+    aliases: ["latency"],
     desc: "Check latency of Discord's API and Bot's respond time",
     exec: (m: Message) => pingCommand(m),
     help: function () {
       return formatHelp({
+        aliases: this.aliases,
         desc: this.desc,
         usage: `${prefix}ping`,
       });
@@ -47,6 +48,7 @@ const commands: CommandsExporter = {
     exec: (m: Message) => cumCommand(m),
     help: function () {
       return formatHelp({
+        aliases: this.aliases,
         desc: this.desc,
         usage: `${prefix}cum`,
       });

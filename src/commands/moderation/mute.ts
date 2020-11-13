@@ -15,12 +15,12 @@ function muteCommand(msg: Message) {
         `Invalid user mention.`
       );
     }
+    stateReact(msg, "error");
     return outputEmbed(msg.channel, "", colors.error, `Mention a user that you want to mute`);
   }
   let mutedRole: Role = msg.guild.roles.cache.find((role) => role.name === "muted");
   msg.mentions.members.each((member: GuildMember) => {
     if (checkForPermissions(["ADMINISTRATOR"], member)) {
-      stateReact(msg, "error");
       return outputEmbed(
         msg.channel,
         `<@${member.id}> has administrator role on this server. Muting will have no effect`,
