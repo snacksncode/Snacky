@@ -44,7 +44,7 @@ const commands: CommandsExporter = {
   },
   jd: {
     commandName: "jd",
-    aliases: ["jebacdisa", "jdkurwe", "orkpls", "orkjebany"],
+    aliases: ["jebacdisa", "jdkurwe", "orkpls", "orkjebany", "dis"],
     desc: "Send you a friendly image on a polish orc",
     exec: (m: Message) => jdCommand(m),
     help: function () {
