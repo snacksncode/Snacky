@@ -10,6 +10,7 @@ import pingCommand from "./base/ping";
 import uptimeCommand from "./base/uptime";
 import avatarCommand from "./fun/avatar";
 import cumCommand from "./fun/cum";
+import jdCommand from "./fun/jd";
 import rollDiceCommand from "./fun/rollDice";
 import clearCommand from "./moderation/clear";
 import muteCommand from "./moderation/mute";
@@ -38,6 +39,19 @@ const commands: CommandsExporter = {
         aliases: this.aliases,
         desc: this.desc,
         usage: `${prefix}ping`,
+      });
+    },
+  },
+  jd: {
+    commandName: "jd",
+    aliases: ["jebacdisa", "jdkurwe", "orkpls", "orkjebany"],
+    desc: "Send you a friendly image on a polish orc",
+    exec: (m: Message) => jdCommand(m),
+    help: function () {
+      return formatHelp({
+        aliases: this.aliases,
+        desc: this.desc,
+        usage: `${prefix}jd`,
       });
     },
   },
