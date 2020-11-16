@@ -1,7 +1,7 @@
-import { Guild } from "discord.js";
+import { Client } from "discord.js";
 
-function getEmojiByName(name: string, guild: Guild) {
-  return guild.emojis.cache.find((emoji) => emoji.name === name);
+function getEmojiByName(name: string, client: Client) {
+  return client.emojis.cache.find((emoji) => emoji.name === name);
 }
 
 export default getEmojiByName;

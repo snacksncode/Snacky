@@ -2,7 +2,7 @@ import "dotenv/config";
 import Discord, { Message } from "discord.js";
 import consoleColors from "colors";
 
-import { prefix, token, autoReactChannels, reactionEmojis } from "./config";
+import { prefix, token, autoReactChannels } from "./config";
 
 import parseMessage from "./utils/parseMessage";
 import setupPresence from "./utils/setupPresence";
@@ -10,7 +10,6 @@ import setupCommands from "./utils/setupCommands";
 import setupGuilds from "./utils/setupGuilds";
 import autoReact from "./utils/autoReact";
 import { get, makeTemplate, set } from "./utils/musicStorage";
-import getEmojiByName from "./utils/getEmojiByName";
 import setupReactionEmojis from "./utils/setupReactionEmojis";
 
 //fujka @filip rewrite this ew
@@ -37,12 +36,12 @@ bot.on("message", (msg: Message) => {
   //normal message parsing
   parseMessage(msg);
   //auto react to messages
-  let successEmoji = getEmojiByName(reactionEmojis.success.name, msg.guild);
-  let heartEmoji = getEmojiByName("heart", msg.guild);
+  let pauseEmoji = "⏸️";
+  let heartEmoji = "❤️";
   autoReact(msg, autoReactChannels.imageChannels, heartEmoji, (m) => {
     return m.attachments.size > 0 || m.embeds.length > 0;
   });
-  autoReact(msg, autoReactChannels.todoChannel, successEmoji);
+  autoReact(msg, autoReactChannels.todoChannel, pauseEmoji);
 });
 
 bot.on("messageUpdate", (_, newMsg) => {

@@ -7,7 +7,7 @@ type StateString = "success" | "error";
 function stateReact(msg: Message, state: StateString) {
   const successEmoji = getEmojiByName(
     reactionEmojis[state === "success" ? "success" : "error"].name,
-    msg.guild
+    msg.client
   );
   return msg.react(successEmoji);
 }
