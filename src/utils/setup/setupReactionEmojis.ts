@@ -1,6 +1,6 @@
 import { CustomReactionEmoji, Guild } from "discord.js";
 
-import { reactionEmojis } from "../config";
+import { reactionEmojis } from "../../config";
 import consoleColors from "colors";
 
 function setupReactionEmojis(guild: Guild, manualRequest?: boolean) {

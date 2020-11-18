@@ -1,17 +1,12 @@
 import { Message } from "discord.js";
-import { get } from "../../utils/musicStorage";
+import { getQueue } from "../../utils/music/queueManager";
 
-export default async (msg: Message) => {
-    let d = get(msg.guild.id);
-
-    if (d.channelId !== msg.member.voice.channel.id)
-        return msg.channel.send('not on yours channel');
-
-    if (!d.isPlaying)
-        return msg.channel.send('not playing');
-    
-    d.queue = [];
-    d.dispatcher.end();
-
-    msg.react('🚫');
+function stopCommand(msg: Message) {
+  const guildQueue = getQueue(msg.guild.id, msg.client);
+  if (!msg.member.voice.channel)
+    return msg.channel.send("You have to be in a voice channel to stop the music!");
+  guildQueue.songs = [];
+  guildQueue.connection.dispatcher.end();
 }
+
+export default stopCommand;

@@ -1,6 +1,7 @@
 declare module "discord.js" {
   export interface Client {
     commands: Collection<string, Command>;
+    guildsQueue: Map<string, GuildMusicQueue>;
   }
   export interface Command {
     readonly commandName: string;
@@ -26,5 +27,35 @@ declare module "discord.js" {
     usage: string;
     example?: string;
     reqPerms?: string[];
+  }
+
+  // export interface GuildMusicQueue {
+  //   id: string;
+  //   generated: string;
+  //   isPlaying: boolean;
+  //   joined: boolean;
+  //   channelId: string;
+  //   loop: boolean;
+  //   dispatcher: StreamDispatcher;
+  //   connection: VoiceConnection;
+  //   bassBoost: boolean;
+  //   volume: number;
+  //   timeout: any;
+  //   songs: Map<number, Song>;
+  // }
+  export interface GuildMusicQueue {
+    textChannel: null | TextChannel;
+    voiceChannel: null | VoiceChannel;
+    connection: null | VoiceConnection;
+    songs: Song[];
+    volume: number;
+    isPlaying: boolean;
+  }
+  export interface Song {
+    title: string;
+    // author: string;
+    url: string;
+    // thumbnail: string;
+    // length: string;
   }
 }

@@ -3,17 +3,17 @@ import Discord, { Message } from "discord.js";
 import consoleColors from "colors";
 
 import { prefix, token, autoReactChannels } from "./config";
-
 import parseMessage from "./utils/parseMessage";
-import setupPresence from "./utils/setupPresence";
-import setupCommands from "./utils/setupCommands";
-import setupGuilds from "./utils/setupGuilds";
+// import { get, makeTemplate, set } from "./utils/music/queueManager";
 import autoReact from "./utils/autoReact";
-import { get, makeTemplate, set } from "./utils/musicStorage";
-import setupReactionEmojis from "./utils/setupReactionEmojis";
+
+import setupPresence from "./utils/setup/setupPresence";
+import setupCommands from "./utils/setup/setupCommands";
+import setupQueue from "./utils/setup/setupQueue";
+import setupReactionEmojis from "./utils/setup/setupReactionEmojis";
 
 //fujka @filip rewrite this ew
-let timeouts = [];
+// let timeouts = [];
 
 if (process.env.CONSOLE_COLORS === "false") {
   consoleColors.disable();
@@ -27,7 +27,7 @@ bot.on("ready", () => {
   );
   setupPresence(bot);
   setupCommands(bot);
-  setupGuilds(bot);
+  setupQueue(bot);
 });
 
 bot.on("message", (msg: Message) => {
@@ -52,48 +52,48 @@ bot.on("messageUpdate", (_, newMsg) => {
 });
 
 bot.on("guildCreate", (guild) => {
-  makeTemplate(guild.id);
+  // makeTemplate(guild.id);
   setupReactionEmojis(guild);
   console.log(`Joining ${guild.name} (${guild.id})`);
 });
 
-bot.on("guildDelete", (guild) => {
-  set(guild.id, undefined);
-  console.log(`Got kicked from: ${guild.name} (${guild.id})`);
-});
+// bot.on("guildDelete", (guild) => {
+//   set(guild.id, undefined);
+//   console.log(`Got kicked from: ${guild.name} (${guild.id})`);
+// });
 
 //ugh fix that
-bot.on("voiceStateUpdate", (oldState, newState) => {
-  const voiceChannel = oldState;
-  let d = get(voiceChannel.guild.id); //TODO: change names to better ones :/
-  if (timeouts[oldState.guild.id]) clearTimeout(timeouts[oldState.guild.id]);
+// bot.on("voiceStateUpdate", (oldState, newState) => {
+//   const voiceChannel = oldState;
+//   let d = get(voiceChannel.guild.id); //TODO: change names to better ones :/
+//   if (timeouts[oldState.guild.id]) clearTimeout(timeouts[oldState.guild.id]);
 
-  if (oldState.channelID === d.channelId && newState.channelID !== d.channelId) {
-    if (oldState.member.id === bot.user.id) {
-      if (newState.channelID === null) {
-        console.log(`Got disconnected from voice channel in server: ${oldState.guild.name}`);
-        d?.dispatcher?.end();
-        makeTemplate(oldState.guild.id);
-      } else {
-        console.log(`Got moved to another channel in server: ${oldState.guild.name}`);
-        d.channelId = newState.channel.id;
-        set(oldState.guild.id, d);
-      }
-    } else
-      timeouts[oldState.guild.id] = setTimeout(() => {
-        const voiceChannelMembers = oldState.guild.channels.resolve(oldState.channel.id).members;
-        if (voiceChannelMembers.size < 2) {
-          oldState.channel.leave();
-          makeTemplate(oldState.guild.id);
+//   if (oldState.channelID === d.channelId && newState.channelID !== d.channelId) {
+//     if (oldState.member.id === bot.user.id) {
+//       if (newState.channelID === null) {
+//         console.log(`Got disconnected from voice channel in server: ${oldState.guild.name}`);
+//         d?.dispatcher?.end();
+//         makeTemplate(oldState.guild.id);
+//       } else {
+//         console.log(`Got moved to another channel in server: ${oldState.guild.name}`);
+//         d.channelId = newState.channel.id;
+//         set(oldState.guild.id, d);
+//       }
+//     } else
+//       timeouts[oldState.guild.id] = setTimeout(() => {
+//         const voiceChannelMembers = oldState.guild.channels.resolve(oldState.channel.id).members;
+//         if (voiceChannelMembers.size < 2) {
+//           oldState.channel.leave();
+//           makeTemplate(oldState.guild.id);
 
-          timeouts[oldState.guild.id] = undefined;
-          console.log(
-            `Leaving channel, because 0 users is in channel on server ${oldState.guild.name}`
-          );
-        }
-      }, 5000);
-  }
-});
+//           timeouts[oldState.guild.id] = undefined;
+//           console.log(
+//             `Leaving channel, because 0 users is in channel on server ${oldState.guild.name}`
+//           );
+//         }
+//       }, 5000);
+//   }
+// });
 
 if (!token) {
   console.error(
