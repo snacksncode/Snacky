@@ -9,6 +9,7 @@ async function playSong(guild: Guild, song: Song) {
   //it means that we have gone through the queue and can leave the channel
   if (!song) {
     guildQueue.voiceChannel.leave();
+    guildQueue.textChannel.send("No more songs to play. Leaving...");
     guild.client.guildsQueue.delete(guild.id);
     return;
   }

@@ -1,5 +1,5 @@
 import { Message, Song } from "discord.js";
-import ytdl from "ytdl-core-discord";
+import ytdl from "ytdl-core";
 
 import { createQueue, getQueue } from "../../utils/music/queueManager";
 import removePrefix from "../../utils/removePrefix";
@@ -39,10 +39,10 @@ async function playCommand(msg: Message) {
   }
   //# YOUTUBE URL
   const youtubeUrl = msg.content.match(youtubeUrlRegex).pop();
-  const songInfo = ytdl.getInfo(youtubeUrl);
+  const songInfo = await ytdl.getInfo(youtubeUrl);
   const songObject: Song = {
-    title: (await songInfo).videoDetails.title,
-    url: (await songInfo).videoDetails.video_url,
+    title: songInfo.videoDetails.title,
+    url: songInfo.videoDetails.video_url,
   };
   let guildQueue = getQueue(msg.guild.id, msg.client);
   if (!guildQueue) {
@@ -59,8 +59,8 @@ async function playCommand(msg: Message) {
     try {
       var connection = await userVoiceChannel.join();
       guildQueue.connection = connection;
-      // Calling the play function to start a song
-      await playSong(msg.guild, guildQueue.songs[0]);
+      await guildQueue.connection.voice.setSelfDeaf(true);
+      playSong(msg.guild, guildQueue.songs[0]);
     } catch (err) {
       // Printing the error message if the bot fails to join the voicechat
       console.log(err);
