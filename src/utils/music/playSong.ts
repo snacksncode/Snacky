@@ -1,6 +1,6 @@
 import { Guild, Song } from "discord.js";
 import { getQueue } from "./queueManager";
-import ytdl from "discord-ytdl-core";
+import ytdl from "ytdl-core-discord";
 
 async function playSong(guild: Guild, song: Song) {
   const guildQueue = getQueue(guild.id, guild.client);
@@ -12,9 +12,8 @@ async function playSong(guild: Guild, song: Song) {
     guild.client.guildsQueue.delete(guild.id);
     return;
   }
-  let stream = ytdl(song.url, {
+  let stream = await ytdl(song.url, {
     filter: "audioonly",
-    opusEncoded: true,
   });
   const voiceChannelDispatcher = guildQueue.connection
     .play(stream, { type: "opus" })
@@ -26,6 +25,7 @@ async function playSong(guild: Guild, song: Song) {
       console.error(err);
     });
   voiceChannelDispatcher.setVolume(1);
+  guildQueue.isPlaying = true;
   guildQueue.textChannel.send(`Started playing: **${song.title}**`);
 }
 

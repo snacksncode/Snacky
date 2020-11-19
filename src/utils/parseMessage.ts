@@ -27,13 +27,13 @@ function parseMessage(msg: Message) {
   //execute the requested command
   try {
     commandObject.exec(msg);
-  } catch(_) {
-      return outputEmbed(
-          msg.channel,
-          `An error occured.`,
-          colors.error,
-          `Error`
-      );
+  } catch (_) {
+    return outputEmbed(
+      msg.channel,
+      `An error occured during command execution.`,
+      colors.error,
+      `Error`
+    );
   }
 }
 

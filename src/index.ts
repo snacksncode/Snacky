@@ -4,16 +4,12 @@ import consoleColors from "colors";
 
 import { prefix, token, autoReactChannels } from "./config";
 import parseMessage from "./utils/parseMessage";
-// import { get, makeTemplate, set } from "./utils/music/queueManager";
 import autoReact from "./utils/autoReact";
 
 import setupPresence from "./utils/setup/setupPresence";
 import setupCommands from "./utils/setup/setupCommands";
 import setupQueue from "./utils/setup/setupQueue";
 import setupReactionEmojis from "./utils/setup/setupReactionEmojis";
-
-//fujka @filip rewrite this ew
-// let timeouts = [];
 
 if (process.env.CONSOLE_COLORS === "false") {
   consoleColors.disable();
