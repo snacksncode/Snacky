@@ -47,6 +47,7 @@ declare module "discord.js" {
     textChannel: null | TextChannel;
     voiceChannel: null | VoiceChannel;
     connection: null | VoiceConnection;
+    bassboost: boolean;
     songs: Song[];
     volume: number;
     isPlaying: boolean;

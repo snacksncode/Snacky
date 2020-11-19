@@ -14,7 +14,8 @@ export const createQueue = (guildId: string, client: Client) => {
     voiceChannel: null,
     connection: null,
     songs: [],
-    volume: 1,
+    volume: 1.0,
+    bassboost: false,
     isPlaying: false,
   };
 

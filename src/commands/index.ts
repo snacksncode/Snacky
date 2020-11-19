@@ -15,6 +15,7 @@ import rollDiceCommand from "./fun/rollDice";
 import clearCommand from "./moderation/clear";
 import muteCommand from "./moderation/mute";
 import unmuteCommand from "./moderation/unmute";
+import bassboostCommand from "./music/bassboost";
 import playCommand from "./music/play";
 import skipCommand from "./music/skip";
 import stopCommand from "./music/stop";
@@ -302,20 +303,19 @@ const commands: CommandsExporter = {
   //     });
   //   },
   // },
-  // bassboost: {
-  //   aliases: ["bb"],
-  //   commandName: "bassboost",
-  //   desc: "Bot bass boosts current song",
-  //   exec: bassboost,
-  //   help: function () {
-  //     return formatHelp({
-  //       aliases: this.aliases,
-  //       desc: this.desc,
-  //       usage: `${prefix}bassboost`,
-  //       example: `\n${prefix}bassboost`,
-  //     });
-  //   },
-  // },
+  bassboost: {
+    aliases: ["bb"],
+    commandName: "bassboost",
+    desc: "Destroys your ears :)",
+    exec: (m: Message) => bassboostCommand(m),
+    help: function () {
+      return formatHelp({
+        aliases: this.aliases,
+        desc: this.desc,
+        usage: `${prefix}bassboost`,
+      });
+    },
+  },
   // volume: {
   //   aliases: ["v"],
   //   commandName: "volume",
