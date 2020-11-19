@@ -40,8 +40,15 @@ bot.on("message", (msg: Message) => {
   autoReact(msg, autoReactChannels.todoChannel, pauseEmoji);
 });
 
-bot.on("messageUpdate", (_, newMsg) => {
-  if (newMsg.author.bot || !newMsg.content.startsWith(prefix)) return;
+bot.on("messageUpdate", (oldMsg, newMsg) => {
+  if (
+    newMsg.author.bot ||
+    !newMsg.content.startsWith(prefix) ||
+    oldMsg.content === newMsg.content
+  ) {
+    return;
+  }
+
   newMsg.fetch().then((_msg: Message) => {
     bot.emit("message", _msg);
   });
