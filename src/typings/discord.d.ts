@@ -54,9 +54,10 @@ declare module "discord.js" {
   }
   export interface Song {
     title: string;
-    // author: string;
     url: string;
+    length: number;
+    formattedLength: string;
+    // author: string;
     // thumbnail: string;
-    // length: string;
   }
 }

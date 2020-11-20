@@ -17,6 +17,7 @@ import muteCommand from "./moderation/mute";
 import unmuteCommand from "./moderation/unmute";
 import bassboostCommand from "./music/bassboost";
 import playCommand from "./music/play";
+import queueCommand from "./music/queue";
 import skipCommand from "./music/skip";
 import stopCommand from "./music/stop";
 
@@ -263,7 +264,7 @@ const commands: CommandsExporter = {
   //   },
   // },
   skip: {
-    aliases: ["sk"],
+    aliases: ["sk", "s"],
     commandName: "skip",
     desc: "Snacky skips currently playing song",
     exec: (m: Message) => skipCommand(m),
@@ -275,20 +276,19 @@ const commands: CommandsExporter = {
       });
     },
   },
-  // queue: {
-  //   aliases: ["q"],
-  //   commandName: "queue",
-  //   desc: "Bot displays current queue",
-  //   exec: queue,
-  //   help: function () {
-  //     return formatHelp({
-  //       aliases: this.aliases,
-  //       desc: this.desc,
-  //       usage: `${prefix}queue`,
-  //       example: `\n${prefix}queue`,
-  //     });
-  //   },
-  // },
+  queue: {
+    aliases: ["q"],
+    commandName: "queue",
+    desc: "Bot displays queue",
+    exec: (m: Message) => queueCommand(m),
+    help: function () {
+      return formatHelp({
+        aliases: this.aliases,
+        desc: this.desc,
+        usage: `${prefix}queue`,
+      });
+    },
+  },
   // loop: {
   //   aliases: [],
   //   commandName: "loop",

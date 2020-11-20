@@ -4,6 +4,7 @@ import ytdl from "ytdl-core";
 import { createQueue, getQueue } from "../../utils/music/queueManager";
 import removePrefix from "../../utils/removePrefix";
 import playSong from "../../utils/music/playSong";
+import formatSongLength from "../../utils/music/formatSongLength";
 
 async function playCommand(msg: Message) {
   //some validation so typescript isn't mad
@@ -43,6 +44,8 @@ async function playCommand(msg: Message) {
   const songObject: Song = {
     title: songInfo.videoDetails.title,
     url: songInfo.videoDetails.video_url,
+    length: Number(songInfo.videoDetails.lengthSeconds),
+    formattedLength: formatSongLength(Number(songInfo.videoDetails.lengthSeconds)),
   };
   let guildQueue = getQueue(msg.guild.id, msg.client);
   if (!guildQueue) {
