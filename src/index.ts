@@ -32,12 +32,9 @@ bot.on("message", (msg: Message) => {
   //normal message parsing
   parseMessage(msg);
   //auto react to messages
-  let pauseEmoji = "⏸️";
-  let heartEmoji = "❤️";
-  autoReact(msg, autoReactChannels.imageChannels, heartEmoji, (m) => {
-    return m.attachments.size > 0 || m.embeds.length > 0;
-  });
-  autoReact(msg, autoReactChannels.todoChannel, pauseEmoji);
+  for (let channel of autoReactChannels) {
+    autoReact(msg, channel.id, channel.emoji, channel.customEmoji, channel.filter);
+  }
 });
 
 bot.on("messageUpdate", (oldMsg, newMsg) => {

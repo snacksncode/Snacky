@@ -1,14 +1,21 @@
-import { Message, EmojiResolvable } from "discord.js";
+import { GuildEmoji, Message } from "discord.js";
+import getEmojiByName from "./getEmojiByName";
 
 function autoReact(
   msg: Message,
-  channels: string[],
-  reaction: EmojiResolvable,
-  filterFunction?: (m: Message) => boolean
+  channelId: string,
+  reactionEmoji: string | GuildEmoji,
+  customReactionEmoji: boolean,
+  filterOption: "images_only" | "none"
 ) {
-  if (!channels.includes(msg.channel.id)) return;
-  if (filterFunction && !filterFunction(msg)) return;
-  msg.react(reaction);
+  if (channelId !== msg.channel.id) return;
+  if (filterOption === "images_only") {
+    if (msg.attachments.size > 0 || msg.embeds.length > 0) return;
+  }
+  if (customReactionEmoji && typeof reactionEmoji === "string") {
+    reactionEmoji = getEmojiByName(reactionEmoji, msg.client);
+  }
+  msg.react(reactionEmoji);
 }
 
 export default autoReact;

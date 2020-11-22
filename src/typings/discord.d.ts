@@ -52,6 +52,13 @@ declare module "discord.js" {
     volume: number;
     isPlaying: boolean;
   }
+
+  export interface AutoReactionChannel {
+    id: string;
+    filter: "none" | "images_only";
+    emoji: string | GuildEmoji;
+    customEmoji: boolean;
+  }
   export interface Song {
     title: string;
     url: string;
