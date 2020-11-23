@@ -16,6 +16,8 @@ import clearCommand from "./moderation/clear";
 import muteCommand from "./moderation/mute";
 import unmuteCommand from "./moderation/unmute";
 import bassboostCommand from "./music/bassboost";
+import pauseCommand from "./music/pause";
+import resumeCommand from "./music/resume";
 import playCommand from "./music/play";
 import queueCommand from "./music/queue";
 import skipCommand from "./music/skip";
@@ -235,34 +237,32 @@ const commands: CommandsExporter = {
       });
     },
   },
-  // pause: {
-  //   aliases: [],
-  //   commandName: "pause",
-  //   desc: "Bot pauses current song",
-  //   exec: pause,
-  //   help: function () {
-  //     return formatHelp({
-  //       aliases: this.aliases,
-  //       desc: this.desc,
-  //       usage: `${prefix}pause`,
-  //       example: `\n${prefix}pause`,
-  //     });
-  //   },
-  // },
-  // resume: {
-  //   aliases: ["r"],
-  //   commandName: "resume",
-  //   desc: "Bot resumes current song",
-  //   exec: resume,
-  //   help: function () {
-  //     return formatHelp({
-  //       aliases: this.aliases,
-  //       desc: this.desc,
-  //       usage: `${prefix}resume`,
-  //       example: `\n${prefix}resume`,
-  //     });
-  //   },
-  // },
+  pause: {
+    aliases: [],
+    commandName: "pause",
+    desc: "Bot pauses current song",
+    exec: (m: Message) => pauseCommand(m),
+    help: function () {
+      return formatHelp({
+        aliases: this.aliases,
+        desc: this.desc,
+        usage: `${prefix}pause`,
+      });
+    },
+  },
+  resume: {
+    aliases: ["r"],
+    commandName: "resume",
+    desc: "Bot resumes current song",
+    exec: (m: Message) => resumeCommand(m),
+    help: function () {
+      return formatHelp({
+        aliases: this.aliases,
+        desc: this.desc,
+        usage: `${prefix}resume`,
+      });
+    },
+  },
   skip: {
     aliases: ["sk", "s"],
     commandName: "skip",

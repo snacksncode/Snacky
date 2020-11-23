@@ -49,7 +49,6 @@ async function playCommand(msg: Message) {
   };
   let guildQueue = getQueue(msg.guild.id, msg.client);
   if (!guildQueue) {
-    console.log("No queue initiated. Creating new one and playing song...");
     guildQueue = createQueue(msg.guild.id, msg.client);
     guildQueue.songs.push(songObject);
     msg.channel.send(`Added ${songObject.title} to queue`);
@@ -71,7 +70,6 @@ async function playCommand(msg: Message) {
       return msg.channel.send(err);
     }
   } else {
-    console.log("There is a queue object already. Adding song...");
     guildQueue.songs.push(songObject);
     msg.channel.send(`Added ${songObject.title} to queue`);
   }

@@ -8,6 +8,7 @@ async function playSong(guild: Guild, song: Song) {
   //it'll attempt to play song at guildQueue.songs[0] which will be undefined
   //it means that we have gone through the queue and can leave the channel
   if (!song) {
+    guildQueue.isPlaying = false;
     guildQueue.voiceChannel.leave();
     guildQueue.textChannel.send("No more songs to play. Leaving...");
     guild.client.guildsQueue.delete(guild.id);
@@ -23,7 +24,8 @@ async function playSong(guild: Guild, song: Song) {
       playSong(guild, guildQueue.songs[0]);
     })
     .on("error", (err) => {
-      console.error(err);
+      console.log("Error on dispatcher");
+      console.error(err.message);
     });
   voiceChannelDispatcher.setVolume(1);
   guildQueue.isPlaying = true;
