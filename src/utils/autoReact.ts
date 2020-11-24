@@ -10,7 +10,7 @@ function autoReact(
 ) {
   if (channelId !== msg.channel.id) return;
   if (filterOption === "images_only") {
-    if (msg.attachments.size > 0 || msg.embeds.length > 0) return;
+    if (!(msg.attachments.size > 0 || msg.embeds.length > 0)) return;
   }
   if (customReactionEmoji && typeof reactionEmoji === "string") {
     reactionEmoji = getEmojiByName(reactionEmoji, msg.client);
