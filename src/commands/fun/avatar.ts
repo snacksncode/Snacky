@@ -14,20 +14,22 @@ const avatarCommand = async (msg: Message) => {
   if (matchedImageSize) {
     let matchedImageSizeAsNumber: number = Number(matchedImageSize.substring(7));
     if (isNaN(matchedImageSizeAsNumber)) {
-      outputEmbed(
-        msg.channel,
-        `Your **--size** flag is invalid. It's not a number`,
-        colors.error,
-        "Image size isn't a number"
-      );
+      outputEmbed(msg.channel, `Your **--size** flag is invalid. It's not a number`, {
+        color: colors.error,
+        title: "Image size isn't a number",
+        author: msg.author,
+      });
       return;
     }
     if (![128, 256, 512, 1024, 2048].includes(matchedImageSizeAsNumber)) {
       outputEmbed(
         msg.channel,
         `Your **--size** flag is invalid. You can only request sizes: 128, 256, 512, 1024, 2048`,
-        colors.error,
-        "Wrong image size"
+        {
+          color: colors.error,
+          title: "Wrong image size",
+          author: msg.author,
+        }
       );
       return;
     }

@@ -11,28 +11,28 @@ import { colors } from "../config";
 
 type ChannelType = TextChannel | DMChannel | NewsChannel | User;
 
-function outputEmbed(
-  dest: ChannelType,
-  message: string,
-  color?: string,
-  title?: string,
-  fields?: EmbedFieldData[]
-) {
-  const bot = dest.client.user;
+interface EmbedOptions {
+  author: User;
+  title: string;
+  color?: string;
+  fields?: EmbedFieldData[];
+}
+
+function outputEmbed(dest: ChannelType, message: string, options: EmbedOptions) {
+  const { color, author, title, fields } = options;
   const embed: MessageEmbed = new MessageEmbed()
-	.setAuthor(
-	  bot.tag.substring(0, bot.tag.indexOf("#")), 
-	  bot.avatarURL()
-	)
-	.setTitle(title ? title : "")
-	.setColor(color ? color : colors.default)
-	.setDescription(message);
+    .setTitle(title ? title : "")
+    .setColor(color ? color : colors.default)
+    .setDescription(message);
 
   if (fields) embed.addFields(fields);
   if (!!process.env.LOCALHOST) {
-	embed.setFooter("I'm running on localhost", "https://i.imgur.com/sPnI3Se.png");
+    embed.setFooter(
+      `Bot is currently under development ${author ? `| Requested by ${author.tag}` : ""}`
+    );
+  } else {
+    if (author) embed.setFooter(`Requested by ${author.tag}`);
   }
-
   return sendMsg(dest, embed);
 }
 export default outputEmbed;

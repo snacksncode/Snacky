@@ -22,6 +22,7 @@ import playCommand from "./music/play";
 import queueCommand from "./music/queue";
 import skipCommand from "./music/skip";
 import stopCommand from "./music/stop";
+import evalCommand from "./base/eval";
 
 // import bassboost from "./music/_bassboost";
 // import join from "./music/_join";
@@ -124,6 +125,19 @@ const commands: CommandsExporter = {
         usage: `${prefix}clear [user?] [--include-command?] [amount 1-100]`,
         reqPerms: this.requiredPermissions,
         example: `\n${prefix}clear 5\n${prefix}purge <@${ownerId}> 10\n${prefix}c 5 --include-command`,
+      });
+    },
+  },
+  eval: {
+    commandName: "eval",
+    desc: "Runs code provided after command invocation",
+    hidden: true,
+    exec: (m: Message) => evalCommand(m),
+    help: function () {
+      return formatHelp({
+        desc: this.desc,
+        usage: `${prefix}eval [code]`,
+        reqPerms: ["This command is only avaible to bot creator and certain people"],
       });
     },
   },

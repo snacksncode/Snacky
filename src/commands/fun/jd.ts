@@ -33,8 +33,11 @@ function jdCommand(msg: Message) {
       return outputEmbed(
         msg.channel,
         "Program tries to pick different image every time. This error means that theres only 1 image in array.",
-        colors.error,
-        "Timeout exceeded"
+        {
+          color: colors.error,
+          title: "Timeout exceeded",
+          author: msg.author,
+        }
       );
     }
     let randomImage = getRandomImage(getRandomInt(0, pics.length - 1));

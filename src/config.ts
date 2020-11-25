@@ -4,6 +4,10 @@ const token: string = process.env.TOKEN;
 const prefix: string = "s!";
 const version: string = "1.8.4";
 const ownerId: string = "430795391265406990";
+const usersAllowedToUseEval: string[] = [
+  "430795391265406990",
+  // "302899754906681357",
+];
 const autoReactChannels: AutoReactionChannel[] = [
   {
     id: "764252519412137994",
@@ -42,4 +46,13 @@ const reactionEmojis: { success: CustomReactionEmoji; error: CustomReactionEmoji
   },
 };
 
-export { token, prefix, version, colors, ownerId, autoReactChannels, reactionEmojis };
+export {
+  token,
+  prefix,
+  version,
+  colors,
+  ownerId,
+  autoReactChannels,
+  reactionEmojis,
+  usersAllowedToUseEval,
+};

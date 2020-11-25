@@ -16,8 +16,11 @@ const cumCommand = (msg: Message) => {
         msg.channel,
         `> Thou shall not changeth the nickname of a person whose highest rank is more elevated
         ~ Steve Jobs`,
-        colors.error,
-        "Unable to change nickname"
+        {
+          color: colors.error,
+          title: "Unable to change nickname",
+          author: msg.author,
+        }
       );
     });
 };

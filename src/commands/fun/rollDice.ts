@@ -53,15 +53,23 @@ function rollDiceCommand(msg: Message) {
     //if no dices matched
     outputEmbed(
       msg.channel,
-      `Sorry I couldn't find any valid dices in your message. Try using **${prefix}rollDice --help**`,
-      colors.error
+      `Sorry I couldn't find any valid dices in your message. Try using **${prefix}help roll**`,
+      {
+        color: colors.error,
+        author: msg.author,
+        title: "Invalid arguments",
+      }
     );
     return;
   }
   let diceObjectArray: diceObject[] = convertDices(extractedDices);
 
   if (!diceObjectArray.length) {
-    outputEmbed(msg.channel, "You cannot roll more than 100 dices", colors.error, "Wrong input");
+    outputEmbed(msg.channel, "You cannot roll more than 100 dices", {
+      color: colors.error,
+      title: "Wrong input",
+      author: msg.author,
+    });
     return;
   }
 
@@ -70,11 +78,16 @@ function rollDiceCommand(msg: Message) {
     return acc + cur;
   }, 0);
 
-  outputEmbed(msg.channel, "", colors.info, `Rolling: **${extractedDices}**`, [
-    { name: "You've rolled", value: `${diceRolls}`, inline: true },
-    { name: "\u200B", value: "\u200B", inline: true },
-    { name: "Total", value: `${calculatedSum}`, inline: true },
-    { name: "Requsted by", value: msg.author },
-  ]);
+  outputEmbed(msg.channel, "", {
+    fields: [
+      { name: "You've rolled", value: `${diceRolls}`, inline: true },
+      { name: "\u200B", value: "\u200B", inline: true },
+      { name: "Total", value: `${calculatedSum}`, inline: true },
+      { name: "Requsted by", value: msg.author },
+    ],
+    color: colors.info,
+    title: `Rolling: **${extractedDices}**`,
+    author: msg.author,
+  });
 }
 export default rollDiceCommand;
