@@ -2,7 +2,7 @@ import { AutoReactionChannel, CustomReactionEmoji } from "discord.js";
 
 const token: string = process.env.TOKEN;
 const prefix: string = "s!";
-const version: string = "1.8.4";
+const version: string = "1.9";
 const ownerId: string = "430795391265406990";
 const usersAllowedToUseEval: string[] = [
   "430795391265406990",
