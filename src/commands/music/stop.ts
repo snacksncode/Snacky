@@ -5,11 +5,18 @@ import outputEmbed from "../../utils/outputEmbed";
 
 function stopCommand(msg: Message) {
   const guildQueue = getQueue(msg.guild.id, msg.client);
-  if (!msg.member.voice.channel) {
-    return msg.channel.send("You have to be in a voice channel to stop the music.");
-  }
-  if (!guildQueue) {
-    return msg.channel.send("Bot is not currently playing music");
+  try {
+    if (!msg.member.voice.channel) {
+      throw "You have to be in a voice channel to stop the music.";
+    }
+    if (!guildQueue) {
+      throw "Bot is not currently playing music";
+    }
+  } catch (errMsg) {
+    return outputEmbed(msg.channel, errMsg, {
+      title: "",
+      color: colors.error,
+    });
   }
   guildQueue.voiceChannel.leave();
   msg.client.guildsQueue.delete(msg.guild.id);

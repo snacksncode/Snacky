@@ -11,15 +11,25 @@ import { colors } from "../../config";
 async function playCommand(msg: Message) {
   //some validation so typescript isn't mad
   if (msg.channel.type !== "text") {
-    return msg.channel.send(`You're trying to use this command in wrong channel type.`);
+    return outputEmbed(msg.channel, `You're trying to use this command in wrong channel type.`, {
+      color: colors.warn,
+      title: "",
+    });
   }
   //check if member is in voiceChat and if bot has permissions to join and speak
   const userVoiceChannel = msg.member.voice.channel;
-  if (!userVoiceChannel)
-    return msg.channel.send("You need to be in a voice channel to play music.");
+  if (!userVoiceChannel) {
+    return outputEmbed(msg.channel, `You need to be in a voice channel to play music`, {
+      color: colors.warn,
+      title: "",
+    });
+  }
   const permissions = userVoiceChannel.permissionsFor(msg.client.user);
   if (!permissions.has("CONNECT") || !permissions.has("SPEAK")) {
-    return msg.channel.send("I need the permissions to join and speak in your voice channel.");
+    return outputEmbed(msg.channel, `Bot is missing permissions to speak and join voice channels`, {
+      color: colors.error,
+      title: "",
+    });
   }
   //extract user input and create / read current guildQueue
   const userInput = removePrefix(msg.content);
@@ -33,11 +43,25 @@ async function playCommand(msg: Message) {
     //Get first group of matched string. Null oparators used to prevent crash if there's no match
     const extractedMatch: string | null = inputMatchArray.value?.[1];
     if (!extractedMatch) {
-      return msg.channel.send("You didn't provide song title");
+      return outputEmbed(msg.channel, `You didn't provide song title`, {
+        color: colors.warn,
+        title: "",
+      });
     }
     const requestedSongTitle = extractedMatch.replace(/\s+/g, " ").trim();
-    return msg.channel.send(
-      `No youtube link detected. | Title: ${requestedSongTitle}. This is unsupported as of now`
+    return outputEmbed(
+      msg.channel,
+      `I'm a lazy piece of shit and didn't implement yt search. Only youtube links are supported as of now.`,
+      {
+        color: colors.error,
+        title: "",
+        fields: [
+          {
+            name: "Detected song name:",
+            value: requestedSongTitle,
+          },
+        ],
+      }
     );
   }
   //# YOUTUBE URL

@@ -13,7 +13,10 @@ async function playSong(msg: Message, song: Song) {
   if (!song) {
     guildQueue.isPlaying = false;
     guildQueue.voiceChannel.leave();
-    guildQueue.textChannel.send("No more songs to play. Leaving...");
+    outputEmbed(msg.channel, `No more songs in queue. Leaving...`, {
+      title: "",
+      color: colors.info,
+    });
     guild.client.guildsQueue.delete(guild.id);
     return;
   }
