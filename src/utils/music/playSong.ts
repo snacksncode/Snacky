@@ -18,9 +18,21 @@ async function playSong(msg: Message, song: Song) {
     return;
   }
   //get audioStream from ytdl
-  let audioStream = await ytdl(song.url, {
-    filter: "audioonly",
-  });
+  let audioStream;
+  try {
+    audioStream = await ytdl(song.url, {
+      filter: "audioonly",
+    });
+  } catch (_) {
+    return outputEmbed(
+      msg.channel,
+      `Failed to retrieve video metadata. It's probably YouTube being a stupid cunt. Just try adding the song again`,
+      {
+        title: "",
+        color: colors.error,
+      }
+    );
+  }
   const voiceChannelDispatcher = guildQueue.connection
     .play(audioStream, { type: "opus" })
     .on("finish", () => {
