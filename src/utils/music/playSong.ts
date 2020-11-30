@@ -21,11 +21,30 @@ async function playSong(msg: Message, song: Song) {
     return;
   }
   //get audioStream from ytdl
-  let audioStream;
   try {
-    audioStream = await ytdl(song.url, {
+    let audioStream = await ytdl(song.url, {
       filter: "audioonly",
     });
+    const voiceChannelDispatcher = guildQueue.connection
+      .play(audioStream, { type: "opus" })
+      .on("finish", () => {
+        guildQueue.songs.shift();
+        playSong(msg, guildQueue.songs[0]);
+      })
+      .on("error", (err) => {
+        console.log("Error on dispatcher");
+        console.error(err.message);
+      });
+    voiceChannelDispatcher.setVolume(guildQueue.bassboost ? 10.0 : 1.0);
+    guildQueue.isPlaying = true;
+    outputEmbed(
+      msg.channel,
+      `Playing [**${song.title}**](${song.url}) | Requested by ${song.requestedBy}`,
+      {
+        title: "",
+        color: colors.info,
+      }
+    );
   } catch (_) {
     return outputEmbed(
       msg.channel,
@@ -36,26 +55,6 @@ async function playSong(msg: Message, song: Song) {
       }
     );
   }
-  const voiceChannelDispatcher = guildQueue.connection
-    .play(audioStream, { type: "opus" })
-    .on("finish", () => {
-      guildQueue.songs.shift();
-      playSong(msg, guildQueue.songs[0]);
-    })
-    .on("error", (err) => {
-      console.log("Error on dispatcher");
-      console.error(err.message);
-    });
-  voiceChannelDispatcher.setVolume(guildQueue.bassboost ? 10.0 : 1.0);
-  guildQueue.isPlaying = true;
-  outputEmbed(
-    msg.channel,
-    `Playing [**${song.title}**](${song.url}) | Requested by ${song.requestedBy}`,
-    {
-      title: "",
-      color: colors.info,
-    }
-  );
 }
 
 export default playSong;

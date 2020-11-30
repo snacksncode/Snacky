@@ -7,10 +7,10 @@ function skipCommand(msg: Message) {
   const guildQueue = getQueue(msg.guild.id, msg.client);
   try {
     if (!msg.member.voice.channel) {
-      throw "You have to be in a voice channel to skip songs!"
+      throw "You have to be in a voice channel to skip songs!";
     }
     if (!guildQueue) {
-      throw "There is no song that I could skip!"
+      throw "There is no song that I could skip!";
     }
   } catch (errMsg) {
     return outputEmbed(msg.channel, errMsg, {
