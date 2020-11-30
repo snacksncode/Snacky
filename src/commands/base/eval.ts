@@ -15,7 +15,7 @@ async function evalCommand(msg: Message) {
       'Your message contains string "token" and was stopped from execution.',
       {
         color: config.colors.warn,
-        author: msg.author,
+
         title: "Security error",
       }
     );
@@ -27,7 +27,6 @@ async function evalCommand(msg: Message) {
     return outputEmbed(msg.channel, "You're not allowed to execute eval command", {
       color: config.colors.warn,
       title: "Permissions warning",
-      author: msg.author,
     });
   }
   const codeToExecute = msg.content.replace(`${config.prefix}eval `, "").replace("--use-embed", "");
@@ -37,7 +36,7 @@ async function evalCommand(msg: Message) {
       "You need to enter something to evaluate after command invocation.",
       {
         color: config.colors.warn,
-        author: msg.author,
+
         title: "Incorrect usage",
       }
     );
@@ -59,7 +58,7 @@ async function evalCommand(msg: Message) {
           "Evaluated code execution was blocked due to token detection algorithm.",
           {
             color: config.colors.warn,
-            author: msg.author,
+
             title: "Security error",
           }
         );
@@ -76,7 +75,7 @@ async function evalCommand(msg: Message) {
   } catch (err) {
     outputEmbed(msg.channel, err.message, {
       color: config.colors.error,
-      author: msg.author,
+
       title: "Error message:",
     });
     console.log(err.stack);

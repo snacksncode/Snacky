@@ -10,13 +10,11 @@ function unmuteCommand(msg: Message) {
       return outputEmbed(msg.channel, "You've mentioned someone not from this server", {
         color: colors.error,
         title: `Invalid user mention.`,
-        author: msg.author,
       });
     }
     return outputEmbed(msg.channel, `Mention a user that you want to unmute`, {
       color: colors.error,
       title: "Wrong command usage",
-      author: msg.author,
     });
   }
   let mutedRole: Role = msg.guild.roles.cache.find((role) => role.name === "muted");
@@ -25,7 +23,7 @@ function unmuteCommand(msg: Message) {
     if (!userIsMuted) {
       return outputEmbed(msg.channel, `Member ${member.user} is not currently muted.`, {
         color: colors.warn,
-        author: msg.author,
+
         title: "Invalid usage",
       });
     }
@@ -35,7 +33,7 @@ function unmuteCommand(msg: Message) {
         stateReact(msg, "success");
         outputEmbed(msg.channel, `Member ${member.user} is now unmuted.`, {
           color: colors.success,
-          author: msg.author,
+
           title: "Success",
         });
       })
@@ -43,7 +41,7 @@ function unmuteCommand(msg: Message) {
         stateReact(msg, "error");
         outputEmbed(msg.channel, `Couldn't unmute ${member.user}`, {
           color: colors.error,
-          author: msg.author,
+
           title: "Runtime Error",
         });
         console.error(err);

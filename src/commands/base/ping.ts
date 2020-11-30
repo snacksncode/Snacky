@@ -10,12 +10,11 @@ function pingCommand(msg: Message): void {
   outputEmbed(msg.channel, `Discord API latency:  **${apiLatency}ms**`, {
     color: colors.success,
     title: "Connection established!",
-    author: msg.author,
   }).then((_msg: Message) => {
     const responseLatency = _msg.createdTimestamp - originalMsgTimestamp;
     outputEmbed(msg.channel, `Bot latency: **${responseLatency}ms**`, {
       color: colors.success,
-      author: msg.author,
+
       title: "",
     });
   });

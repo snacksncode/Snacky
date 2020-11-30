@@ -9,7 +9,7 @@ function clearCommand(msg: Message) {
   if (!checkForPermissions(["ADMINISTRATOR", "MANAGE_MESSAGES"], msg.member)) {
     outputEmbed(msg.channel, `You do not have sufficient permissions to use \`clear\` command.`, {
       color: colors.info,
-      author: msg.author,
+
       title: "Missing permissions",
     });
     return;
@@ -37,7 +37,6 @@ function clearCommand(msg: Message) {
     return outputEmbed(msg.channel, errMsg, {
       title: "Error",
       color: colors.error,
-      author: msg.author,
     });
   }
 
@@ -65,7 +64,7 @@ function clearCommand(msg: Message) {
           if (!withCommandFlag) stateReact(msg, "success");
           outputEmbed(msg.channel, `Deleted last ${messages.size} messages`, {
             color: colors.success,
-            author: msg.author,
+
             title: "Success",
           }).then((msg) => {
             setTimeout(() => {

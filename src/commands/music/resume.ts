@@ -22,19 +22,17 @@ function resumeCommand(msg: Message) {
       throw "There's no songs in queue";
     }
   } catch (errMsg) {
-    return outputEmbed(msg.channel, "", {
+    return outputEmbed(msg.channel, errMsg, {
       color: colors.warn,
-      title: errMsg,
-      author: msg.author,
+      title: "",
     });
   }
   if (!guildQueue.isPlaying) {
     guildQueue.isPlaying = true;
     guildQueue.connection.dispatcher.resume();
-    outputEmbed(msg.channel, "Current player is resumed", {
+    outputEmbed(msg.channel, "Resumed current player", {
       color: colors.success,
-      author: msg.author,
-      title: "Success",
+      title: "",
     });
   }
 }

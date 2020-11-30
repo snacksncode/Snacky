@@ -19,8 +19,6 @@ function generateQueueEmbeds(songs: Song[], songsLimit: number): MessageEmbed[] 
     paginatedSongs.push(arraySlice);
   }
 
-  console.log(paginatedSongs);
-
   for (let page of paginatedSongs) {
     const currentPage = paginatedSongs.indexOf(page) + 1;
     const pageEmbed = new MessageEmbed()

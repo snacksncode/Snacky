@@ -29,7 +29,6 @@ function parseMessage(msg: Message) {
     return outputEmbed(msg.channel, `Command \`${command}\` doesn't exist`, {
       title: "Wrong command",
       color: colors.error,
-      author: msg.author,
     });
   }
   //execute the requested command
@@ -40,7 +39,6 @@ function parseMessage(msg: Message) {
     return outputEmbed(msg.channel, `An error occured during command execution.`, {
       title: "Runtime Error",
       color: colors.error,
-      author: msg.author,
     });
   }
 }

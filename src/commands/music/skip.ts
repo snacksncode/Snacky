@@ -1,5 +1,7 @@
 import { Message } from "discord.js";
+import { colors } from "../../config";
 import { getQueue } from "../../utils/music/queueManager";
+import outputEmbed from "../../utils/outputEmbed";
 
 function skipCommand(msg: Message) {
   const guildQueue = getQueue(msg.guild.id, msg.client);
@@ -11,6 +13,10 @@ function skipCommand(msg: Message) {
   }
   guildQueue.isPlaying = true;
   guildQueue.connection.dispatcher.end();
+  return outputEmbed(msg.channel, `Skipped song.`, {
+    title: "",
+    color: colors.success,
+  });
 }
 
 export default skipCommand;

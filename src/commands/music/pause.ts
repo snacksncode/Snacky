@@ -19,15 +19,18 @@ function pauseCommand(msg: Message) {
       throw "Bot is not currently playing anything";
     }
   } catch (errMsg) {
-    return outputEmbed(msg.channel, "", {
+    return outputEmbed(msg.channel, errMsg, {
       color: colors.warn,
-      title: errMsg,
-      author: msg.author,
+      title: "",
     });
   }
   if (guildQueue.isPlaying) {
     guildQueue.isPlaying = false;
     guildQueue.connection.dispatcher.pause(true);
+    outputEmbed(msg.channel, "Paused current player. Please note that pause is weird on linux hosts. It kinda speeds up the song after a long pause time.", {
+      color: colors.success,
+      title: "",
+    });
   }
 }
 

@@ -19,7 +19,6 @@ const cumCommand = (msg: Message) => {
         {
           color: colors.error,
           title: "Unable to change nickname",
-          author: msg.author,
         }
       );
     });

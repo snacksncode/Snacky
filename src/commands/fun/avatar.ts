@@ -17,7 +17,6 @@ const avatarCommand = async (msg: Message) => {
       outputEmbed(msg.channel, `Your **--size** flag is invalid. It's not a number`, {
         color: colors.error,
         title: "Image size isn't a number",
-        author: msg.author,
       });
       return;
     }
@@ -28,7 +27,6 @@ const avatarCommand = async (msg: Message) => {
         {
           color: colors.error,
           title: "Wrong image size",
-          author: msg.author,
         }
       );
       return;

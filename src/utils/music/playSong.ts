@@ -1,8 +1,11 @@
-import { Guild, Song } from "discord.js";
+import { Message, Song } from "discord.js";
 import { getQueue } from "./queueManager";
 import ytdl from "ytdl-core-discord";
+import outputEmbed from "../outputEmbed";
+import { colors } from "../../config";
 
-async function playSong(guild: Guild, song: Song) {
+async function playSong(msg: Message, song: Song) {
+  const guild = msg.guild;
   const guildQueue = getQueue(guild.id, guild.client);
   //function will call itself recursively so after we play the last song
   //it'll attempt to play song at guildQueue.songs[0] which will be undefined
@@ -14,22 +17,30 @@ async function playSong(guild: Guild, song: Song) {
     guild.client.guildsQueue.delete(guild.id);
     return;
   }
-  let stream = await ytdl(song.url, {
+  //get audioStream from ytdl
+  let audioStream = await ytdl(song.url, {
     filter: "audioonly",
   });
   const voiceChannelDispatcher = guildQueue.connection
-    .play(stream, { type: "opus" })
+    .play(audioStream, { type: "opus" })
     .on("finish", () => {
       guildQueue.songs.shift();
-      playSong(guild, guildQueue.songs[0]);
+      playSong(msg, guildQueue.songs[0]);
     })
     .on("error", (err) => {
       console.log("Error on dispatcher");
       console.error(err.message);
     });
-  voiceChannelDispatcher.setVolume(1);
+  voiceChannelDispatcher.setVolume(guildQueue.bassboost ? 10.0 : 1.0);
   guildQueue.isPlaying = true;
-  guildQueue.textChannel.send(`Started playing: **${song.title}**`);
+  outputEmbed(
+    msg.channel,
+    `Playing [**${song.title}**](${song.url}) | Requested by ${song.requestedBy}`,
+    {
+      title: "",
+      color: colors.info,
+    }
+  );
 }
 
 export default playSong;

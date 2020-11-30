@@ -56,7 +56,7 @@ function rollDiceCommand(msg: Message) {
       `Sorry I couldn't find any valid dices in your message. Try using **${prefix}help roll**`,
       {
         color: colors.error,
-        author: msg.author,
+
         title: "Invalid arguments",
       }
     );
@@ -68,7 +68,6 @@ function rollDiceCommand(msg: Message) {
     outputEmbed(msg.channel, "You cannot roll more than 100 dices", {
       color: colors.error,
       title: "Wrong input",
-      author: msg.author,
     });
     return;
   }
@@ -87,7 +86,6 @@ function rollDiceCommand(msg: Message) {
     ],
     color: colors.info,
     title: `Rolling: **${extractedDices}**`,
-    author: msg.author,
   });
 }
 export default rollDiceCommand;

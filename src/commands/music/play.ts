@@ -5,6 +5,8 @@ import { createQueue, getQueue } from "../../utils/music/queueManager";
 import removePrefix from "../../utils/removePrefix";
 import playSong from "../../utils/music/playSong";
 import formatSongLength from "../../utils/music/formatSongLength";
+import outputEmbed from "../../utils/outputEmbed";
+import { colors } from "../../config";
 
 async function playCommand(msg: Message) {
   //some validation so typescript isn't mad
@@ -46,12 +48,16 @@ async function playCommand(msg: Message) {
     url: songInfo.videoDetails.video_url,
     length: Number(songInfo.videoDetails.lengthSeconds),
     formattedLength: formatSongLength(Number(songInfo.videoDetails.lengthSeconds)),
+    requestedBy: msg.author,
   };
   let guildQueue = getQueue(msg.guild.id, msg.client);
   if (!guildQueue) {
     guildQueue = createQueue(msg.guild.id, msg.client);
     guildQueue.songs.push(songObject);
-    msg.channel.send(`Added ${songObject.title} to queue`);
+    outputEmbed(msg.channel, `Added [**${songObject.title}**](${songObject.url}) to queue`, {
+      title: "",
+      color: colors.info,
+    });
 
     //setup textChannel and voiceChannel on guildQueue
     guildQueue.textChannel = msg.channel;
@@ -62,16 +68,26 @@ async function playCommand(msg: Message) {
       var connection = await userVoiceChannel.join();
       guildQueue.connection = connection;
       await guildQueue.connection.voice.setSelfDeaf(true);
-      playSong(msg.guild, guildQueue.songs[0]);
+      playSong(msg, guildQueue.songs[0]);
     } catch (err) {
       // Printing the error message if the bot fails to join the voicechat
       console.log(err);
       msg.client.guildsQueue.delete(msg.guild.id);
-      return msg.channel.send(err);
+      return outputEmbed(
+        msg.channel,
+        `Bot failed to join voicechat. Probable cause: missing permissions`,
+        {
+          color: colors.error,
+          title: "Error",
+        }
+      );
     }
   } else {
     guildQueue.songs.push(songObject);
-    msg.channel.send(`Added ${songObject.title} to queue`);
+    outputEmbed(msg.channel, `Added [**${songObject.title}**](${songObject.url}) to queue`, {
+      title: "",
+      color: colors.info,
+    });
   }
 }
 

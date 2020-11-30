@@ -19,7 +19,6 @@ function helpCommand(msg: Message): Promise<Message> {
       {
         color: colors.info,
         title: "First time? Here's some information",
-        author: msg.author,
       }
     );
   }
@@ -28,7 +27,6 @@ function helpCommand(msg: Message): Promise<Message> {
     return outputEmbed(msg.channel, `Command \`${parsedValue}\` doesn't exist`, {
       color: colors.error,
       title: "Cannot get help for command",
-      author: msg.author,
     });
   }
   const mentionedCommand = msg.client.commands.get(parsedValue);
@@ -36,7 +34,6 @@ function helpCommand(msg: Message): Promise<Message> {
     color: colors.info,
     title: `Information | ${mentionedCommand.commandName}`,
     fields: mentionedCommand.help(),
-    author: msg.author,
   });
 }
 export default helpCommand;

@@ -36,7 +36,6 @@ function jdCommand(msg: Message) {
         {
           color: colors.error,
           title: "Timeout exceeded",
-          author: msg.author,
         }
       );
     }

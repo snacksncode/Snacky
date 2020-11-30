@@ -8,7 +8,6 @@ function uptimeCommand(msg: Message) {
   outputEmbed(msg.channel, upTime, {
     color: colors.info,
     title: "Snacky has been up for",
-    author: msg.author,
   });
 }
 

@@ -64,7 +64,6 @@ declare module "discord.js" {
     url: string;
     length: number;
     formattedLength: string;
-    // author: string;
-    // thumbnail: string;
+    requestedBy: User;
   }
 }
