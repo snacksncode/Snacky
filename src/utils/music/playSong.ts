@@ -31,6 +31,11 @@ async function playSong(msg: Message, song: Song) {
         guildQueue.songs.shift();
         playSong(msg, guildQueue.songs[0]);
       })
+      .on("debug", (info) => {
+        console.log("--- DEBUG START ---");
+        console.log(info);
+        console.log("--- DEBUG END ---");
+      })
       .on("error", (err) => {
         console.log("Error on dispatcher");
         console.error(err.message);

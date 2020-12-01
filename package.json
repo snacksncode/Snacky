@@ -10,7 +10,7 @@
     "node": "15.x"
   },
   "author": "snacksncode",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "@discordjs/opus": "^0.3.3",
     "@types/node": "^14.11.8",
