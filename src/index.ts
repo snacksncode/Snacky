@@ -33,7 +33,7 @@ bot.on("message", (msg: Message) => {
   parseMessage(msg);
   //auto react to messages
   for (let channel of autoReactChannels) {
-    autoReact(msg, channel.id, channel.emoji, channel.customEmoji, channel.filter);
+    autoReact(msg, channel.id, channel.emojis, channel.filter);
   }
 });
 

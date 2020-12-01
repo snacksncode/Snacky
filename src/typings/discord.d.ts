@@ -55,8 +55,12 @@ declare module "discord.js" {
 
   export interface AutoReactionChannel {
     id: string;
-    filter: "none" | "images_only";
-    emoji: string | GuildEmoji;
+    filter: (m: Message) => boolean;
+    emojis: AutoReactionEmojis[];
+  }
+  
+  export interface AutoReactionEmojis {
+    emoji: string | GuildEmoji
     customEmoji: boolean;
   }
   export interface Song {

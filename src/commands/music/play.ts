@@ -1,5 +1,5 @@
 import { Message, Song } from "discord.js";
-import ytdl from "ytdl-core";
+import ytdl from "ytdl-core-discord";
 
 import { createQueue, getQueue } from "../../utils/music/queueManager";
 import removePrefix from "../../utils/removePrefix";

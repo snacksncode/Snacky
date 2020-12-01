@@ -2,30 +2,53 @@ import { AutoReactionChannel, CustomReactionEmoji } from "discord.js";
 
 const token: string = process.env.TOKEN;
 const prefix: string = "s!";
-const version: string = "1.9.1";
+const version: string = "1.9.2";
 const ownerId: string = "430795391265406990";
-const usersAllowedToUseEval: string[] = [
-  "430795391265406990",
-  // "302899754906681357",
-];
+const usersAllowedToUseEval: string[] = ["430795391265406990"];
 const autoReactChannels: AutoReactionChannel[] = [
   {
     id: "764252519412137994",
-    filter: "images_only",
-    emoji: "❤️",
-    customEmoji: false,
+    filter: (m) => m.attachments.size > 0 || m.embeds.length > 0,
+    emojis: [
+      {
+        emoji: "❤️",
+        customEmoji: false,
+      },
+    ],
+  },
+  {
+    id: "783337140749598760",
+    filter: (m) => m.content.startsWith("["),
+    emojis: [
+      {
+        emoji: "snky_error",
+        customEmoji: true,
+      },
+      {
+        emoji: "snky_success",
+        customEmoji: true,
+      },
+    ],
   },
   {
     id: "764256491426283540",
-    filter: "images_only",
-    emoji: "❤️",
-    customEmoji: false,
+    filter: (m) => m.attachments.size > 0 || m.embeds.length > 0,
+    emojis: [
+      {
+        emoji: "❤️",
+        customEmoji: false,
+      },
+    ],
   },
   {
     id: "771880244905902090",
-    filter: "none",
-    emoji: "⏸️",
-    customEmoji: false,
+    filter: () => true,
+    emojis: [
+      {
+        emoji: "⏸️",
+        customEmoji: false,
+      },
+    ],
   },
 ];
 const colors = {

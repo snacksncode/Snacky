@@ -1,21 +1,29 @@
-import { GuildEmoji, Message } from "discord.js";
+import { AutoReactionEmojis, Message } from "discord.js";
+import { colors } from "../config";
 import getEmojiByName from "./getEmojiByName";
+import outputEmbed from "./outputEmbed";
 
-function autoReact(
+async function autoReact(
   msg: Message,
   channelId: string,
-  reactionEmoji: string | GuildEmoji,
-  customReactionEmoji: boolean,
-  filterOption: "images_only" | "none"
+  reactionEmojis: AutoReactionEmojis[],
+  filterOption: (m: Message) => boolean
 ) {
   if (channelId !== msg.channel.id) return;
-  if (filterOption === "images_only") {
-    if (!(msg.attachments.size > 0 || msg.embeds.length > 0)) return;
+  if (!filterOption(msg)) return;
+  for (let reactionEmoji of reactionEmojis) {
+    if (reactionEmoji.customEmoji && typeof reactionEmoji.emoji === "string") {
+      reactionEmoji.emoji = getEmojiByName(reactionEmoji.emoji, msg.client);
+    }
+    try {
+      await msg.react(reactionEmoji.emoji);
+    } catch (err) {
+      outputEmbed(msg.channel, `There was an error whilst trying to auto-react to message`, {
+        color: colors.error,
+        title: "",
+      });
+    }
   }
-  if (customReactionEmoji && typeof reactionEmoji === "string") {
-    reactionEmoji = getEmojiByName(reactionEmoji, msg.client);
-  }
-  msg.react(reactionEmoji);
 }
 
 export default autoReact;
