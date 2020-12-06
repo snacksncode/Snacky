@@ -25,11 +25,12 @@ async function playSong(msg: Message, song: Song) {
     let audioStream = ytdl(song.url, {
       filter: "audioonly",
       opusEncoded: true,
-      encoderArgs: ["-af", "bass=g=10,dynaudnorm=f=200"],
+      highWaterMark: 1 << 25,
     });
     const voiceChannelDispatcher = guildQueue.connection
       .play(audioStream, {
         type: "opus",
+        highWaterMark: 96,
         bitrate: 96,
       })
       .on("finish", () => {
