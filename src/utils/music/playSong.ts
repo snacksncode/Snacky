@@ -1,6 +1,6 @@
 import { Message, Song } from "discord.js";
 import { getQueue } from "./queueManager";
-import ytdl from "ytdl-core-discord";
+import ytdl from "discord-ytdl-core";
 import outputEmbed from "../outputEmbed";
 import { colors } from "../../config";
 
@@ -22,11 +22,16 @@ async function playSong(msg: Message, song: Song) {
   }
   //get audioStream from ytdl
   try {
-    let audioStream = await ytdl(song.url, {
+    let audioStream = ytdl(song.url, {
       filter: "audioonly",
+      opusEncoded: true,
+      encoderArgs: ["-af", "bass=g=10,dynaudnorm=f=200"],
     });
     const voiceChannelDispatcher = guildQueue.connection
-      .play(audioStream, { type: "opus" })
+      .play(audioStream, {
+        type: "opus",
+        bitrate: 96,
+      })
       .on("finish", () => {
         guildQueue.songs.shift();
         playSong(msg, guildQueue.songs[0]);
@@ -50,15 +55,12 @@ async function playSong(msg: Message, song: Song) {
         color: colors.info,
       }
     );
-  } catch (_) {
-    return outputEmbed(
-      msg.channel,
-      `Failed to play the song`,
-      {
-        title: "",
-        color: colors.error,
-      }
-    );
+  } catch (err) {
+    console.log(err);
+    return outputEmbed(msg.channel, `Failed to play the song`, {
+      title: "",
+      color: colors.error,
+    });
   }
 }
 
