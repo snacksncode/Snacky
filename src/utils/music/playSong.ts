@@ -53,7 +53,7 @@ async function playSong(msg: Message, song: Song) {
   } catch (_) {
     return outputEmbed(
       msg.channel,
-      `Failed to retrieve video metadata. It's probably YouTube being a stupid cunt. Just try adding the song again`,
+      `Failed to play the song`,
       {
         title: "",
         color: colors.error,

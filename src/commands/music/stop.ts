@@ -12,6 +12,9 @@ function stopCommand(msg: Message) {
     if (!guildQueue) {
       throw "Bot is not currently playing music";
     }
+    if (msg.member.voice.channel.id !== guildQueue.voiceChannel.id) {
+      throw "You're not in the same voice chat as bot"
+    }
   } catch (errMsg) {
     return outputEmbed(msg.channel, errMsg, {
       title: "",
