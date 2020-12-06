@@ -2,7 +2,7 @@ import "dotenv/config";
 import Discord, { Message } from "discord.js";
 import consoleColors from "colors";
 
-import { prefix, token, autoReactChannels } from "./config";
+import { prefix, token, autoReactChannels, colors } from "./config";
 import parseMessage from "./utils/parseMessage";
 import autoReact from "./utils/autoReact";
 
@@ -10,6 +10,8 @@ import setupPresence from "./utils/setup/setupPresence";
 import setupCommands from "./utils/setup/setupCommands";
 import setupQueue from "./utils/setup/setupQueue";
 import setupReactionEmojis from "./utils/setup/setupReactionEmojis";
+import { getQueue } from "./utils/music/queueManager";
+import outputEmbed from "./utils/outputEmbed";
 
 if (process.env.CONSOLE_COLORS === "false") {
   consoleColors.disable();
@@ -55,6 +57,35 @@ bot.on("guildCreate", (guild) => {
   // makeTemplate(guild.id);
   setupReactionEmojis(guild);
   console.log(`Joining ${guild.name} (${guild.id})`);
+});
+
+bot.on("voiceStateUpdate", (oldVoiceState, newVoiceState) => {
+  if (oldVoiceState.member.id !== bot.user.id) {
+    return;
+  }
+  if (!oldVoiceState.channel) {
+    //bot just joined the voice chat
+    return;
+  }
+  const guildQueue = getQueue(oldVoiceState.guild.id, oldVoiceState.client);
+  if (!newVoiceState.channel) {
+    //new voice state might not have a channel if bot was disconnected by someone
+    return;
+  }
+  const oldChannelId = oldVoiceState.channel.id;
+  const newChannelId = newVoiceState.channel.id;
+
+  if (oldChannelId !== newChannelId) {
+    guildQueue.voiceChannel = newVoiceState.channel;
+    outputEmbed(
+      guildQueue.textChannel,
+      `Snacky was moved to **${newVoiceState.channel.name}**. Updating voice-channel informations...`,
+      {
+        color: colors.info,
+        title: "",
+      }
+    );
+  }
 });
 
 // bot.on("guildDelete", (guild) => {

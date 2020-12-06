@@ -53,7 +53,7 @@ async function playSong(msg: Message, song: Song) {
       `Playing [**${song.title}**](${song.url}) | Requested by ${song.requestedBy}`,
       {
         title: "",
-        color: colors.info,
+        color: colors.success,
       }
     );
   } catch (err) {
