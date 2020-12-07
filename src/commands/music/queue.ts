@@ -6,13 +6,36 @@ import outputEmbed from "../../utils/outputEmbed";
 
 async function queueCommand(msg: Message) {
   const guildQueue = getQueue(msg.guild.id, msg.client);
-  const songsPerPage = 5;
+  let songsPerPage = 5;
   const reactionCollectorIdleTimout = 60000;
   if (!guildQueue) {
     return outputEmbed(msg.channel, `There is no songs in queue`, {
       color: colors.warn,
       title: "",
     });
+  }
+  const regex = /--page-size=(\d{1,})/g;
+  const regexMatches = msg.content.matchAll(regex);
+  const matchedCustomPageSize: string | undefined | null = regexMatches.next().value?.[1];
+  if (matchedCustomPageSize) {
+    const customPageSize = Number(matchedCustomPageSize);
+    try {
+      if (isNaN(customPageSize)) {
+        throw "Invalid arguments passed to --page-size. You should only pass in numbers there.";
+      }
+      if (customPageSize > 30) {
+        throw "You can output maximum of 30 songs per page.";
+      }
+      if (customPageSize <= 0) {
+        throw "You cannot set the page size to 0 or less.";
+      }
+    } catch (errMsg) {
+      return outputEmbed(msg.channel, errMsg, {
+        color: colors.error,
+        title: "",
+      });
+    }
+    songsPerPage = customPageSize;
   }
   const filter = (reaction: MessageReaction, user: User) => {
     return ["⬅️", "⏹", "➡️"].includes(reaction.emoji.name) && msg.author.id === user.id;
