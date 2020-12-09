@@ -69,6 +69,7 @@ async function playCommand(msg: Message) {
     const youtubeUrl = msg.content.match(youtubeUrlRegex).pop();
     const songInfo = await ytdl.getInfo(youtubeUrl);
     const songObject: Song = {
+      id: songInfo.videoDetails.videoId,
       title: songInfo.videoDetails.title,
       url: songInfo.videoDetails.video_url,
       length: Number(songInfo.videoDetails.lengthSeconds),

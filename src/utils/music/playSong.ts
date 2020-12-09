@@ -22,25 +22,21 @@ async function playSong(msg: Message, song: Song) {
   }
   //get audioStream from ytdl
   try {
-    let audioStream = ytdl(song.url, {
+    let audioStream = ytdl(song.id, {
       filter: "audioonly",
       opusEncoded: true,
-      highWaterMark: 1 << 25,
+      encoderArgs: ["-af", "bass=g=10,dynaudnorm=f=200"],
     });
     const voiceChannelDispatcher = guildQueue.connection
       .play(audioStream, {
         type: "opus",
-        highWaterMark: 96,
-        bitrate: 96,
       })
       .on("finish", () => {
         guildQueue.songs.shift();
         playSong(msg, guildQueue.songs[0]);
       })
       .on("debug", (info) => {
-        console.log("--- DEBUG START ---");
         console.log(info);
-        console.log("--- DEBUG END ---");
       })
       .on("error", (err) => {
         console.log("Error on dispatcher");

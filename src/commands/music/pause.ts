@@ -27,10 +27,14 @@ function pauseCommand(msg: Message) {
   if (guildQueue.isPlaying) {
     guildQueue.isPlaying = false;
     guildQueue.connection.dispatcher.pause(true);
-    outputEmbed(msg.channel, "Paused current player. Please note that pause is weird on linux hosts. It kinda speeds up the song after a long pause time.", {
-      color: colors.success,
-      title: "",
-    });
+    outputEmbed(
+      msg.channel,
+      "Paused current player. Please note that pause is weird on linux hosts. It kinda speeds up the song after a long pause time.",
+      {
+        color: colors.success,
+        title: "",
+      }
+    );
   }
 }
 

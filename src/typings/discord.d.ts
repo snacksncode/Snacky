@@ -58,12 +58,13 @@ declare module "discord.js" {
     filter: (m: Message) => boolean;
     emojis: AutoReactionEmojis[];
   }
-  
+
   export interface AutoReactionEmojis {
-    emoji: string | GuildEmoji
+    emoji: string | GuildEmoji;
     customEmoji: boolean;
   }
   export interface Song {
+    id: string;
     title: string;
     url: string;
     length: number;
