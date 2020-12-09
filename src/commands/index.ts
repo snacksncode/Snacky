@@ -3,31 +3,63 @@ import { CommandsExporter, Message } from "discord.js";
 
 import { prefix, ownerId } from "../config";
 import formatHelp from "../utils/formatHelp";
+import configureEmojis from "./base/configureEmojis";
 import helpCommand from "./base/help";
 
 import pingCommand from "./base/ping";
 import uptimeCommand from "./base/uptime";
 import avatarCommand from "./fun/avatar";
 import cumCommand from "./fun/cum";
+import jdCommand from "./fun/jd";
 import rollDiceCommand from "./fun/rollDice";
 import clearCommand from "./moderation/clear";
 import muteCommand from "./moderation/mute";
 import unmuteCommand from "./moderation/unmute";
+import bassboostCommand from "./music/bassboost";
+import pauseCommand from "./music/pause";
+import resumeCommand from "./music/resume";
+import playCommand from "./music/play";
+import queueCommand from "./music/queue";
+import skipCommand from "./music/skip";
+import stopCommand from "./music/stop";
+import evalCommand from "./base/eval";
 
-// export {
-//   unmuteCommand,
-// };
+// import bassboost from "./music/_bassboost";
+// import join from "./music/_join";
+// import leave from "./music/_leave";
+// import loop from "./music/_loop";
+// import pause from "./music/_pause";
+// import play from "./music/_play";
+// import queue from "./music/_queue";
+// import resume from "./music/_resume";
+// import skip from "./music/_skip";
+// import stop from "./music/_stop";
+// import volume from "./music/_volume";
 
 const commands: CommandsExporter = {
   ping: {
     commandName: "ping",
-    aliases: ["latency", "p"],
+    aliases: ["latency"],
     desc: "Check latency of Discord's API and Bot's respond time",
     exec: (m: Message) => pingCommand(m),
     help: function () {
       return formatHelp({
+        aliases: this.aliases,
         desc: this.desc,
         usage: `${prefix}ping`,
+      });
+    },
+  },
+  jd: {
+    commandName: "jd",
+    aliases: ["jebacdisa", "jdkurwe", "orkpls", "orkjebany", "dis"],
+    desc: "Send you a friendly image on a polish orc",
+    exec: (m: Message) => jdCommand(m),
+    help: function () {
+      return formatHelp({
+        aliases: this.aliases,
+        desc: this.desc,
+        usage: `${prefix}jd`,
       });
     },
   },
@@ -38,6 +70,7 @@ const commands: CommandsExporter = {
     exec: (m: Message) => cumCommand(m),
     help: function () {
       return formatHelp({
+        aliases: this.aliases,
         desc: this.desc,
         usage: `${prefix}cum`,
       });
@@ -95,6 +128,19 @@ const commands: CommandsExporter = {
       });
     },
   },
+  eval: {
+    commandName: "eval",
+    desc: "Runs code provided after command invocation",
+    hidden: true,
+    exec: (m: Message) => evalCommand(m),
+    help: function () {
+      return formatHelp({
+        desc: this.desc,
+        usage: `${prefix}eval [code]`,
+        reqPerms: ["This command is only avaible to bot creator and certain people"],
+      });
+    },
+  },
   roll: {
     aliases: ["rolldice", "dice"],
     commandName: "roll",
@@ -137,5 +183,166 @@ const commands: CommandsExporter = {
       });
     },
   },
+  configureemojis: {
+    commandName: "configureemojis",
+    desc: "Configures needed reaction emojis Snacky uses",
+    exec: (m: Message) => configureEmojis(m),
+    hidden: true,
+    help: function () {
+      return formatHelp({
+        desc: this.desc,
+        usage: `${prefix}configureEmojis`,
+      });
+    },
+  },
+  // music section
+  // join: {
+  //   aliases: ["j"],
+  //   commandName: "join",
+  //   desc: "Bot join your channel",
+  //   exec: join,
+  //   help: function () {
+  //     return formatHelp({
+  //       aliases: this.aliases,
+  //       desc: this.desc,
+  //       usage: `${prefix}join`,
+  //       example: `\n${prefix}join`,
+  //     });
+  //   },
+  // },
+  play: {
+    aliases: ["p"],
+    commandName: "play",
+    desc: "Bot joins VC user is currently in and plays audio from video",
+    exec: (m: Message) => playCommand(m),
+    help: function () {
+      return formatHelp({
+        aliases: this.aliases,
+        desc: this.desc,
+        usage: `${prefix}play [youtube link or title of a video]`,
+        example: `\n${prefix}play exyl ping\n${prefix}p https://www.youtube.com/watch?v=zDE3DBvmvhE`,
+      });
+    },
+  },
+  // leave: {
+  //   aliases: ["l"],
+  //   commandName: "leave",
+  //   desc: "Bot leaves your channel",
+  //   exec: leave,
+  //   help: function () {
+  //     return formatHelp({
+  //       aliases: this.aliases,
+  //       desc: this.desc,
+  //       usage: `${prefix}leave`,
+  //       example: `\n${prefix}leave`,
+  //     });
+  //   },
+  // },
+  stop: {
+    aliases: ["s"],
+    commandName: "stop",
+    desc: "Bot stops playing music and removes all songs from queue",
+    exec: (m: Message) => stopCommand(m),
+    help: function () {
+      return formatHelp({
+        aliases: this.aliases,
+        desc: this.desc,
+        usage: `${prefix}stop`,
+      });
+    },
+  },
+  pause: {
+    aliases: [],
+    commandName: "pause",
+    desc: "Bot pauses current song",
+    exec: (m: Message) => pauseCommand(m),
+    help: function () {
+      return formatHelp({
+        aliases: this.aliases,
+        desc: this.desc,
+        usage: `${prefix}pause`,
+      });
+    },
+  },
+  resume: {
+    aliases: ["r"],
+    commandName: "resume",
+    desc: "Bot resumes current song",
+    exec: (m: Message) => resumeCommand(m),
+    help: function () {
+      return formatHelp({
+        aliases: this.aliases,
+        desc: this.desc,
+        usage: `${prefix}resume`,
+      });
+    },
+  },
+  skip: {
+    aliases: ["sk", "s"],
+    commandName: "skip",
+    desc: "Snacky skips currently playing song",
+    exec: (m: Message) => skipCommand(m),
+    help: function () {
+      return formatHelp({
+        aliases: this.aliases,
+        desc: this.desc,
+        usage: `${prefix}skip`,
+      });
+    },
+  },
+  queue: {
+    aliases: ["q"],
+    commandName: "queue",
+    desc: "Bot displays queue",
+    exec: (m: Message) => queueCommand(m),
+    help: function () {
+      return formatHelp({
+        aliases: this.aliases,
+        desc: this.desc,
+        usage: `${prefix}queue`,
+      });
+    },
+  },
+  // loop: {
+  //   aliases: [],
+  //   commandName: "loop",
+  //   desc: "Bot loops current song",
+  //   exec: loop,
+  //   help: function () {
+  //     return formatHelp({
+  //       aliases: this.aliases,
+  //       desc: this.desc,
+  //       usage: `${prefix}loop`,
+  //       example: `\n${prefix}loop`,
+  //     });
+  //   },
+  // },
+  bassboost: {
+    aliases: ["bb"],
+    commandName: "bassboost",
+    desc: "Destroys your ears :)",
+    exec: (m: Message) => bassboostCommand(m),
+    help: function () {
+      return formatHelp({
+        aliases: this.aliases,
+        desc: this.desc,
+        usage: `${prefix}bassboost`,
+      });
+    },
+  },
+  // volume: {
+  //   aliases: ["v"],
+  //   commandName: "volume",
+  //   desc: "Bot change song volume",
+  //   exec: volume,
+  //   help: function () {
+  //     return formatHelp({
+  //       aliases: this.aliases,
+  //       desc: this.desc,
+  //       usage: `${prefix}volume <0 - 2>`,
+  //       example: `\n${prefix}volume 0.55`,
+  //     });
+  //   },
+  // },
 };
 export default commands;

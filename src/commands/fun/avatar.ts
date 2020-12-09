@@ -2,6 +2,7 @@ import { Collection, ImageSize, Message, MessageEmbed, User } from "discord.js";
 import { colors } from "../../config";
 import Vibrant from "node-vibrant";
 import outputEmbed from "../../utils/outputEmbed";
+import stateReact from "../../utils/stateReact";
 
 const avatarCommand = async (msg: Message) => {
   const mentionedUsers: Collection<string, User> = msg.mentions.users;
@@ -13,20 +14,20 @@ const avatarCommand = async (msg: Message) => {
   if (matchedImageSize) {
     let matchedImageSizeAsNumber: number = Number(matchedImageSize.substring(7));
     if (isNaN(matchedImageSizeAsNumber)) {
-      outputEmbed(
-        msg.channel,
-        `Your **--size** flag is invalid. It's not a number`,
-        colors.error,
-        "Image size isn't a number"
-      );
+      outputEmbed(msg.channel, `Your **--size** flag is invalid. It's not a number`, {
+        color: colors.error,
+        title: "Image size isn't a number",
+      });
       return;
     }
     if (![128, 256, 512, 1024, 2048].includes(matchedImageSizeAsNumber)) {
       outputEmbed(
         msg.channel,
         `Your **--size** flag is invalid. You can only request sizes: 128, 256, 512, 1024, 2048`,
-        colors.error,
-        "Wrong image size"
+        {
+          color: colors.error,
+          title: "Wrong image size",
+        }
       );
       return;
     }
@@ -57,7 +58,14 @@ const avatarCommand = async (msg: Message) => {
     .setImage(avatarUrl)
     .setColor(palette ? palette.Vibrant.hex : colors.default);
 
-  msg.channel.send(embed);
+  msg.channel
+    .send(embed)
+    .then((_) => {
+      stateReact(msg, "success");
+    })
+    .catch((err) => {
+      stateReact(msg, "error");
+    });
 };
 
 export default avatarCommand;
