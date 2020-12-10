@@ -1,6 +1,6 @@
 {
   "name": "discord-bot",
-  "version": "1.2",
+  "version": "1.9.5",
   "description": "My first ever Discord Bot. His name is Snacky",
   "main": "src/index.ts",
   "scripts": {
