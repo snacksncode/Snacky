@@ -1,12 +1,13 @@
-import { Message, Song } from "discord.js";
-import ytdl from "discord-ytdl-core";
+import { Message, MessageEmbed, MessageReaction, Song, User, VoiceChannel } from "discord.js";
 
 import { createQueue, getQueue } from "../../utils/music/queueManager";
 import removePrefix from "../../utils/removePrefix";
 import playSong from "../../utils/music/playSong";
-import formatSongLength from "../../utils/music/formatSongLength";
 import outputEmbed from "../../utils/outputEmbed";
-import { colors } from "../../config";
+import { colors, ownerId } from "../../config";
+import ytpl from "ytpl";
+import sendMsg from "../../utils/sendMsg";
+import getSongFromLink from "../../utils/music/getSongFromLink";
 
 async function playCommand(msg: Message) {
   //some validation so typescript isn't mad
@@ -34,10 +35,11 @@ async function playCommand(msg: Message) {
   //extract user input and create / read current guildQueue
   const userInput = removePrefix(msg.content);
   //check if message contains youtube url. If no assume it's a video title
-  const youtubeUrlRegex = /((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?/g;
-  const hasYoutubeUrl = youtubeUrlRegex.test(msg.content);
-  if (!hasYoutubeUrl) {
-    // #TITLE
+  const urlRegex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/g;
+  const containsUrl = !!msg.content.match(urlRegex);
+  //check if message contains url
+  if (!containsUrl) {
+    // doens't contain url -> song title
     const titleRegex = /\b\w*\s(.*\s?)/g;
     const inputMatchArray = userInput.matchAll(titleRegex).next();
     //Get first group of matched string. Null oparators used to prevent crash if there's no match
@@ -51,9 +53,9 @@ async function playCommand(msg: Message) {
     const requestedSongTitle = extractedMatch.replace(/\s+/g, " ").trim();
     return outputEmbed(
       msg.channel,
-      `I'm a lazy piece of shit and didn't implement yt search. Only youtube links are supported as of now.`,
+      `<@${ownerId}> is lazy piece of shit and didn't implement yt search yet. Only youtube links are supported as of now.`,
       {
-        color: colors.error,
+        color: colors.warn,
         title: "",
         fields: [
           {
@@ -63,63 +65,242 @@ async function playCommand(msg: Message) {
         ],
       }
     );
-  }
-  //# YOUTUBE URL
-  try {
-    const youtubeUrl = msg.content.match(youtubeUrlRegex).pop();
-    const songInfo = await ytdl.getInfo(youtubeUrl);
-    const songObject: Song = {
-      id: songInfo.videoDetails.videoId,
-      title: songInfo.videoDetails.title,
-      url: songInfo.videoDetails.video_url,
-      length: Number(songInfo.videoDetails.lengthSeconds),
-      formattedLength: formatSongLength(Number(songInfo.videoDetails.lengthSeconds)),
-      requestedBy: msg.author,
-    };
-    let guildQueue = getQueue(msg.guild.id, msg.client);
-    if (!guildQueue) {
-      guildQueue = createQueue(msg.guild.id, msg.client);
-      guildQueue.songs.push(songObject);
-      outputEmbed(msg.channel, `Added [**${songObject.title}**](${songObject.url}) to queue`, {
+  } else {
+    // Contains URL
+    const extractedUrl = msg.content.match(urlRegex).shift();
+    if (!extractedUrl.includes("youtube.com")) {
+      //if user typed a url that is not a youtube url
+      return outputEmbed(msg.channel, `The url you've provided is not a valid youtube url`, {
+        color: colors.warn,
         title: "",
-        color: colors.info,
-      });
-
-      //setup textChannel and voiceChannel on guildQueue
-      guildQueue.textChannel = msg.channel;
-      guildQueue.voiceChannel = userVoiceChannel;
-
-      //try joining voiceChannel
-      try {
-        var connection = await userVoiceChannel.join();
-        guildQueue.connection = connection;
-        await guildQueue.connection.voice.setSelfDeaf(true);
-        playSong(msg, guildQueue.songs[0]);
-      } catch (err) {
-        // Printing the error message if the bot fails to join the voicechat
-        console.log(err);
-        msg.client.guildsQueue.delete(msg.guild.id);
-        return outputEmbed(
-          msg.channel,
-          `Bot failed to join voicechat. Probable cause: missing permissions`,
-          {
-            color: colors.error,
-            title: "Error",
-          }
-        );
-      }
-    } else {
-      guildQueue.songs.push(songObject);
-      outputEmbed(msg.channel, `Added [**${songObject.title}**](${songObject.url}) to queue`, {
-        title: "",
-        color: colors.info,
       });
     }
-  } catch (_) {
-    return outputEmbed(msg.channel, `Failed to get song info. Try again?`, {
-      title: "",
+    try {
+      const containsListFlag = !!extractedUrl.match(/list=.*/);
+      const containsWatchFlag = !!extractedUrl.match(/watch\?v=.*/);
+
+      if (!containsWatchFlag && !containsListFlag) {
+        //list don't have list? or watch?v flags. | NONE
+        return outputEmbed(
+          msg.channel,
+          `I cannot find the video id in this link. Could you please give me a link like this one: \`https://www.youtube.com/watch?v=-vJ0NMOH2vA\`?`,
+          {
+            color: colors.error,
+            title: "",
+          }
+        );
+      } else if (!containsListFlag && containsWatchFlag) {
+        //link contains only watch?v=<id> flag | SONG
+        processSong(extractedUrl, msg);
+      } else if (containsListFlag && !containsWatchFlag) {
+        //link contains only list=<id> flag | PLAYLIST
+        processPlaylist(extractedUrl, msg);
+      } else if (containsWatchFlag && containsListFlag) {
+        //link contains watch flag as well as playlist | LET USER CHOOSE
+        const playlistId = await ytpl.getPlaylistID(extractedUrl);
+        const validPlayListId = ytpl.validateID(playlistId);
+        if (!validPlayListId) {
+          return outputEmbed(msg.channel, `This is not a valid playlist`, {
+            color: colors.error,
+            title: "",
+          });
+        }
+        const embed = new MessageEmbed()
+          .setTitle("Please choose what you want to do")
+          .setDescription(
+            "I've detected that your link contains playlist and song id's. Please choose what you want to do."
+          )
+          .addFields([
+            {
+              name: "1. Just play the song",
+              value:
+                "Bot will ignore the playlist provided and will just add provided song to queue",
+            },
+            {
+              name: "2. Just add playlist to queue",
+              value:
+                "Bot will add the whole playlist provided playlist to queue and will play the songs in the order of how they are in playlist.",
+            },
+            {
+              name: "3. Add playlist to queue but play provided song first",
+              value:
+                "Bot will add the whole provided playlist to queue but will put the song at the beggining of that playlist",
+            },
+          ])
+          .setColor(colors.info);
+        const messageObject = await sendMsg(msg.channel, embed);
+        await messageObject.react("1️⃣");
+        await messageObject.react("2️⃣");
+        await messageObject.react("3️⃣");
+        const filterFunction = (reaction: MessageReaction, user: User) => {
+          return ["1️⃣", "2️⃣", "3️⃣"].includes(reaction.emoji.name) && msg.author.id === user.id;
+        };
+        const collectorInstance = messageObject.createReactionCollector(filterFunction, {
+          max: 1,
+          idle: 30000, //30s, I think lmao
+        });
+        let userInputReceived = false;
+        collectorInstance
+          .on("collect", async (reaction: MessageReaction) => {
+            userInputReceived = true;
+            switch (reaction.emoji.name) {
+              case "1️⃣": {
+                //Just play the song, ignore playlist
+                processSong(extractedUrl, msg);
+                collectorInstance.stop();
+                break;
+              }
+              case "2️⃣": {
+                //Add the playlist to queue
+                processPlaylist(extractedUrl, msg);
+                collectorInstance.stop();
+                break;
+              }
+              case "3️⃣": {
+                //Add the playlist to queue
+                outputEmbed(
+                  msg.channel,
+                  `<@${ownerId}> sucks ass lmao.\nOption 3 is not yet developed`,
+                  {
+                    color: colors.warn,
+                    title: "",
+                  }
+                );
+                collectorInstance.stop();
+                break;
+              }
+            }
+          })
+          .on("end", async (_) => {
+            messageObject.reactions.removeAll();
+            //if no reaction were collected output message
+            if (!userInputReceived) {
+              outputEmbed(msg.channel, `No input from user provided. Cancelling the request.`, {
+                title: "",
+                color: colors.warn,
+              });
+            }
+          });
+      }
+    } catch (_) {
+      return outputEmbed(
+        msg.channel,
+        `Failed to add the song to queue or parse it's info. Try again?`,
+        {
+          title: "",
+          color: colors.error,
+        }
+      );
+    }
+  }
+}
+
+//get the song info from link and add it songsToAddQueue
+async function processSong(url: string, msg: Message) {
+  let songsToAddToQueue: Song[] = [];
+  const userVoiceChannel = msg.member.voice.channel;
+  const song = await getSongFromLink(url, msg);
+  songsToAddToQueue.push(song);
+  updateGuildQueueAndJoinVC(msg, songsToAddToQueue, userVoiceChannel);
+}
+
+//get songs from playlist and add it songsToAddQueue. Also show loading progress
+async function processPlaylist(url: string, msg: Message) {
+  const songsToLoad: Promise<Song>[] = [];
+  const playlistId = await ytpl.getPlaylistID(url);
+  const validPlayListId = ytpl.validateID(playlistId);
+  if (!validPlayListId) {
+    return outputEmbed(msg.channel, `This is not a valid playlist`, {
       color: colors.error,
+      title: "",
     });
+  }
+  const userVoiceChannel = msg.member.voice.channel;
+  ytpl(playlistId)
+    .then(async (playlist) => {
+      outputEmbed(
+        msg.channel,
+        `Loading **${playlist.items.length}** songs from playlist **[${playlist.title}](${playlist.url})**`,
+        {
+          title: "",
+          color: colors.info,
+        }
+      );
+      //loop through songs
+      for (let playlistSong of playlist.items) {
+        const loadSong = getSongFromLink(playlistSong.url, msg);
+        songsToLoad.push(loadSong);
+      }
+      const loadedSongs = await Promise.all(songsToLoad);
+      updateGuildQueueAndJoinVC(msg, loadedSongs, userVoiceChannel, playlist.title);
+    })
+    .catch((_) => {
+      return outputEmbed(
+        msg.channel,
+        `I was't able to parse that playlist. Please recheck that it's public and the ID is right`,
+        {
+          title: "",
+          color: colors.error,
+        }
+      );
+    });
+}
+
+async function updateGuildQueueAndJoinVC(
+  msg: Message,
+  songsToAdd: Song[],
+  userVoiceChannel: VoiceChannel,
+  _playlistName?: string
+) {
+  if (msg.channel.type !== "text") return; //make typescript happy;
+  let playlistName = _playlistName ? _playlistName : undefined;
+  let guildQueue = getQueue(msg.guild.id, msg.client);
+  let invokeNewDispatcher = false;
+  if (!guildQueue) {
+    //initialize the queue object
+    guildQueue = createQueue(msg.guild.id, msg.client);
+    //setup textChannel and voiceChannel on guildQueue
+    guildQueue.textChannel = msg.channel;
+    guildQueue.voiceChannel = userVoiceChannel;
+    invokeNewDispatcher = true;
+  }
+  //add the songs to the songs queue
+  songsToAdd.forEach((song) => {
+    guildQueue.songs.push(song);
+  });
+  //check the length of songsToAddToQueue and output different embeds based on the length
+  let embedMessage: string = "";
+  //playlistName variable won't be undefined only if I'm processing a playlist
+  if (playlistName) {
+    embedMessage = `Added **${songsToAdd.length}** songs to queue from ${playlistName}`;
+  } else {
+    embedMessage = `Added [**${songsToAdd[0].title}**](${songsToAdd[0].url}) to queue`;
+  }
+  //let user know what we how much songs we added or if it's only one it's name
+  outputEmbed(msg.channel, embedMessage, {
+    title: "",
+    color: colors.info,
+  });
+  if (invokeNewDispatcher) {
+    //try joining voiceChannel
+    try {
+      var connection = await userVoiceChannel.join();
+      guildQueue.connection = connection;
+      await guildQueue.connection.voice.setSelfDeaf(true);
+      playSong(msg, guildQueue.songs[0]);
+    } catch (err) {
+      // Printing the error message if the bot fails to join the voicechat
+      console.log(err);
+      msg.client.guildsQueue.delete(msg.guild.id);
+      return outputEmbed(
+        msg.channel,
+        `Bot failed to join voicechat. Probable cause: missing permissions`,
+        {
+          color: colors.error,
+          title: "Error",
+        }
+      );
+    }
   }
 }
 

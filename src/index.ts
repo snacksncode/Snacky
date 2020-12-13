@@ -56,7 +56,11 @@ bot.on("messageUpdate", (oldMsg, newMsg) => {
 bot.on("guildCreate", (guild) => {
   // makeTemplate(guild.id);
   setupReactionEmojis(guild);
-  console.log(`Joining ${guild.name} (${guild.id})`);
+  console.log(
+    `${consoleColors.blue("[ Guild ]")} Bot was ${consoleColors.green(
+      "added"
+    )} to ${consoleColors.blue(guild.name)} ${consoleColors.dim(`[${guild.id}]`)}`
+  );
 });
 
 bot.on("voiceStateUpdate", (oldVoiceState, newVoiceState) => {
@@ -88,10 +92,13 @@ bot.on("voiceStateUpdate", (oldVoiceState, newVoiceState) => {
   }
 });
 
-// bot.on("guildDelete", (guild) => {
-//   set(guild.id, undefined);
-//   console.log(`Got kicked from: ${guild.name} (${guild.id})`);
-// });
+bot.on("guildDelete", (guild) => {
+  console.log(
+    `${consoleColors.blue("[ Guild ]")} Bot was ${consoleColors.red(
+      "kicked"
+    )} from ${consoleColors.blue(guild.name)} ${consoleColors.dim(`[${guild.id}]`)}`
+  );
+});
 
 //ugh fix that
 // bot.on("voiceStateUpdate", (oldState, newState) => {

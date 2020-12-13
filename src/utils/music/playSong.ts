@@ -31,7 +31,7 @@ async function playSong(msg: Message, song: Song) {
       */
       quality: "highestaudio",
       opusEncoded: true,
-      encoderArgs: ["-af", "bass=g=10,dynaudnorm=f=200"],
+      encoderArgs: ["-af", "bass=g=5,dynaudnorm=f=200"],
       highWaterMark: 1 << 25,
     });
     //play the audioStream and repeatedly call itself
