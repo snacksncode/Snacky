@@ -17,6 +17,22 @@ if (process.env.CONSOLE_COLORS === "false") {
   consoleColors.disable();
 }
 
+// interface NumberInterface {
+//   num: number;
+// }
+
+// interface NumberConstructor {
+//   a: number,
+//   b: number
+// }
+
+// class MyNumber implements NumberInterface {
+//   num: number;
+//   constructor() {
+//     this.num = n;
+//   }
+// }
+
 const bot = new Discord.Client();
 
 bot.on("ready", () => {
@@ -26,6 +42,8 @@ bot.on("ready", () => {
   setupPresence(bot);
   setupCommands(bot);
   setupQueue(bot);
+  // let collectionTest = new Discord.Collection<string, NumberInterface>();
+  // collectionTest.set("1", new MyNumber(1));
 });
 
 bot.on("message", (msg: Message) => {

@@ -6,6 +6,7 @@ import playSong from "../../utils/music/playSong";
 import outputEmbed from "../../utils/outputEmbed";
 import { colors, ownerId } from "../../config";
 import ytpl from "ytpl";
+import ytsr from "ytsr";
 import sendMsg from "../../utils/sendMsg";
 import getSongFromLink from "../../utils/music/getSongFromLink";
 
@@ -51,20 +52,39 @@ async function playCommand(msg: Message) {
       });
     }
     const requestedSongTitle = extractedMatch.replace(/\s+/g, " ").trim();
-    return outputEmbed(
-      msg.channel,
-      `<@${ownerId}> is lazy piece of shit and didn't implement yt search yet. Only youtube links are supported as of now.`,
-      {
-        color: colors.warn,
+    try {
+      outputEmbed(msg.channel, `Be right back :3 | Seaching on YouTube...`, {
+        color: colors.info,
         title: "",
-        fields: [
+      });
+      try {
+        let ytSearchResults = await ytsr(requestedSongTitle, { pages: 1 });
+        let filteredResult = ytSearchResults.items.filter((item) => item.type === "video")?.[0];
+        //type checking just for TS to be happy
+        if (!filteredResult || filteredResult.type !== "video") {
+          return outputEmbed(msg.channel, `Search returned an empty result`, {
+            color: colors.warn,
+            title: "",
+          });
+        }
+        processSong(filteredResult.url, msg);
+      } catch (err) {
+        return outputEmbed(
+          msg.channel,
+          `Hmm... There was an error whilst searching for the song on YouTube. Try again later?`,
           {
-            name: "Detected song name:",
-            value: requestedSongTitle,
-          },
-        ],
+            color: colors.error,
+            title: "",
+          }
+        );
+        console.log(err.message);
       }
-    );
+    } catch (err) {
+      return outputEmbed(msg.channel, "Failed to get song from youtube. Try again?", {
+        color: colors.error,
+        title: "",
+      });
+    }
   } else {
     // Contains URL
     const extractedUrl = msg.content.match(urlRegex).shift();
@@ -105,7 +125,7 @@ async function playCommand(msg: Message) {
             title: "",
           });
         }
-        const embed = new MessageEmbed()
+        let chooseEmbed = new MessageEmbed()
           .setTitle("Please choose what you want to do")
           .setDescription(
             "I've detected that your link contains playlist and song id's. Please choose what you want to do."
@@ -128,7 +148,7 @@ async function playCommand(msg: Message) {
             },
           ])
           .setColor(colors.info);
-        const messageObject = await sendMsg(msg.channel, embed);
+        const messageObject = await sendMsg(msg.channel, chooseEmbed);
         await messageObject.react("1️⃣");
         await messageObject.react("2️⃣");
         await messageObject.react("3️⃣");
@@ -140,6 +160,7 @@ async function playCommand(msg: Message) {
           idle: 30000, //30s, I think lmao
         });
         let userInputReceived = false;
+        let userSelectedOptionText = "";
         collectorInstance
           .on("collect", async (reaction: MessageReaction) => {
             userInputReceived = true;
@@ -147,17 +168,20 @@ async function playCommand(msg: Message) {
               case "1️⃣": {
                 //Just play the song, ignore playlist
                 processSong(extractedUrl, msg);
+                userSelectedOptionText = "You have chosen 1st option";
                 collectorInstance.stop();
                 break;
               }
               case "2️⃣": {
                 //Add the playlist to queue
                 processPlaylist(extractedUrl, msg);
+                userSelectedOptionText = "You have chosen 2nd option";
                 collectorInstance.stop();
                 break;
               }
               case "3️⃣": {
                 //Add the playlist to queue
+                userSelectedOptionText = "You have chosen 3rd option";
                 outputEmbed(
                   msg.channel,
                   `<@${ownerId}> sucks ass lmao.\nOption 3 is not yet developed`,
@@ -173,6 +197,8 @@ async function playCommand(msg: Message) {
           })
           .on("end", async (_) => {
             messageObject.reactions.removeAll();
+            chooseEmbed.setFooter(userSelectedOptionText);
+            messageObject.edit(chooseEmbed);
             //if no reaction were collected output message
             if (!userInputReceived) {
               outputEmbed(msg.channel, `No input from user provided. Cancelling the request.`, {
