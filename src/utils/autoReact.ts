@@ -20,7 +20,6 @@ async function autoReact(
     } catch (err) {
       outputEmbed(msg.channel, `There was an error whilst trying to auto-react to message`, {
         color: colors.error,
-        title: "",
       });
     }
   }

@@ -1,19 +1,62 @@
+import { Message } from "discord.js";
+
 declare module "discord.js" {
-  export interface Client {
-    commands: Collection<string, Command>;
-    guildsQueue: Map<string, GuildMusicQueue>;
+  export interface CommandInterface extends CommandBaseInterface {
+    run(msg: Message): void;
   }
-  export interface Command {
-    readonly commandName: string;
-    readonly aliases?: string[];
-    readonly desc: string;
-    readonly requiredPermissions?: string[];
-    readonly exec: (msg: Message) => void;
-    readonly help: () => EmbedFieldData[];
-    readonly hidden?: boolean;
+
+  export interface CommandHelpObject {
+    name: string;
+    aliases: string[];
+    usage: string;
+    description: string;
+    category: string;
   }
-  export interface CommandsExporter {
-    [key: string]: Command;
+
+  export interface CommandOptions {
+    name: string;
+    description: string;
+    usage: string;
+    category: CommandCategory;
+    example?: string;
+    aliases?: string[];
+    hidden?: boolean;
+    permissions?: PermissionString[];
+    allowDMs?: boolean;
+  }
+
+  export interface CommandBaseInterface {
+    client: BotClient;
+    help: CommandHelpObject;
+    commandName: string;
+    info: CommandInfo;
+    allowDMs: boolean;
+  }
+
+  export interface CommandInfo {
+    aliases: string[];
+    description: string;
+    permissions: PermissionString[];
+    usage: string;
+    example: string;
+    hidden: boolean;
+    category: CommandCategory;
+  }
+
+  export type CommandCategory =
+    | "Information"
+    | "Music"
+    | "Fun"
+    | "Moderation"
+    | "Special"
+    | "Other";
+  export interface Event extends EventBaseInterface {
+    run(...args: any): void;
+  }
+
+  export interface EventBaseInterface {
+    client: BotClient;
+    eventName: string;
   }
 
   export interface CustomReactionEmoji {
@@ -29,20 +72,6 @@ declare module "discord.js" {
     reqPerms?: string[];
   }
 
-  // export interface GuildMusicQueue {
-  //   id: string;
-  //   generated: string;
-  //   isPlaying: boolean;
-  //   joined: boolean;
-  //   channelId: string;
-  //   loop: boolean;
-  //   dispatcher: StreamDispatcher;
-  //   connection: VoiceConnection;
-  //   bassBoost: boolean;
-  //   volume: number;
-  //   timeout: any;
-  //   songs: Map<number, Song>;
-  // }
   export interface GuildMusicQueue {
     textChannel: null | TextChannel;
     voiceChannel: null | VoiceChannel;
@@ -70,5 +99,56 @@ declare module "discord.js" {
     length: number;
     formattedLength: string;
     requestedBy: User;
+    isLive: boolean;
+  }
+  export interface Config {
+    token: string;
+    version: string;
+    prefix: string;
+    paths: {
+      commands: string;
+      events: string;
+    };
+    colors: {
+      info: string;
+      warn: string;
+      success: string;
+      error: string;
+    };
+    ownerId: string;
+    reactionEmojis: { success: CustomReactionEmoji; error: CustomReactionEmoji };
+  }
+
+  export interface MusicPlayerInterface {
+    client: BotClient;
+    guildsQueue: Map<string, GuildMusicQueue>;
+    createQueue(guildId: string): GuildMusicQueue;
+    getQueue(guildId: string): GuildMusicQueue;
+    playSong(msg: Message, song: Song): Promise<void>;
+  }
+
+  export interface BotClient extends Client {
+    client: Client;
+    logger: LoggerInterface;
+    commands: Collection<string, CommandInterface>;
+    // guildsQueue: Map<string, GuildMusicQueue>;
+    player: MusicPlayerInterface;
+    config: Config;
+    _login(token: string): Promise<string>;
+    _loadCommands(path: string): void;
+    _loadEvents(path: string): void;
+    init(): void;
+  }
+
+  export interface LoggerInterface {
+    log(flag: LoggerFlag, message: string): void;
+    getColor(color: FlagColor): string;
+  }
+
+  export type FlagColor = "success" | "error" | "warning" | "info";
+
+  export interface LoggerFlag {
+    name: string;
+    color: FlagColor;
   }
 }
