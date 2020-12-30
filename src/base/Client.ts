@@ -14,7 +14,6 @@ import Logger from "./Logger";
 import MusicPlayer from "./MusicPlayer";
 
 //interfaces
-
 interface InternalClientOptions {
   config: Config;
   clientOptions?: ClientOptions;
@@ -55,7 +54,16 @@ class CustomClient extends Client implements BotClient {
         } else if (type === "event") {
           //type is "events"
           let e = loadedClass as Event;
-          super.on(e.eventName, (...args) => e.run(...args));
+          super.on(e.eventName, (...args) => {
+            try {
+              e.run(...args);
+            } catch (err) {
+              this.logger.log(
+                { name: "Event runtime error", color: "error" },
+                `\n${err}`
+              );
+            }
+          });
         } else {
           throw new Error("_loadClasses() was invoked with incorrect type");
         }
@@ -63,7 +71,10 @@ class CustomClient extends Client implements BotClient {
         const loadedClassName = path.parse(file).name.replace(`.${type}`, "");
         failedToLoad.push(loadedClassName);
         this.logger.log(
-          { name: `Error occured during loading of ${loadedClassName} ${type}`, color: "error" },
+          {
+            name: `Error occured during loading of ${loadedClassName} ${type}`,
+            color: "error",
+          },
           `\n${err.stack}`
         );
       }
@@ -95,8 +106,13 @@ class CustomClient extends Client implements BotClient {
   }
 
   async init() {
-    this.logger.log({ name: "Client: Init", color: "info" }, "Started initiation process");
-    await this._loadCommands(path.join(global.appRoot, this.config.paths.commands));
+    this.logger.log(
+      { name: "Client: Init", color: "info" },
+      "Started initiation process"
+    );
+    await this._loadCommands(
+      path.join(global.appRoot, this.config.paths.commands)
+    );
     await this._loadEvents(path.join(global.appRoot, this.config.paths.events));
     await this._login(this.config.token);
   }

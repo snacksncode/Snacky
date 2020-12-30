@@ -28,14 +28,18 @@ class Queue extends Command implements CommandInterface {
     let songsPerPage = 5;
     const reactionCollectorIdleTimout = 60000;
     if (!guildQueue) {
-      return outputEmbed(msg.channel, `There is no songs in queue`, {
+      return outputEmbed(msg.channel, `Bot is not currently playing music`, {
         color: colors.warn,
-        title: "",
+      });
+    } else if (guildQueue.songs.length === 0) {
+      return outputEmbed(msg.channel, `Queue is empty`, {
+        color: colors.info,
       });
     }
     const regex = /--page-size=(\d{1,})/g;
     const regexMatches = msg.content.matchAll(regex);
-    const matchedCustomPageSize: string | undefined | null = regexMatches.next().value?.[1];
+    const matchedCustomPageSize: string | undefined | null = regexMatches.next()
+      .value?.[1];
     if (matchedCustomPageSize) {
       const customPageSize = Number(matchedCustomPageSize);
       try {
@@ -57,10 +61,16 @@ class Queue extends Command implements CommandInterface {
       songsPerPage = customPageSize;
     }
     const filter = (reaction: MessageReaction, user: User) => {
-      return ["⬅️", "⏹", "➡️"].includes(reaction.emoji.name) && msg.author.id === user.id;
+      return (
+        ["⬅️", "⏹", "➡️"].includes(reaction.emoji.name) &&
+        msg.author.id === user.id
+      );
     };
     let currentPageIndex = 0;
-    const queueEmbeds = this.generateQueueEmbeds(guildQueue.songs, songsPerPage);
+    const queueEmbeds = this.generateQueueEmbeds(
+      guildQueue.songs,
+      songsPerPage
+    );
 
     const messageObject = await msg.channel.send(queueEmbeds[currentPageIndex]);
     if (queueEmbeds.length > 1) {
@@ -128,7 +138,8 @@ class Queue extends Command implements CommandInterface {
           },
         ]);
 
-      if (amountOfPages > 1) pageEmbed.setFooter(`Page: ${currentPage}/${amountOfPages}`);
+      if (amountOfPages > 1)
+        pageEmbed.setFooter(`Page: ${currentPage}/${amountOfPages}`);
 
       queueEmbeds.push(pageEmbed);
     }
@@ -138,9 +149,9 @@ class Queue extends Command implements CommandInterface {
   generateQueuePageString(page: Song[], songs: Song[]): string {
     let outputString: string = "";
     for (let song of page) {
-      outputString += `${songs.indexOf(song) + 1}. [**${song.title}**](${song.url}) [${
-        song.isLive ? "LIVE" : song.formattedLength
-      }]\n`;
+      outputString += `${songs.indexOf(song) + 1}. [**${song.title}**](${
+        song.url
+      }) [${song.isLive ? "LIVE" : song.formattedLength}]\n`;
     }
     return outputString;
   }

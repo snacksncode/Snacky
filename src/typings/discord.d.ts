@@ -116,15 +116,21 @@ declare module "discord.js" {
       error: string;
     };
     ownerId: string;
-    reactionEmojis: { success: CustomReactionEmoji; error: CustomReactionEmoji };
+    reactionEmojis: {
+      success: CustomReactionEmoji;
+      error: CustomReactionEmoji;
+    };
   }
 
   export interface MusicPlayerInterface {
     client: BotClient;
     guildsQueue: Map<string, GuildMusicQueue>;
+    leaveVCTimeoutId: ReturnType<typeof setTimeout>;
+    finishedQueueTimeoutId: ReturnType<typeof setTimeout>;
     createQueue(guildId: string): GuildMusicQueue;
     getQueue(guildId: string): GuildMusicQueue;
     playSong(msg: Message, song: Song): Promise<void>;
+    leaveVCIfEmpty(guildId: string): void;
   }
 
   export interface BotClient extends Client {

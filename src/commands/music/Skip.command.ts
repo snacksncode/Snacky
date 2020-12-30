@@ -26,8 +26,8 @@ class Skip extends Command implements CommandInterface {
         color: colors.error,
       });
     }
-    guildQueue.isPlaying = true;
     guildQueue.connection.dispatcher.end();
+    guildQueue.isPlaying = false;
     outputEmbed(
       msg.channel,
       `Skipped **[${guildQueue.songs[0].title}](${guildQueue.songs[0].url})**`,

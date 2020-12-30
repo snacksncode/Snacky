@@ -11,7 +11,8 @@ const config: Config = {
     events: "/events/**/*.event.ts",
   },
   colors: {
-    info: "#3d5eeb",
+    // info: "#3d5eeb",
+    info: "#4895ef",
     success: "#45bb8a",
     warn: "#ffcc4d",
     error: "#ef4949",

@@ -5,7 +5,7 @@ import Client from "./base/Client";
 global.appRoot = __dirname;
 //initiate bot client
 new Client({
-  config: config,
+  config: config
 }).init();
 
 // import Discord, { Message } from "discord.js";
@@ -59,32 +59,7 @@ new Client({
 // });
 
 // bot.on("voiceStateUpdate", (oldVoiceState, newVoiceState) => {
-//   if (oldVoiceState.member.id !== bot.user.id) {
-//     return;
-//   }
-//   if (!oldVoiceState.channel) {
-//     //bot just joined the voice chat
-//     return;
-//   }
-//   const guildQueue = getQueue(oldVoiceState.guild.id, oldVoiceState.client);
-//   if (!newVoiceState.channel) {
-//     //new voice state might not have a channel if bot was disconnected by someone
-//     return;
-//   }
-//   const oldChannelId = oldVoiceState.channel.id;
-//   const newChannelId = newVoiceState.channel.id;
-
-//   if (oldChannelId !== newChannelId) {
-//     guildQueue.voiceChannel = newVoiceState.channel;
-//     outputEmbed(
-//       guildQueue.textChannel,
-//       `Snacky was moved to **${newVoiceState.channel.name}**. Updating voice-channel informations...`,
-//       {
-//         color: colors.info,
-//         title: "",
-//       }
-//     );
-//   }
+ 
 // });
 
 // bot.on("guildDelete", (guild) => {

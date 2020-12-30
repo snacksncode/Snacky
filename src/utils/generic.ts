@@ -73,18 +73,20 @@ export function splitMsgOnLimit(input: string, limit: number): string[] {
 
 //very useful embeds "factory"
 interface EmbedOptions {
-  title?: string;
   color?: string;
+  title?: string;
   fields?: EmbedFieldData[];
+  footerText?: string;
   includeTimestamp?: boolean;
 }
 export async function outputEmbed(dest: destType, message: string, options: EmbedOptions) {
-  const { color, title, fields, includeTimestamp } = options;
+  const { color, title, fields, includeTimestamp, footerText } = options;
   const embed: MessageEmbed = new MessageEmbed().setDescription(message).setColor("#1b1b1b");
 
   if (fields) embed.addFields(fields);
   if (title) embed.setTitle(title);
   if (color) embed.setColor(color);
+  if (footerText) embed.setFooter(footerText);
   if (includeTimestamp) embed.setTimestamp();
 
   const sentMessage = await sendMsg(dest, embed);
