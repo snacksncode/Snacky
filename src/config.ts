@@ -1,5 +1,3 @@
-// import { AutoReactionChannel, CustomReactionEmoji } from "discord.js";
-
 import { Config } from "discord.js";
 
 const config: Config = {
@@ -11,7 +9,6 @@ const config: Config = {
     events: "/events/**/*.event.ts",
   },
   colors: {
-    // info: "#3d5eeb",
     info: "#4895ef",
     success: "#45bb8a",
     warn: "#ffcc4d",
