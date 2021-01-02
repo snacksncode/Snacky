@@ -8,6 +8,7 @@ class Pause extends Command implements CommandInterface {
       name: "pause",
       description: "Paused current music player",
       usage: "<prefix>pause",
+      hidden: true,
       category: "Music",
     });
   }

@@ -11,6 +11,8 @@ class MessageEvent extends EventBase implements Event {
   run(msg: Message) {
     const channel = msg.channel;
     if (channel.type === "dm") return;
+    //Emit custom event. Triggers auto-react feature
+    this.client.emit("autoReact", msg);
     //check if message contains a prefix, if not stop the execution
     const isCommand = msg.content.startsWith(this.client.config.prefix);
     if (!isCommand) return;
@@ -22,7 +24,6 @@ class MessageEvent extends EventBase implements Event {
     const args = userInput.split(" ");
     const requestedCommand = args
       .shift()
-      .replace(/\||`|~|\*|_|\"/g, "")
       .replace(/\s{2,}/g, " ")
       .toLowerCase();
     //try finding command

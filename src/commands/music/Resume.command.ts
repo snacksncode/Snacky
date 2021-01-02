@@ -8,6 +8,7 @@ class Resume extends Command implements CommandInterface {
       name: "resume",
       description: "Resumes current music player",
       usage: "<prefix>resume",
+      hidden: true,
       category: "Music",
     });
   }

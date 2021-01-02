@@ -116,9 +116,10 @@ declare module "discord.js" {
       error: string;
     };
     ownerId: string;
+    mainServerId: string;
     reactionEmojis: {
-      success: CustomReactionEmoji;
-      error: CustomReactionEmoji;
+      success: string;
+      error: string;
     };
   }
 

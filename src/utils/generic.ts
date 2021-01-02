@@ -10,7 +10,6 @@ import {
   Message,
   EmbedFieldData,
 } from "discord.js";
-import { inspect } from "util";
 
 //this one is yoinked from stackoverflow <3 (I've only added types)
 //used in play function to push some songs to front
@@ -61,16 +60,6 @@ export async function sendMsg(dest: destType, msg: MessageEmbed | string) {
   return dest.send(msg);
 }
 
-//used by eval function to split messages longer than 2000 char into smaller ones
-export function splitMsgOnLimit(input: string, limit: number): string[] {
-  let output: string[] = [];
-  while (input.length) {
-    output.push(input.substr(0, limit));
-    input = input.substr(limit);
-  }
-  return output;
-}
-
 //very useful embeds "factory"
 interface EmbedOptions {
   color?: string;
@@ -79,9 +68,15 @@ interface EmbedOptions {
   footerText?: string;
   includeTimestamp?: boolean;
 }
-export async function outputEmbed(dest: destType, message: string, options: EmbedOptions) {
+export async function outputEmbed(
+  dest: destType,
+  message: string,
+  options: EmbedOptions
+) {
   const { color, title, fields, includeTimestamp, footerText } = options;
-  const embed: MessageEmbed = new MessageEmbed().setDescription(message).setColor("#1b1b1b");
+  const embed: MessageEmbed = new MessageEmbed()
+    .setDescription(message)
+    .setColor("#1b1b1b");
 
   if (fields) embed.addFields(fields);
   if (title) embed.setTitle(title);
@@ -96,15 +91,19 @@ export async function outputEmbed(dest: destType, message: string, options: Embe
 //used to indicate if command was successful (primarily used in mod commands)
 //might strip this one
 type StateString = "success" | "error";
-export function stateReact(msg: Message, state: StateString, client: BotClient) {
+export function stateReact(
+  msg: Message,
+  state: StateString,
+  client: BotClient
+) {
   const reactionEmojis = client.config.reactionEmojis;
-  const successEmoji = getEmojiByName(reactionEmojis[state].name, client);
+  const successEmoji = getEmojiById(reactionEmojis[state], client);
   return msg.react(successEmoji);
 }
 
-//finds non-custom emoji by name
-export function getEmojiByName(name: string, client: BotClient) {
-  return client.emojis.cache.find((emoji) => emoji.name === name);
+//finds non-custom emoji by id
+export function getEmojiById(id: string, client: BotClient) {
+  return client.emojis.cache.get(id);
 }
 
 //formats amount in milliseconds to "H hrs, M min, S sec"
@@ -116,11 +115,6 @@ export function formatMs(ms: number) {
   if (hours) return `${hours} hrs, ${minutes} min, ${seconds} sec`;
   else if (minutes) return `${minutes} min, ${seconds} sec`;
   else return `${seconds} sec`;
-}
-
-//also used by eval command to output objects properly
-export function convertObjectToString(obj: object): string {
-  return inspect(obj);
 }
 
 //checks member agains an array of permissions and returns the ones member lacks
@@ -138,6 +132,10 @@ export function getMissingPermissions(
 }
 
 //Thank you stackoverflow. At least I added typing myself haha
-export function paginateArray<T>(array: T[], pageSize: number, pageNumber: number): T[] {
+export function paginateArray<T>(
+  array: T[],
+  pageSize: number,
+  pageNumber: number
+): T[] {
   return array.slice((pageNumber - 1) * pageSize, pageNumber * pageSize);
 }
