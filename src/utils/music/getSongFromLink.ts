@@ -8,6 +8,7 @@ async function getSongFromLink(url: string, msg: Message): Promise<Song> {
     id: songInfo.videoDetails.videoId,
     title: songInfo.videoDetails.title,
     url: songInfo.videoDetails.video_url,
+    isLive: songInfo.videoDetails.lengthSeconds === "0",
     length: Number(songInfo.videoDetails.lengthSeconds),
     formattedLength: formatSongLength(Number(songInfo.videoDetails.lengthSeconds)),
     requestedBy: msg.author,
