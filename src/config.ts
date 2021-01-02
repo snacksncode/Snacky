@@ -1,81 +1,25 @@
-import { AutoReactionChannel, CustomReactionEmoji } from "discord.js";
+import { Config } from "discord.js";
 
-const token: string = process.env.TOKEN;
-const prefix: string = "s!";
-const version: string = "1.9.4";
-const ownerId: string = "430795391265406990";
-const usersAllowedToUseEval: string[] = ["430795391265406990"];
-const autoReactChannels: AutoReactionChannel[] = [
-  {
-    id: "764252519412137994",
-    filter: (m) => m.attachments.size > 0 || m.embeds.length > 0,
-    emojis: [
-      {
-        emoji: "❤️",
-        customEmoji: false,
-      },
-    ],
+const config: Config = {
+  prefix: "s!",
+  token: process.env.TOKEN,
+  version: "2.1",
+  paths: {
+    commands: "/commands/**/*.command.ts", //you can use pattern matching here
+    events: "/events/**/*.event.ts",
   },
-  {
-    id: "783337140749598760",
-    filter: (m) => m.content.startsWith("["),
-    emojis: [
-      {
-        emoji: "snky_error",
-        customEmoji: true,
-      },
-      {
-        emoji: "snky_success",
-        customEmoji: true,
-      },
-    ],
+  colors: {
+    info: "#4895ef",
+    success: "#45bb8a",
+    warn: "#ffcc4d",
+    error: "#ef4949",
   },
-  {
-    id: "764256491426283540",
-    filter: (m) => m.attachments.size > 0 || m.embeds.length > 0,
-    emojis: [
-      {
-        emoji: "❤️",
-        customEmoji: false,
-      },
-    ],
+  reactionEmojis: {
+    error: "776486161836277781",
+    success: "776484399038464022",
   },
-  {
-    id: "771880244905902090",
-    filter: () => true,
-    emojis: [
-      {
-        emoji: "⏸️",
-        customEmoji: false,
-      },
-    ],
-  },
-];
-const colors = {
-  default: "#1b1b1b",
-  info: "#3d5eeb",
-  success: "#45bb8a",
-  warn: "#ffcc4d",
-  error: "#ef4949",
-};
-const reactionEmojis: { success: CustomReactionEmoji; error: CustomReactionEmoji } = {
-  success: {
-    name: "snky_success",
-    url: "https://i.imgur.com/y9dhF8w.png",
-  },
-  error: {
-    name: "snky_error",
-    url: "https://i.imgur.com/iU5CiGs.png",
-  },
+  ownerId: "430795391265406990",
+  mainServerId: "763094235217657876",
 };
 
-export {
-  token,
-  prefix,
-  version,
-  colors,
-  ownerId,
-  autoReactChannels,
-  reactionEmojis,
-  usersAllowedToUseEval,
-};
+export default config;
