@@ -45,14 +45,6 @@ Also create a `.env` file in root directory with those contents
 ```
 TOKEN=[PUT YOUR TOKEN HERE]
 ```
-If you want to use music features of Snacky install [ffmpeg](https://ffmpeg.org/) on your system or install `ffmpeg-static` package via `npm` or `yarn`.
-After that you're all good to go! Just run the bot
-```bash
-# by using yarn
-yarn start
-# or npm
-npm start
-```
 And the your own instance of the bot should be up. Don't forgot to invite him to your testing server.<br/>
 <sup>If you're on windows you might get an error about `ts-node` not being defined. In this case install this package globally</sup>
 
