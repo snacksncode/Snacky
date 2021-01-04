@@ -26,6 +26,7 @@ class Eval extends Command implements CommandInterface {
         footerText:
           "Eval command is owner-only due to it being extremely unsafe",
       });
+      return; //whoops
     }
     const config = this.client.config;
     if (msg.content.includes("token")) {
