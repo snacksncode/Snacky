@@ -7,7 +7,10 @@ class MessageUpdate extends EventBase implements Event {
       eventName: "messageUpdate",
     });
   }
-  run(oldMsg: Message | PartialMessage, newMsg: Message | PartialMessage) {
+  async run(
+    oldMsg: Message | PartialMessage,
+    newMsg: Message | PartialMessage
+  ) {
     if (
       newMsg.author.bot ||
       !newMsg.content.startsWith(this.client.config.prefix) ||

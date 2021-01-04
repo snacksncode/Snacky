@@ -54,9 +54,9 @@ class CustomClient extends Client implements BotClient {
         } else if (type === "event") {
           //type is "events"
           let e = loadedClass as Event;
-          super.on(e.eventName, (...args) => {
+          super.on(e.eventName, async (...args) => {
             try {
-              e.run(...args);
+              await e.run(...args);
             } catch (err) {
               this.logger.log(
                 { name: "Event runtime error", color: "error" },

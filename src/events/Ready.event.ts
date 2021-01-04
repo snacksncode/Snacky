@@ -16,7 +16,7 @@ class ReadyEvent extends EventBase implements Event {
       status: "online",
     });
   }
-  run() {
+  async run() {
     this.client.logger.log(
       { name: "Client: Ready", color: "success" },
       `Bot has fully loaded and logged in as ${this.client.user.tag}`

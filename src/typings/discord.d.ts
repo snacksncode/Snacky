@@ -1,8 +1,6 @@
-import { Message } from "discord.js";
-
 declare module "discord.js" {
   export interface CommandInterface extends CommandBaseInterface {
-    run(msg: Message): void;
+    run(msg: Message): Promise<any>;
   }
 
   export interface CommandHelpObject {
@@ -51,7 +49,7 @@ declare module "discord.js" {
     | "Special"
     | "Other";
   export interface Event extends EventBaseInterface {
-    run(...args: any): void;
+    run(...args: any): Promise<any>;
   }
 
   export interface EventBaseInterface {

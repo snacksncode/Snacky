@@ -12,7 +12,7 @@ class Earrape extends Command implements CommandInterface {
       category: "Music",
     });
   }
-  run(msg: Message) {
+  async run(msg: Message) {
     const guildQueue = this.client.player.getQueue(msg.guild.id);
     let isEnabled: boolean;
     //toggle the value on current player

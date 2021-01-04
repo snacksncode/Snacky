@@ -12,7 +12,8 @@ class ForceError extends Command implements CommandInterface {
     });
   }
 
-  run(_msg: Message) {
+  async run(_msg: Message) {
+    this.client.emit("fakeCrashEvent");
     throw new Error("This is a test error. Nothing actually broke.");
   }
 }

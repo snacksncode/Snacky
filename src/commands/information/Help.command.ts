@@ -20,7 +20,7 @@ class Help extends Command implements CommandInterface {
     });
   }
 
-  run(msg: Message) {
+  async run(msg: Message) {
     const userInput = msg.content;
     const regExp = new RegExp(
       `${this.client.config.prefix}help\\s?(\\w*)?`,

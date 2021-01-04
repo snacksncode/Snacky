@@ -14,7 +14,7 @@ class ForceError extends Command implements CommandInterface {
     });
   }
 
-  run(msg: Message) {
+  async run(msg: Message) {
     let amountRemoved = 0;
     let failedToRemove = [];
     const emojisToRemove = ["snky_error", "snky_success"];

@@ -14,11 +14,13 @@ class Cum extends Command implements CommandInterface {
     });
   }
 
-  run(msg: Message) {
+  async run(msg: Message) {
     msg.member
       .setNickname("cum")
       .then((_) => {
-        msg.channel.send(`:sweat_drops: I declare you the lord of **cum** :sweat_drops:`);
+        msg.channel.send(
+          `:sweat_drops: I declare you the lord of **cum** :sweat_drops:`
+        );
       })
       .catch((_) => {
         outputEmbed(

@@ -13,7 +13,7 @@ class Uptime extends Command implements CommandInterface {
     });
   }
 
-  run(msg: Message) {
+  async run(msg: Message) {
     const uptime = formatMs(this.client.uptime);
     outputEmbed(msg.channel, `Snacky has been up for **${uptime}**`, {
       color: this.client.config.colors.info,

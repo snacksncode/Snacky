@@ -11,7 +11,7 @@ class Skip extends Command implements CommandInterface {
       category: "Music",
     });
   }
-  run(msg: Message) {
+  async run(msg: Message) {
     const guildQueue = this.client.player.getQueue(msg.guild.id);
     const colors = this.client.config.colors;
     try {

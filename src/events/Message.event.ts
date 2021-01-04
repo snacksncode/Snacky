@@ -8,7 +8,7 @@ class MessageEvent extends EventBase implements Event {
       eventName: "message",
     });
   }
-  run(msg: Message) {
+  async run(msg: Message) {
     const channel = msg.channel;
     if (channel.type === "dm") return;
     //Emit custom event. Triggers auto-react feature
@@ -65,7 +65,7 @@ class MessageEvent extends EventBase implements Event {
     }
     //run the command
     try {
-      commandClass.run(msg);
+      await commandClass.run(msg);
     } catch (err) {
       const errorEmbed = new MessageEmbed();
       errorEmbed

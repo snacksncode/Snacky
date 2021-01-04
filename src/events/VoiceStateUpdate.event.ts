@@ -8,7 +8,7 @@ class VoiceStateUpdate extends EventBase implements Event {
       eventName: "voiceStateUpdate",
     });
   }
-  run(oldVoiceState: VoiceState, newVoiceState: VoiceState) {
+  async run(oldVoiceState: VoiceState, newVoiceState: VoiceState) {
     //==========================================
     //Setup timeout when bot is left alone in VC
     //==========================================
