@@ -74,6 +74,7 @@ export async function outputEmbed(
   options: EmbedOptions
 ) {
   const { color, title, fields, includeTimestamp, footerText } = options;
+  const isRunningLocally = process.env.SHOW_LOCALHOST === "enabled";
   const embed: MessageEmbed = new MessageEmbed()
     .setDescription(message)
     .setColor("#1b1b1b");
@@ -81,7 +82,13 @@ export async function outputEmbed(
   if (fields) embed.addFields(fields);
   if (title) embed.setTitle(title);
   if (color) embed.setColor(color);
-  if (footerText) embed.setFooter(footerText);
+  if (footerText) {
+    let _footerText = footerText;
+    if (isRunningLocally) _footerText += " | Bot is under development";
+    embed.setFooter(_footerText);
+  } else {
+    if (isRunningLocally) embed.setFooter(`Bot is under development`);
+  }
   if (includeTimestamp) embed.setTimestamp();
 
   const sentMessage = await sendMsg(dest, embed);

@@ -78,7 +78,10 @@ class MusicPlayer implements MusicPlayerInterface {
         })
         .on("finish", () => {
           guildQueue.isPlaying = false;
-          guildQueue.songs.shift();
+          //if looping is disabled remove current song from queue
+          if (guildQueue.loopMode === "off") {
+            guildQueue.songs.shift();
+          }
           this.playSong(msg, guildQueue.songs[0]);
         })
         // .on("debug", (debugInfo) => {
@@ -137,6 +140,7 @@ class MusicPlayer implements MusicPlayerInterface {
       songs: [],
       volume: 1.0,
       bassboost: false,
+      loopMode: "off",
       isPlaying: false,
     };
 

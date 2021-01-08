@@ -75,6 +75,7 @@ declare module "discord.js" {
     voiceChannel: null | VoiceChannel;
     connection: null | VoiceConnection;
     bassboost: boolean;
+    loopMode: "song" | "*playlist" | "off";
     songs: Song[];
     volume: number;
     isPlaying: boolean;

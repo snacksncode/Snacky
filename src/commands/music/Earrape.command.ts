@@ -14,6 +14,25 @@ class Earrape extends Command implements CommandInterface {
   }
   async run(msg: Message) {
     const guildQueue = this.client.player.getQueue(msg.guild.id);
+    const colors = this.client.config.colors;
+    try {
+      if (!guildQueue) {
+        throw "Bot is not currently in voicechat";
+      }
+      if (!msg.member.voice) {
+        throw "You're not currently in voice channel";
+      }
+      if (msg.member.voice.channel.id !== guildQueue.voiceChannel.id) {
+        throw "You're not in the same voice chat as Snacky.";
+      }
+      if (!guildQueue.isPlaying) {
+        throw "Bot is currently not playing any audio";
+      }
+    } catch (errMsg) {
+      return outputEmbed(msg.channel, errMsg, {
+        color: colors.warn,
+      });
+    }
     let isEnabled: boolean;
     //toggle the value on current player
     guildQueue.bassboost = isEnabled = !guildQueue.bassboost;
@@ -24,7 +43,7 @@ class Earrape extends Command implements CommandInterface {
         ? `Ah yes good 'ol earrape... Enjoy lmao`
         : `Earrape mode has been disabled`,
       {
-        color: this.client.config.colors.success,
+        color: colors.success,
       }
     );
   }

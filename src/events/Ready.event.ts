@@ -8,9 +8,13 @@ class ReadyEvent extends EventBase implements Event {
     });
   }
   setupCustomPresence() {
+    const isRunningLocally = process.env.SHOW_LOCALHOST === "enabled";
+    const presenceText = isRunningLocally
+      ? `Currently under developing • ver. ${this.client.config.version}`
+      : `${this.client.config.prefix}help • ver. ${this.client.config.version}`;
     this.client.user.setPresence({
       activity: {
-        name: `${this.client.config.prefix}help • ver. ${this.client.config.version}`,
+        name: presenceText,
         type: "LISTENING",
       },
       status: "online",

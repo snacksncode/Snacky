@@ -25,6 +25,9 @@ class Resume extends Command implements CommandInterface {
       if (msg.member.voice.channel.id !== guildQueue.voiceChannel.id) {
         throw "You're not in the same voice chat as Snacky.";
       }
+      if (!guildQueue.isPlaying) {
+        throw "Bot is currently not playing any audio";
+      }
       if (!guildQueue.connection.dispatcher.paused) {
         throw "Playback is not currently paused";
       }
