@@ -61,14 +61,14 @@ class Help extends Command implements CommandInterface {
     if (mentionedUsers.size === 0) {
       avatarUrl = msg.author.avatarURL({
         size: userRequestedSize ? userRequestedSize : defaultImageSize,
-        format: "png",
         dynamic: true,
+        format: "png",
       });
     } else {
       avatarUrl = mentionedUsers.first().avatarURL({
         size: userRequestedSize ? userRequestedSize : defaultImageSize,
-        format: "png",
         dynamic: true,
+        format: "png",
       });
     }
 
