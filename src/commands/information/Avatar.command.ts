@@ -58,19 +58,17 @@ class Help extends Command implements CommandInterface {
       userRequestedSize = matchedImageSizeAsNumber;
     }
     //parse mentioned users (optional, if no one is mentioned use message author)
+    let userToGrabAvatarFrom: User = null;
     if (mentionedUsers.size === 0) {
-      avatarUrl = msg.author.avatarURL({
-        size: userRequestedSize ? userRequestedSize : defaultImageSize,
-        dynamic: true,
-        format: "png",
-      });
+      userToGrabAvatarFrom = msg.author;
     } else {
-      avatarUrl = mentionedUsers.first().avatarURL({
-        size: userRequestedSize ? userRequestedSize : defaultImageSize,
-        dynamic: true,
-        format: "png",
-      });
+      userToGrabAvatarFrom = mentionedUsers.first();
     }
+    userToGrabAvatarFrom.avatarURL({
+      size: userRequestedSize ? userRequestedSize : defaultImageSize,
+      dynamic: true,
+      format: "png",
+    });
 
     let palette;
     await Vibrant.from(avatarUrl)
