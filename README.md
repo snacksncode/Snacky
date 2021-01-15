@@ -20,7 +20,7 @@ Category | Commands
 ---------|----------
 Information | avatar, help, ping, uptime
 Moderation | clear, mute, unmute
-Music* | play, queue, skip, stop, earrape
+Music* | play, queue, skip, loop, stop, earrape
 Fun | roll, jd
 
 <sup>*not all commands are shown because some of them are buggy</sup>
