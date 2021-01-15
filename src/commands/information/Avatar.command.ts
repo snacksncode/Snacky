@@ -57,14 +57,12 @@ class Help extends Command implements CommandInterface {
       }
       userRequestedSize = matchedImageSizeAsNumber;
     }
-    //parse mentioned users (optional, if no one is mentioned use message author)
-    let userToGrabAvatarFrom: User = null;
-    if (mentionedUsers.size === 0) {
-      userToGrabAvatarFrom = msg.author;
-    } else {
-      userToGrabAvatarFrom = mentionedUsers.first();
-    }
-    avatarUrl = userToGrabAvatarFrom.avatarURL({
+
+    //grab avatar or either mentioned user or author
+    avatarUrl = (mentionedUsers.size === 0
+      ? msg.author
+      : mentionedUsers.first()
+    ).avatarURL({
       size: userRequestedSize ? userRequestedSize : defaultImageSize,
       dynamic: true,
       format: "png",
