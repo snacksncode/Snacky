@@ -30,12 +30,18 @@ class Help extends Command implements CommandInterface {
     let matchedImageSize: string = msg.content.match(/--size=\S{1,}/g)?.shift();
     //parse --size flag (optional)
     if (matchedImageSize) {
-      let matchedImageSizeAsNumber: number = Number(matchedImageSize.substring(7));
+      let matchedImageSizeAsNumber: number = Number(
+        matchedImageSize.substring(7)
+      );
       if (isNaN(matchedImageSizeAsNumber)) {
-        outputEmbed(msg.channel, `Your **--size** flag is invalid. It's not a number`, {
-          color: this.client.config.colors.error,
-          title: "Image size isn't a number",
-        });
+        outputEmbed(
+          msg.channel,
+          `Your **--size** flag is invalid. It's not a number`,
+          {
+            color: this.client.config.colors.error,
+            title: "Image size isn't a number",
+          }
+        );
         return;
       }
       if (![128, 256, 512, 1024, 2048].includes(matchedImageSizeAsNumber)) {
@@ -56,11 +62,13 @@ class Help extends Command implements CommandInterface {
       avatarUrl = msg.author.avatarURL({
         size: userRequestedSize ? userRequestedSize : defaultImageSize,
         format: "png",
+        dynamic: true,
       });
     } else {
       avatarUrl = mentionedUsers.first().avatarURL({
         size: userRequestedSize ? userRequestedSize : defaultImageSize,
         format: "png",
+        dynamic: true,
       });
     }
 
@@ -72,7 +80,11 @@ class Help extends Command implements CommandInterface {
       });
 
     const avatarEmbed = new MessageEmbed()
-      .setTitle(`Avatar | ${mentionedUsers.size ? mentionedUsers.first().tag : msg.author.tag}`)
+      .setTitle(
+        `Avatar | ${
+          mentionedUsers.size ? mentionedUsers.first().tag : msg.author.tag
+        }`
+      )
       .setImage(avatarUrl)
       .setColor(palette ? palette.Vibrant.hex : "#1b1b1b");
 
