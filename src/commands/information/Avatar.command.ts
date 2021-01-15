@@ -64,7 +64,7 @@ class Help extends Command implements CommandInterface {
     } else {
       userToGrabAvatarFrom = mentionedUsers.first();
     }
-    userToGrabAvatarFrom.avatarURL({
+    avatarUrl = userToGrabAvatarFrom.avatarURL({
       size: userRequestedSize ? userRequestedSize : defaultImageSize,
       dynamic: true,
       format: "png",
