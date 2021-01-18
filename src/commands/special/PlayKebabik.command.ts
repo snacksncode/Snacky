@@ -1,4 +1,4 @@
-import { Message, CommandInterface, BotClient } from "discord.js";
+import { Message, CommandInterface, BotClient, PlayCommandInterface } from "discord.js";
 import Command from "../../base/Command";
 
 class KebabikPls extends Command implements CommandInterface {
@@ -12,11 +12,10 @@ class KebabikPls extends Command implements CommandInterface {
     });
   }
   async run(msg: Message) {
-    //Fake play command exec
-    const modifiedMsgObject = msg;
-    const playlistLink = "https://youtube.com/playlist?list=PLDIhE97v42e6bQldgDg3DKeeHjKHM4xjv";
-    modifiedMsgObject.content = `${this.client.config.prefix}play ${playlistLink}`;
-    this.client.emit("message", modifiedMsgObject);
+    const randomizePlaylist = !!msg.content.match(/--(random|randomize)/g)?.shift();
+    const playCommandObject = this.client.commands.get("play") as PlayCommandInterface;
+    const playlistUrl = "https://youtube.com/playlist?list=PLDIhE97v42e6bQldgDg3DKeeHjKHM4xjv";
+    playCommandObject.processPlaylist(playlistUrl, msg, false, randomizePlaylist);
   }
 }
 

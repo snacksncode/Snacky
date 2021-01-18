@@ -3,6 +3,22 @@ declare module "discord.js" {
     run(msg: Message): Promise<any>;
   }
 
+  export interface PlayCommandInterface extends CommandInterface {
+    processSong(url: string, msg: Message): Promise<void>;
+    processPlaylist(
+      url: string,
+      msg: Message,
+      putSongAsFirst: boolean,
+      randomizePlaylist: boolean
+    ): Promise<void>;
+    updateQueueAndJoinVC(
+      msg: Message,
+      songsToAdd: Song[],
+      userVoiceChannel: VoiceChannel,
+      playlistName?: string
+    ): Promise<void>;
+  }
+
   export interface CommandHelpObject {
     name: string;
     aliases: string[];

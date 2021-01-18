@@ -1,6 +1,5 @@
 import {
   Message,
-  CommandInterface,
   BotClient,
   MessageEmbed,
   MessageReaction,
@@ -8,6 +7,7 @@ import {
   Song,
   Config,
   VoiceChannel,
+  PlayCommandInterface,
 } from "discord.js";
 import ytpl from "ytpl";
 import ytsr from "ytsr";
@@ -18,9 +18,10 @@ import {
   outputEmbed,
   removePrefix,
   sendMsg,
+  shuffleArray,
 } from "../../utils/generic";
 
-class Play extends Command implements CommandInterface {
+class Play extends Command implements PlayCommandInterface {
   colors: Config["colors"];
   constructor(client: BotClient) {
     super(client, {
@@ -142,7 +143,7 @@ class Play extends Command implements CommandInterface {
           this.processSong(extractedUrl, msg);
         } else if (containsListFlag && !containsWatchFlag) {
           //link contains only list=<id> flag | PLAYLIST
-          this.processPlaylist(extractedUrl, msg);
+          this.processPlaylist(extractedUrl, msg, false, false);
         } else if (containsWatchFlag && containsListFlag) {
           //link contains watch flag as well as playlist | LET USER CHOOSE
           const playlistId = await ytpl.getPlaylistID(extractedUrl);
@@ -201,14 +202,14 @@ class Play extends Command implements CommandInterface {
                 }
                 case "2️⃣": {
                   //Add the playlist to queue
-                  this.processPlaylist(extractedUrl, msg);
+                  this.processPlaylist(extractedUrl, msg, false, false);
                   userSelectedOptionText = "You have chosen 2nd option";
                   collectorInstance.stop();
                   break;
                 }
                 case "3️⃣": {
                   //Add the playlist to queue
-                  this.processPlaylist(extractedUrl, msg, true);
+                  this.processPlaylist(extractedUrl, msg, true, false);
                   userSelectedOptionText = "You have chosen 3rd option";
                   collectorInstance.stop();
                   break;
@@ -247,14 +248,20 @@ class Play extends Command implements CommandInterface {
     this.updateQueueAndJoinVC(msg, songsToAddToQueue, userVoiceChannel);
   }
 
-  async processPlaylist(url: string, msg: Message, putSongAsFirst?: boolean) {
+  async processPlaylist(
+    url: string,
+    msg: Message,
+    putSongAsFirst: boolean,
+    randomizePlaylist: boolean
+  ) {
     const songsToLoad: Promise<Song>[] = [];
     const playlistId = await ytpl.getPlaylistID(url);
     const validPlayListId = ytpl.validateID(playlistId);
     if (!validPlayListId) {
-      return outputEmbed(msg.channel, `This is not a valid playlist`, {
+      outputEmbed(msg.channel, `This is not a valid playlist`, {
         color: this.colors.error,
       });
+      return;
     }
     const userVoiceChannel = msg.member.voice.channel;
     ytpl(playlistId)
@@ -272,6 +279,9 @@ class Play extends Command implements CommandInterface {
           songsToLoad.push(loadSong);
         }
         let loadedSongs = await Promise.all(songsToLoad);
+        if (randomizePlaylist) {
+          loadedSongs = shuffleArray(loadedSongs);
+        }
         if (putSongAsFirst) {
           const matchedSongIDFromURL = url.matchAll(/\?v=(.*)\&list/g).next()?.value?.[1];
           let songIndex: number = -1;
@@ -291,15 +301,17 @@ class Play extends Command implements CommandInterface {
         this.updateQueueAndJoinVC(msg, loadedSongs, userVoiceChannel, playlist.title);
       })
       .catch((_) => {
-        return outputEmbed(
+        outputEmbed(
           msg.channel,
           `I was't able to parse that playlist. Please recheck that it's public and the ID is right`,
           {
             color: this.colors.error,
           }
         );
+        return;
       });
   }
+
   async updateQueueAndJoinVC(
     msg: Message,
     songsToAdd: Song[],

@@ -68,16 +68,10 @@ interface EmbedOptions {
   footerText?: string;
   includeTimestamp?: boolean;
 }
-export async function outputEmbed(
-  dest: destType,
-  message: string,
-  options: EmbedOptions
-) {
+export async function outputEmbed(dest: destType, message: string, options: EmbedOptions) {
   const { color, title, fields, includeTimestamp, footerText } = options;
   const isRunningLocally = process.env.SHOW_LOCALHOST === "enabled";
-  const embed: MessageEmbed = new MessageEmbed()
-    .setDescription(message)
-    .setColor("#1b1b1b");
+  const embed: MessageEmbed = new MessageEmbed().setDescription(message).setColor("#1b1b1b");
 
   if (fields) embed.addFields(fields);
   if (title) embed.setTitle(title);
@@ -98,11 +92,7 @@ export async function outputEmbed(
 //used to indicate if command was successful (primarily used in mod commands)
 //might strip this one
 type StateString = "success" | "error";
-export function stateReact(
-  msg: Message,
-  state: StateString,
-  client: BotClient
-) {
+export function stateReact(msg: Message, state: StateString, client: BotClient) {
   const reactionEmojis = client.config.reactionEmojis;
   const successEmoji = getEmojiById(reactionEmojis[state], client);
   return msg.react(successEmoji);
@@ -139,10 +129,27 @@ export function getMissingPermissions(
 }
 
 //Thank you stackoverflow. At least I added typing myself haha
-export function paginateArray<T>(
-  array: T[],
-  pageSize: number,
-  pageNumber: number
-): T[] {
+export function paginateArray<T>(array: T[], pageSize: number, pageNumber: number): T[] {
   return array.slice((pageNumber - 1) * pageSize, pageNumber * pageSize);
+}
+
+//Jeez don't we all love stackoverflow? Types added
+export function shuffleArray<T>(array: T[]): T[] {
+  let currentIndex = array.length;
+  let temporaryValue: T = null;
+  let randomIndex = -1;
+
+  // While there remain elements to shuffle...
+  while (0 !== currentIndex) {
+    // Pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+
+    // And swap it with the current element.
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
+  }
+
+  return array;
 }
