@@ -36,24 +36,16 @@ class Play extends Command implements CommandInterface {
   async run(msg: Message) {
     //some validation so typescript isn't mad
     if (msg.channel.type !== "text") {
-      return outputEmbed(
-        msg.channel,
-        `You're trying to use this command in wrong channel type.`,
-        {
-          color: this.colors.warn,
-        }
-      );
+      return outputEmbed(msg.channel, `You're trying to use this command in wrong channel type.`, {
+        color: this.colors.warn,
+      });
     }
     //check if member is in voiceChat and if bot has permissions to join and speak
     const userVoiceChannel = msg.member.voice.channel;
     if (!userVoiceChannel) {
-      return outputEmbed(
-        msg.channel,
-        `You need to be in a voice channel to play music`,
-        {
-          color: this.colors.warn,
-        }
-      );
+      return outputEmbed(msg.channel, `You need to be in a voice channel to play music`, {
+        color: this.colors.warn,
+      });
     }
     const permissions = userVoiceChannel.permissionsFor(msg.client.user);
     if (!permissions.has("CONNECT") || !permissions.has("SPEAK")) {
@@ -96,9 +88,7 @@ class Play extends Command implements CommandInterface {
         });
         try {
           let ytSearchResults = await ytsr(requestedSongTitle, { pages: 1 });
-          let filteredResult = ytSearchResults.items.filter(
-            (item) => item.type === "video"
-          )?.[0];
+          let filteredResult = ytSearchResults.items.filter((item) => item.type === "video")?.[0];
           //type checking just for TS to be happy
           if (!filteredResult || filteredResult.type !== "video") {
             return outputEmbed(msg.channel, `Search returned an empty result`, {
@@ -117,37 +107,22 @@ class Play extends Command implements CommandInterface {
           );
         }
       } catch (err) {
-        return outputEmbed(
-          msg.channel,
-          "Failed to get song from youtube. Try again?",
-          {
-            color: this.colors.error,
-          }
-        );
+        return outputEmbed(msg.channel, "Failed to get song from youtube. Try again?", {
+          color: this.colors.error,
+        });
       }
     } else {
       // Contains URL
       const extractedUrl = msg.content.match(urlRegex).shift();
-      if (
-        !extractedUrl.includes("youtube.com") &&
-        !extractedUrl.includes("youtu.be")
-      ) {
+      if (!extractedUrl.includes("youtube.com") && !extractedUrl.includes("youtu.be")) {
         //if user typed a url that is not a youtube url
-        return outputEmbed(
-          msg.channel,
-          `The url you've provided is not a valid youtube url`,
-          {
-            color: this.colors.warn,
-          }
-        );
+        return outputEmbed(msg.channel, `The url you've provided is not a valid youtube url`, {
+          color: this.colors.warn,
+        });
       } else if (extractedUrl.includes("youtu.be")) {
-        return outputEmbed(
-          msg.channel,
-          `Sorry but **youtu.be** links are not supported`,
-          {
-            color: this.colors.warn,
-          }
-        );
+        return outputEmbed(msg.channel, `Sorry but **youtu.be** links are not supported`, {
+          color: this.colors.warn,
+        });
       }
       try {
         const containsListFlag = !!extractedUrl.match(/list=.*/);
@@ -184,12 +159,12 @@ class Play extends Command implements CommandInterface {
             )
             .addFields([
               {
-                name: "1. Just play the song",
+                name: "1. Play the song",
                 value:
                   "Bot will ignore the playlist provided and will just add provided song to queue",
               },
               {
-                name: "2. Just add playlist to queue",
+                name: "2. Add playlist to queue",
                 value:
                   "Bot will add the whole playlist provided playlist to queue and will play the songs in the order of how they are in playlist.",
               },
@@ -205,18 +180,12 @@ class Play extends Command implements CommandInterface {
           await messageObject.react("2️⃣");
           await messageObject.react("3️⃣");
           const filterFunction = (reaction: MessageReaction, user: User) => {
-            return (
-              ["1️⃣", "2️⃣", "3️⃣"].includes(reaction.emoji.name) &&
-              msg.author.id === user.id
-            );
+            return ["1️⃣", "2️⃣", "3️⃣"].includes(reaction.emoji.name) && msg.author.id === user.id;
           };
-          const collectorInstance = messageObject.createReactionCollector(
-            filterFunction,
-            {
-              max: 1,
-              idle: 30000, //30s, I think...
-            }
-          );
+          const collectorInstance = messageObject.createReactionCollector(filterFunction, {
+            max: 1,
+            idle: 30000, //30s, I think...
+          });
           let userInputReceived = false;
           let userSelectedOptionText = "";
           collectorInstance
@@ -252,13 +221,9 @@ class Play extends Command implements CommandInterface {
               messageObject.edit(chooseEmbed);
               //if no reaction were collected output message
               if (!userInputReceived) {
-                outputEmbed(
-                  msg.channel,
-                  `No input from user provided. Cancelling the request.`,
-                  {
-                    color: this.colors.warn,
-                  }
-                );
+                outputEmbed(msg.channel, `No input from user provided. Cancelling the request.`, {
+                  color: this.colors.warn,
+                });
               }
             });
         }
@@ -308,8 +273,7 @@ class Play extends Command implements CommandInterface {
         }
         let loadedSongs = await Promise.all(songsToLoad);
         if (putSongAsFirst) {
-          const matchedSongIDFromURL = url.matchAll(/\?v=(.*)\&list/g).next()
-            ?.value?.[1];
+          const matchedSongIDFromURL = url.matchAll(/\?v=(.*)\&list/g).next()?.value?.[1];
           let songIndex: number = -1;
           for (let song of loadedSongs) {
             if (song.id === matchedSongIDFromURL) {
@@ -317,27 +281,14 @@ class Play extends Command implements CommandInterface {
             }
           }
           if (songIndex === -1) {
-            outputEmbed(
-              msg.channel,
-              `Something went wrong during song index detection process`,
-              {
-                color: this.client.config.colors.error,
-              }
-            );
+            outputEmbed(msg.channel, `Something went wrong during song index detection process`, {
+              color: this.client.config.colors.error,
+            });
             return;
           }
-          loadedSongs = moveItemInArrayFromIndexToIndex(
-            loadedSongs,
-            songIndex,
-            0
-          );
+          loadedSongs = moveItemInArrayFromIndexToIndex(loadedSongs, songIndex, 0);
         }
-        this.updateQueueAndJoinVC(
-          msg,
-          loadedSongs,
-          userVoiceChannel,
-          playlist.title
-        );
+        this.updateQueueAndJoinVC(msg, loadedSongs, userVoiceChannel, playlist.title);
       })
       .catch((_) => {
         return outputEmbed(
