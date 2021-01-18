@@ -1,7 +1,7 @@
 import { Message, CommandInterface, BotClient } from "discord.js";
 import Command from "../../base/Command";
 
-class Pause extends Command implements CommandInterface {
+class KebabikPls extends Command implements CommandInterface {
   constructor(client: BotClient) {
     super(client, {
       name: "kebabikpls",
@@ -20,4 +20,4 @@ class Pause extends Command implements CommandInterface {
   }
 }
 
-module.exports = Pause;
+module.exports = KebabikPls;
