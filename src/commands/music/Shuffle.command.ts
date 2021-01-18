@@ -2,7 +2,7 @@ import { Message, CommandInterface, BotClient } from "discord.js";
 import Command from "../../base/Command";
 import { outputEmbed, shuffleArray } from "../../utils/generic";
 
-class KebabikPls extends Command implements CommandInterface {
+class Shuffle extends Command implements CommandInterface {
   constructor(client: BotClient) {
     super(client, {
       name: "shuffle",
@@ -44,4 +44,4 @@ class KebabikPls extends Command implements CommandInterface {
   }
 }
 
-module.exports = KebabikPls;
+module.exports = Shuffle;
