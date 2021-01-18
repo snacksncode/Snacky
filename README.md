@@ -17,12 +17,12 @@ Snacky is a little bot that I've written for my own server and overall just for 
 
 ### Avaible commands
 
-| Category    | Commands                               |
-| ----------- | -------------------------------------- |
-| Information | avatar, help, ping, uptime             |
-| Moderation  | clear, mute, unmute                    |
-| Music\*     | play, queue, skip, loop, stop, earrape |
-| Fun         | roll, jd                               |
+| Category    | Commands                                        |
+| ----------- | ----------------------------------------------- |
+| Information | avatar, help, ping, uptime                      |
+| Moderation  | clear, mute, unmute                             |
+| Music\*     | play, queue, shuffle, skip, loop, stop, earrape |
+| Fun         | roll, jd                                        |
 
 <sup>\*not all commands are shown because some of them are buggy</sup>
 
