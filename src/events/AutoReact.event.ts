@@ -68,20 +68,17 @@ class AutoReact extends EventBase implements Event {
       if (!filter(msg)) continue;
       for (let reactionEmoji of emojis) {
         if (reactionEmoji.customEmoji) {
-          reactionEmoji.emoji = getEmojiById(
-            reactionEmoji.emoji as string,
-            this.client
-          );
+          reactionEmoji.emoji = getEmojiById(reactionEmoji.emoji as string, this.client);
         }
         try {
           await msg.react(reactionEmoji.emoji);
         } catch (err) {
-          outputEmbed(
-            msg.channel,
-            `There was an error whilst trying to auto-react to message`,
-            {
-              color: this.client.config.colors.error,
-            }
+          outputEmbed(msg.channel, `There was an error whilst trying to auto-react to message`, {
+            color: this.client.config.colors.error,
+          });
+          this.client.logger.log(
+            { name: "Error during AutoReact process", color: "error" },
+            `\n${err}`
           );
         }
       }

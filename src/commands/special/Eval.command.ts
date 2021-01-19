@@ -1,7 +1,7 @@
 import { Message, CommandInterface, BotClient, MessageEmbed } from "discord.js";
 import { inspect } from "util";
 import Command from "../../base/Command";
-import { outputEmbed, sendMsg } from "../../utils/generic";
+import * as utils from "../../utils/generic";
 
 interface CensoredData {
   censoredOutput: string;
@@ -21,16 +21,15 @@ class Eval extends Command implements CommandInterface {
 
   async run(msg: Message) {
     if (msg.author.id !== this.client.config.ownerId) {
-      outputEmbed(msg.channel, "You're not allowed to execute this command", {
+      utils.outputEmbed(msg.channel, "You're not allowed to execute this command", {
         color: this.client.config.colors.warn,
-        footerText:
-          "Eval command is owner-only due to it being extremely unsafe",
+        footerText: "Eval command is owner-only due to it being extremely unsafe",
       });
       return; //whoops
     }
     const config = this.client.config;
     if (msg.content.includes("token")) {
-      return outputEmbed(
+      return utils.outputEmbed(
         msg.channel,
         'Your message contains string "token" and was stopped from execution.',
         {
@@ -46,7 +45,7 @@ class Eval extends Command implements CommandInterface {
       .replace(`${this.client.config.prefix}eval `, "")
       .replace("--use-embed", "");
     if (codeToExecute.length === 0) {
-      return outputEmbed(
+      return utils.outputEmbed(
         msg.channel,
         "You need to enter something to evaluate after command invocation.",
         {
@@ -64,14 +63,11 @@ class Eval extends Command implements CommandInterface {
         executedCode = this.convertObjectToString(executedCode);
       }
 
-      const messagesToSend = this.splitMsgOnLimit(
-        executedCode,
-        discordMessageLimit
-      );
+      const messagesToSend = this.splitMsgOnLimit(executedCode, discordMessageLimit);
       for (let message of messagesToSend) {
         let evaluatedCode = this.censorPrivateInfo(message);
         if (evaluatedCode.tokenPieceDetected) {
-          return outputEmbed(
+          return utils.outputEmbed(
             msg.channel,
             "Evaluated code execution was blocked due to token detection algorithm.",
             {
@@ -82,23 +78,17 @@ class Eval extends Command implements CommandInterface {
           );
         }
         if (outputAsEmbed) {
-          return await sendMsg(msg.channel, embed);
+          return await utils.sendMsg(msg.channel, embed);
         }
-        await sendMsg(
-          msg.channel,
-          `\`\`\`js\n${evaluatedCode.censoredOutput}\`\`\``
-        );
+        await utils.sendMsg(msg.channel, `\`\`\`js\n${evaluatedCode.censoredOutput}\`\`\``);
       }
     } catch (err) {
-      outputEmbed(msg.channel, err.message, {
+      utils.outputEmbed(msg.channel, err.message, {
         color: config.colors.error,
 
         title: "Error message:",
       });
-      this.client.logger.log(
-        { name: "Eval: Error", color: "error" },
-        `\n${err}`
-      );
+      this.client.logger.log({ name: "Eval: Error", color: "error" }, `\n${err}`);
     }
   }
 
