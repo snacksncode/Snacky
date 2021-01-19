@@ -34,8 +34,8 @@ You can use [this](https://discord.com/oauth2/authorize?client_id=76566066495697
 
 If you for some reason want to get your own version of the bot up and running you can use this section to guide you.
 
-1. Go to [Discord's Dev Portal](https://discord.com/developers) and create there a new application. Then add a bot to this application and copy your bot token from there.
-2. Clone Snacky's code and install all all needed packages
+1. Go to [Discord's Dev Portal](https://discord.com/developers) and create a new application there. Then add a bot to this application and copy your bot token from there.
+2. Clone Snacky's code and install all needed packages
 
 ```bash
 # by using yarn
@@ -50,7 +50,15 @@ Also create a `.env` file in root directory with those contents
 TOKEN=[PUT YOUR TOKEN HERE]
 ```
 
-And the your own instance of the bot should be up. Don't forgot to invite him to your testing server.<br/>
+After that your own instance of the bot should be ready to launch. To start the bot just use the start script.
+
+```bash
+yarn start
+# or
+npm start
+```
+
+Don't forgot to invite him to your testing server.<br/>
 <sup>If you're on windows you might get an error about `ts-node` not being defined. In this case install this package globally</sup>
 
 <a name="issues"><h1>Known issues</h1></a>
