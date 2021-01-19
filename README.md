@@ -34,8 +34,8 @@ You can use [this](https://discord.com/oauth2/authorize?client_id=76566066495697
 
 If you for some reason want to get your own version of the bot up and running you can use this section to guide you.
 
-1. Go to [Discord's Dev Portal](https://discord.com/developers) and create there a new application. Then add a bot to this application and copy your bot token from there.
-2. Clone Snacky's code and install all all needed packages
+1. Go to [Discord's Dev Portal](https://discord.com/developers) and create a new application there. Then add a bot to this application and copy your bot token from there.
+2. Clone Snacky's code and install all needed packages
 
 ```bash
 # by using yarn
