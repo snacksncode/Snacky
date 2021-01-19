@@ -50,7 +50,15 @@ Also create a `.env` file in root directory with those contents
 TOKEN=[PUT YOUR TOKEN HERE]
 ```
 
-And the your own instance of the bot should be up. Don't forgot to invite him to your testing server.<br/>
+After that your own instance of the bot should be ready to launch. To start the bot just use the start script.
+
+```bash
+yarn start
+# or
+npm start
+```
+
+Don't forgot to invite him to your testing server.<br/>
 <sup>If you're on windows you might get an error about `ts-node` not being defined. In this case install this package globally</sup>
 
 <a name="issues"><h1>Known issues</h1></a>
