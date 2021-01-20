@@ -13,9 +13,7 @@ class VoiceStateUpdate extends EventBase implements Event {
     //Setup timeout when bot is left alone in VC
     //==========================================
     const DEFAULT_LEAVE_VC_IF_EMPTY_DELAY = 30000; //30s
-    const guildQueue = this.client.player.guildsQueue.get(
-      newVoiceState.guild.id
-    );
+    const guildQueue = this.client.player.guildsQueue.get(newVoiceState.guild.id);
     const player = this.client.player;
     //stop execution if server currently doesn't have music queue
     if (!guildQueue) return;
@@ -26,9 +24,10 @@ class VoiceStateUpdate extends EventBase implements Event {
       //user left voice channel
       if (guildQueue.voiceChannel.id !== newVoiceState.channel?.id) {
         //if there is already a timeout clear old one before setting up a new one
-        //if there is no timeout set this will contains null thus won't trigger if statement
+        //if there is no timeout set this will contain null thus won't trigger if statement
         if (player.leaveVCTimeoutId) {
           clearTimeout(player.leaveVCTimeoutId);
+          player.leaveVCTimeoutId = null;
         }
         //create timeout if someone left
         this.client.logger.log(
@@ -40,11 +39,14 @@ class VoiceStateUpdate extends EventBase implements Event {
         }, DEFAULT_LEAVE_VC_IF_EMPTY_DELAY);
       } else {
         //clear timeout if someone joined
-        this.client.logger.log(
-          { color: "warning", name: "Music Player: Debug" },
-          `${newVoiceState.member.user.tag} joined VC (${newVoiceState.channel.name}). Clearing timeout...`
-        );
-        clearTimeout(player.leaveVCTimeoutId);
+        if (player.leaveVCTimeoutId) {
+          this.client.logger.log(
+            { color: "warning", name: "Music Player: Debug" },
+            `${newVoiceState.member.user.tag} joined VC (${newVoiceState.channel.name}). Clearing timeout...`
+          );
+          clearTimeout(player.leaveVCTimeoutId);
+          player.leaveVCTimeoutId = null;
+        }
       }
     }
     //===================================================
@@ -66,10 +68,7 @@ class VoiceStateUpdate extends EventBase implements Event {
 
     if (oldChannelId !== newChannelId) {
       //edge case: bot can be moved during "timeout" period
-      if (
-        player.leaveVCTimeoutId &&
-        guildQueue.voiceChannel.members.size === 1
-      ) {
+      if (player.leaveVCTimeoutId && guildQueue.voiceChannel.members.size === 1) {
         if (player.leaveVCTimeoutId) {
           clearTimeout(player.leaveVCTimeoutId);
         }

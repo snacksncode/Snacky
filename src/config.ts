@@ -3,7 +3,7 @@ import { Config } from "discord.js";
 const config: Config = {
   prefix: "s!",
   token: process.env.TOKEN,
-  version: "2.4.1",
+  version: "2.4.2",
   paths: {
     commands: "/commands/**/*.command.ts", //you can use pattern matching here
     events: "/events/**/*.event.ts",

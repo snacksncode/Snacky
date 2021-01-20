@@ -64,6 +64,7 @@ class Play extends Command implements PlayCommandInterface {
         "Added new song during timeout. Removing timeout..."
       );
       clearTimeout(this.client.player.finishedQueueTimeoutId);
+      this.client.player.finishedQueueTimeoutId = null;
     }
     //extract user input and create / read current guildQueue
     const userInput = removePrefix(msg.content, this.client.config.prefix);
