@@ -1,6 +1,6 @@
 import { Message, CommandInterface, BotClient } from "discord.js";
 import Command from "../../base/Command";
-import getRandomInt, { removePrefix, outputEmbed } from "../../utils/generic";
+import { removePrefix, outputEmbed, getRandomInt } from "../../utils/generic";
 
 interface diceObject {
   timesToRoll: number;

@@ -1,7 +1,7 @@
 import { Message, CommandInterface, BotClient, MessageEmbed } from "discord.js";
 import Command from "../../base/Command";
 import Vibrant from "node-vibrant";
-import getRandomInt, { outputEmbed } from "../../utils/generic";
+import { getRandomInt, outputEmbed } from "../../utils/generic";
 
 class JD extends Command implements CommandInterface {
   JDPics: string[];
