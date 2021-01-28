@@ -25,6 +25,9 @@ class Earrape extends Command implements CommandInterface {
       if (msg.member.voice.channel.id !== guildQueue.voiceChannel.id) {
         throw "You're not in the same voice chat as Snacky.";
       }
+      if (guildQueue.songs.length === 0) {
+        throw "Queue is empty";
+      }
     } catch (errMsg) {
       return outputEmbed(msg.channel, errMsg, {
         color: colors.warn,

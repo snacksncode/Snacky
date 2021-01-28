@@ -116,12 +116,13 @@ class Play extends Command implements PlayCommandInterface {
     } else {
       // Contains URL
       const extractedUrl = msg.content.match(urlRegex).shift();
-      if (!extractedUrl.includes("youtube.com") && !extractedUrl.includes("youtu.be")) {
+      const urlObject = new URL(extractedUrl);
+      if (!urlObject.hostname.includes("youtube.com") && !urlObject.hostname.includes("youtu.be")) {
         //if user typed a url that is not a youtube url
         return outputEmbed(msg.channel, `The url you've provided is not a valid youtube url`, {
           color: this.colors.warn,
         });
-      } else if (extractedUrl.includes("youtu.be")) {
+      } else if (urlObject.hostname.includes("youtu.be")) {
         return outputEmbed(msg.channel, `Sorry but **youtu.be** links are not supported`, {
           color: this.colors.warn,
         });
@@ -229,14 +230,11 @@ class Play extends Command implements PlayCommandInterface {
               }
             });
         }
-      } catch (_) {
-        return outputEmbed(
-          msg.channel,
-          `Failed to add the song to queue or parse it's info. Try again?`,
-          {
-            color: this.colors.error,
-          }
-        );
+      } catch (e) {
+        outputEmbed(msg.channel, `Failed to add the song to queue or parse it's info. Try again?`, {
+          color: this.colors.error,
+        });
+        this.client.logger.log({ color: "error", name: "[ Error stack ]" }, `\n${e}`);
       }
     }
   }
@@ -299,7 +297,7 @@ class Play extends Command implements PlayCommandInterface {
           }
           loadedSongs = moveItemInArrayFromIndexToIndex(loadedSongs, songIndex, 0);
         }
-        this.updateQueueAndJoinVC(msg, loadedSongs, userVoiceChannel, playlist.title);
+        this.updateQueueAndJoinVC(msg, loadedSongs, userVoiceChannel);
       })
       .catch((_) => {
         outputEmbed(
@@ -313,12 +311,7 @@ class Play extends Command implements PlayCommandInterface {
       });
   }
 
-  async updateQueueAndJoinVC(
-    msg: Message,
-    songsToAdd: Song[],
-    userVoiceChannel: VoiceChannel,
-    playlistName?: string
-  ) {
+  async updateQueueAndJoinVC(msg: Message, songsToAdd: Song[], userVoiceChannel: VoiceChannel) {
     if (msg.channel.type !== "text") return; //make typescript happy
 
     let guildQueue = this.client.player.getQueue(msg.guild.id);
@@ -338,8 +331,8 @@ class Play extends Command implements PlayCommandInterface {
     //check the length of songsToAddToQueue and output different embeds based on the length
     let embedMessage: string = "";
     //playlistName variable won't be undefined only if I'm processing a playlist
-    if (playlistName) {
-      embedMessage = `Added **${songsToAdd.length}** songs to queue from **${playlistName}**`;
+    if (songsToAdd.length > 1) {
+      embedMessage = `Added **${songsToAdd.length}** songs to queue`;
     } else {
       embedMessage = `Added **[${songsToAdd[0].title}](${songsToAdd[0].url})** to queue`;
     }
