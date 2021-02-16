@@ -152,3 +152,14 @@ export function shuffleArray<T>(array: T[]): T[] {
 
   return array;
 }
+
+//map numbers between ranges
+export function mapNumber(
+  num: number,
+  in_min: number,
+  in_max: number,
+  out_min: number,
+  out_max: number
+): number {
+  return ((num - in_min) * (out_max - out_min)) / (in_max - in_min) + out_min;
+}
