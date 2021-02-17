@@ -39,13 +39,14 @@ class NowPlaying extends Command implements CommandInterface {
       emptyChar: "-",
       filledChar: "=",
       limit: songLength,
+      headChar: "|",
       width: 35,
     });
     outputEmbed(
       msg.channel,
-      `**[${song.title}](${song.url})**\n${progress} ${formatSongLength(amountOfSecondsPlayed)}/${
+      `**[${song.title}](${song.url})**\n\`${progress} ${formatSongLength(amountOfSecondsPlayed)}/${
         song.formattedLength
-      }`,
+      }\``,
       {
         color: this.client.config.colors.info,
         title: "Currently playing",

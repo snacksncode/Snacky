@@ -5,23 +5,18 @@ interface ProgressBarOptions {
   current: number;
   emptyChar: string;
   filledChar: string;
+  headChar: string;
   width?: number;
 }
 
 export default function progressBar(options: ProgressBarOptions) {
-  let { limit, current, emptyChar, filledChar, width } = options;
+  let { limit, current, emptyChar, filledChar, width, headChar } = options;
   if (!width) width = limit;
 
   current = mapNumber(current, 0, limit, 0, width);
 
-  let progressString = `[${filledChar.repeat(current)}${emptyChar.repeat(width - current)}]`;
+  let progressString = `[${filledChar.repeat(current - 1)}${headChar}${emptyChar.repeat(
+    width - current
+  )}]`;
   return progressString;
 }
-
-progressBar({
-  current: 100,
-  limit: 300,
-  emptyChar: "-",
-  filledChar: "=",
-  width: 30,
-});
