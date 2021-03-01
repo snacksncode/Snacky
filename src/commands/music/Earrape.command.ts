@@ -6,7 +6,7 @@ class Earrape extends Command implements CommandInterface {
   constructor(client: BotClient) {
     super(client, {
       name: "earrape",
-      aliases: ["er"],
+      aliases: ["er", "bb"],
       description: "Self explanatory, isn't it?",
       usage: "<prefix>earrape",
       category: "Music",
@@ -39,9 +39,7 @@ class Earrape extends Command implements CommandInterface {
     guildQueue.connection.dispatcher.setVolume(isEnabled ? 10.0 : 1.0);
     outputEmbed(
       msg.channel,
-      isEnabled
-        ? `Ah yes good 'ol earrape... Enjoy lmao`
-        : `Earrape mode has been disabled`,
+      isEnabled ? `Ah yes good 'ol earrape... Enjoy lmao` : `Earrape mode has been disabled`,
       {
         color: colors.success,
       }

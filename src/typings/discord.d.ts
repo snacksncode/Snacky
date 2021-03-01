@@ -143,6 +143,7 @@ declare module "discord.js" {
     guildsQueue: Map<string, GuildMusicQueue>;
     leaveVCTimeoutId: ReturnType<typeof setTimeout>;
     finishedQueueTimeoutId: ReturnType<typeof setTimeout>;
+    queueEditMode: boolean;
     createQueue(guildId: string): GuildMusicQueue;
     getQueue(guildId: string): GuildMusicQueue;
     playSong(msg: Message, song: Song): Promise<void>;

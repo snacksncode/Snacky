@@ -1,10 +1,4 @@
-import {
-  BotClient,
-  GuildMusicQueue,
-  Message,
-  MusicPlayerInterface,
-  Song,
-} from "discord.js";
+import { BotClient, GuildMusicQueue, Message, MusicPlayerInterface, Song } from "discord.js";
 import ytdl from "discord-ytdl-core";
 import ytdlBase from "ytdl-core";
 import { outputEmbed } from "../utils/generic";
@@ -26,11 +20,13 @@ class MusicPlayer implements MusicPlayerInterface {
     e.x. to give users 1min (by default) to pick a new song before leaving
   */
   finishedQueueTimeoutId: ReturnType<typeof setTimeout>;
+  queueEditMode: boolean;
   constructor(client: BotClient) {
     this.client = client;
     this.guildsQueue = new Map();
     this.leaveVCTimeoutId = null;
     this.finishedQueueTimeoutId = null;
+    this.queueEditMode = false;
   }
 
   async playSong(msg: Message, song: Song) {
@@ -94,7 +90,7 @@ class MusicPlayer implements MusicPlayerInterface {
       voiceChannelDispatcher.setVolume(guildQueue.bassboost ? 10.0 : 1.0);
       outputEmbed(
         msg.channel,
-        `Playing [**${song.title}**](${song.url}) | Requested by ${song.requestedBy}`,
+        `Playing **[${song.title}](${song.url})** | Requested by ${song.requestedBy}`,
         {
           color: this.client.config.colors.success,
           footerText: song.isLive

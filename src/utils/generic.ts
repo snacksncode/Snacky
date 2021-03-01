@@ -113,6 +113,14 @@ export function formatMs(ms: number) {
   else return `${seconds} sec`;
 }
 
+export function swapElementsInArray(arr: any[], indexA: number, indexB: number) {
+  let arrCopy = arr.slice();
+  var temp = arrCopy[indexA];
+  arrCopy[indexA] = arrCopy[indexB];
+  arrCopy[indexB] = temp;
+  return arrCopy;
+}
+
 //checks member agains an array of permissions and returns the ones member lacks
 export function getMissingPermissions(
   perms: PermissionString[],

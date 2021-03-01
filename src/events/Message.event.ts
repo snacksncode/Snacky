@@ -17,10 +17,7 @@ class MessageEvent extends EventBase implements Event {
     const isCommand = msg.content.startsWith(this.client.config.prefix);
     if (!isCommand) return;
     //parse user input
-    const userInput = removePrefix(
-      msg.content.trim(),
-      this.client.config.prefix
-    );
+    const userInput = removePrefix(msg.content.trim(), this.client.config.prefix);
     const args = userInput.split(" ");
     const requestedCommand = args
       .shift()
@@ -32,15 +29,17 @@ class MessageEvent extends EventBase implements Event {
       this.client.commands.find(
         (cmd) => cmd.info.aliases && cmd.info.aliases.includes(requestedCommand)
       );
-    //if neither aliases or command name returned a class that means command doesnt exist
+    /*
+      if neither aliases or command name returned a class that means command doesnt exist
+      also check if queue edit mode is enabled and ignore the "not found" in that situation because
+      well they are mini commands and dont have their own classes
+    */
     if (!commandClass) {
-      outputEmbed(
-        msg.channel,
-        `Command \`${requestedCommand}\` doesn't exist`,
-        {
+      if (!this.client.player.queueEditMode) {
+        outputEmbed(msg.channel, `Command \`${requestedCommand}\` doesn't exist`, {
           color: this.client.config.colors.error,
-        }
-      );
+        });
+      }
       return;
     }
     //if there are some permissions that need checking
@@ -69,21 +68,14 @@ class MessageEvent extends EventBase implements Event {
     } catch (err) {
       const errorEmbed = new MessageEmbed();
       errorEmbed
-        .setTitle(
-          `Crash prevented | Runtime error during ${commandClass.commandName} command`
-        )
-        .setDescription(
-          `<@${this.client.config.ownerId}>\n---------------\n${err.message}`
-        )
+        .setTitle(`Crash prevented | Runtime error during ${commandClass.commandName} command`)
+        .setDescription(`<@${this.client.config.ownerId}>\n---------------\n${err.message}`)
         .setFooter("Full errorstack was logged into console")
         .setTimestamp()
         .setColor(this.client.config.colors.error);
       sendMsg(msg.channel, errorEmbed);
 
-      this.client.logger.log(
-        { name: "Command runtime error", color: "error" },
-        `\n${err}`
-      );
+      this.client.logger.log({ name: "Command runtime error", color: "error" }, `\n${err.stack}`);
     }
   }
 }

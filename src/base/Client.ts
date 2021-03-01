@@ -58,10 +58,7 @@ class CustomClient extends Client implements BotClient {
             try {
               await e.run(...args);
             } catch (err) {
-              this.logger.log(
-                { name: "Event runtime error", color: "error" },
-                `\n${err}`
-              );
+              this.logger.log({ name: "Event runtime error", color: "error" }, `\n${err.stack}`);
             }
           });
         } else {
@@ -106,13 +103,8 @@ class CustomClient extends Client implements BotClient {
   }
 
   async init() {
-    this.logger.log(
-      { name: "Client: Init", color: "info" },
-      "Started initiation process"
-    );
-    await this._loadCommands(
-      path.join(global.appRoot, this.config.paths.commands)
-    );
+    this.logger.log({ name: "Client: Init", color: "info" }, "Started initiation process");
+    await this._loadCommands(path.join(global.appRoot, this.config.paths.commands));
     await this._loadEvents(path.join(global.appRoot, this.config.paths.events));
     await this._login(this.config.token);
   }

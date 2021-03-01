@@ -6,7 +6,7 @@ class KebabikPls extends Command implements CommandInterface {
     super(client, {
       name: "kebabikpls",
       description: "Plays the playlist of a best local rapper",
-      usage: "<prefix>kebabik",
+      usage: "<prefix>kebabikpls [--nightcore] [--random]",
       hidden: true,
       category: "Music",
     });
