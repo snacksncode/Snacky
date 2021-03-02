@@ -17,14 +17,12 @@ Snacky is a little bot that I've written for my own server and overall just for 
 
 ### Avaible commands
 
-| Category    | Commands                                        |
-| ----------- | ----------------------------------------------- |
-| Information | avatar, help, ping, uptime                      |
-| Moderation  | clear, mute, unmute                             |
-| Music\*     | play, queue, shuffle, skip, loop, stop, earrape, nowplaying |
-| Fun         | roll, jd                                        |
-
-<sup>\*not all commands are shown because some of them are buggy</sup>
+| Category    | Commands                                                                   |
+| ----------- | -------------------------------------------------------------------------- |
+| Information | avatar, help, ping, uptime                                                 |
+| Moderation  | clear, mute, unmute                                                        |
+| Music       | play, queue, shuffle, skip, loop, stop, earrape, nowplaying, pause, resume |
+| Fun         | roll, jd                                                                   |
 
 <a name="invite"><h1>Invite Snacky to your discord server</h1></a>
 
@@ -63,5 +61,5 @@ Don't forgot to invite him to your testing server.<br/>
 
 <a name="issues"><h1>Known issues</h1></a>
 
-1. Pausing works but resuming doesn't.
+1. ~~Pausing works but resuming doesn't.~~ **Fixed!** Had to switch to LTS version of NodeJS. Version 15 was causing problems for some reason, version 14 on the other hand doesn't
 2. Because Snacky is hosted on Heroku. Sometimes after bot has been playing music for a long time heroku "clears" websocket connections and the bot stops playing. In this case whilst still in voice chat use `stop` command to disconnect him and then add songs back to queue. I'll implement a command that will "rescue" the queue in this case.
