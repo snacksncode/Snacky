@@ -8,6 +8,7 @@ import {
   Config,
   VoiceChannel,
   PlayCommandInterface,
+  QueueCommandInterface,
 } from "discord.js";
 import ytpl from "ytpl";
 import ytsr from "ytsr";
@@ -20,7 +21,6 @@ import {
   sendMsg,
   shuffleArray,
 } from "../../utils/generic";
-
 class Play extends Command implements PlayCommandInterface {
   colors: Config["colors"];
   constructor(client: BotClient) {
@@ -336,6 +336,11 @@ class Play extends Command implements PlayCommandInterface {
       embedMessage = `Added **${songsToAdd.length}** songs to queue`;
     } else {
       embedMessage = `Added **[${songsToAdd[0].title}](${songsToAdd[0].url})** to queue`;
+    }
+    //if user decides to add a song during queue edit process we need to update the visuals that user sees
+    if (this.client.player.queueEditMode) {
+      const queueCommand = this.client.commands.get("queue") as QueueCommandInterface;
+      queueCommand.updateRefQueueEmbed(msg);
     }
     //let user know what we how much songs we added or if it's only one it's name
     outputEmbed(msg.channel, embedMessage, {

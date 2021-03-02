@@ -1,5 +1,6 @@
 import { BotClient, Event } from "discord.js";
 import EventBase from "../base/Event";
+import consoleColor from "colors";
 
 class ReadyEvent extends EventBase implements Event {
   constructor(client: BotClient) {
@@ -23,7 +24,7 @@ class ReadyEvent extends EventBase implements Event {
   async run() {
     this.client.logger.log(
       { name: "Client: Ready", color: "success" },
-      `Bot has fully loaded and logged in as ${this.client.user.tag}`
+      `Bot has fully loaded and logged in as ${consoleColor.bold.yellow(this.client.user.tag)}`
     );
     this.setupCustomPresence();
   }

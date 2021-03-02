@@ -1,9 +1,25 @@
 import { Config } from "discord.js";
 
+function getToken() {
+  if (process.env.VERSION === "CANARY") {
+    return process.env.TOKEN_CANARY;
+  } else {
+    return process.env.TOKEN_STABLE;
+  }
+}
+
+function getPrefix() {
+  if (process.env.VERSION === "CANARY") {
+    return "sc!";
+  } else {
+    return "s!";
+  }
+}
+
 const config: Config = {
-  prefix: "s!",
-  token: process.env.TOKEN,
-  version: "2.8.1",
+  prefix: getPrefix(),
+  token: getToken(),
+  version: "2.9.0",
   paths: {
     commands: "/commands/**/*.command.ts", //you can use pattern matching here
     events: "/events/**/*.event.ts",

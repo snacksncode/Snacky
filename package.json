@@ -3,7 +3,8 @@
   "description": "My first ever Discord Bot. His name is Snacky",
   "main": "src/index.ts",
   "scripts": {
-    "start": "ts-node --files ."
+    "start": "ts-node --files .",
+    "start-canary": "VERSION=CANARY ts-node --files ."
   },
   "engines": {
     "node": "14.x"

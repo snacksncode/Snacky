@@ -19,6 +19,29 @@ declare module "discord.js" {
     ): Promise<void>;
   }
 
+  export interface QueueCommandInterface extends CommandInterface {
+    guildQueue: GuildMusicQueue;
+    queueMessage: QueueMessageData;
+    songsPerPage: number;
+    swapSongsInQueue(msg: Message, args: string[]): Promise<void>;
+    playSongNextInQueue(msg: Message, args: string[]): Promise<void>;
+    playSongNextInQueue(msg: Message, args: string[]): Promise<void>;
+    moveSongInQueue(msg: Message, args: string[]): Promise<void>;
+    updateRefQueueEmbed(msg: Message): Promise<void>;
+    generateQueueEmbeds(songs: Song[], songsLimit: number): void;
+    attachCollectorToEmbed(queueMessageRef: Message): Promise<void>;
+    outputQueueEmbed(msg: Message): Promise<void>;
+    generateQueuePageString(page: Song[], songs: Song[]): string;
+    removeSongFromQueue(msg: Message, args: string[]): Promise<void>;
+  }
+
+  export interface QueueMessageData {
+    ref: Message;
+    collector: ReactionCollector;
+    generatedPages: MessageEmbed[];
+    authorId: string;
+  }
+
   export interface CommandHelpObject {
     name: string;
     aliases: string[];
@@ -91,7 +114,7 @@ declare module "discord.js" {
     voiceChannel: null | VoiceChannel;
     connection: null | VoiceConnection;
     bassboost: boolean;
-    loopMode: "song" | "*playlist" | "off";
+    loopMode: "song" | "queue" | "off";
     songs: Song[];
     volume: number;
     isPlaying: boolean;

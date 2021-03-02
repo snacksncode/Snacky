@@ -22,10 +22,7 @@ class Help extends Command implements CommandInterface {
 
   async run(msg: Message) {
     const userInput = msg.content;
-    const regExp = new RegExp(
-      `${this.client.config.prefix}help\\s?(\\w*)?`,
-      "g"
-    );
+    const regExp = new RegExp(`${this.client.config.prefix}help\\s?(\\w*)?`, "g");
     const matches = userInput.matchAll(regExp);
     const parsedCommandName: string | null = matches.next().value?.[1];
     if (!parsedCommandName) {
@@ -42,17 +39,12 @@ class Help extends Command implements CommandInterface {
       const command =
         this.client.commands.get(parsedCommandName) ||
         this.client.commands.find(
-          (cmd) =>
-            cmd.info.aliases && cmd.info.aliases.includes(parsedCommandName)
+          (cmd) => cmd.info.aliases && cmd.info.aliases.includes(parsedCommandName)
         );
       if (!command) {
-        outputEmbed(
-          msg.channel,
-          `Command \`${parsedCommandName}\` doesn't exist`,
-          {
-            color: this.client.config.colors.error,
-          }
-        );
+        outputEmbed(msg.channel, `Command \`${parsedCommandName}\` doesn't exist`, {
+          color: this.client.config.colors.error,
+        });
         return;
       }
       outputEmbed(msg.channel, "", {
@@ -62,9 +54,7 @@ class Help extends Command implements CommandInterface {
       });
     }
   }
-  generateHelpFields(
-    commands: Collection<string, CommandInterface>
-  ): EmbedFieldData[] {
+  generateHelpFields(commands: Collection<string, CommandInterface>): EmbedFieldData[] {
     interface HelpCommandCategory {
       name: string;
       commands: string[];
@@ -90,7 +80,7 @@ class Help extends Command implements CommandInterface {
     for (let category of categorizedCommands) {
       generatedFields.push({
         name: category.name,
-        value: category.commands.toString().replaceAll(",", ", "),
+        value: category.commands.toString().replace(/,/g, ", "),
       });
     }
     return generatedFields;

@@ -39,7 +39,6 @@ class Resume extends Command implements CommandInterface {
     guildQueue.isPlaying = true;
     outputEmbed(msg.channel, "Resumed current player", {
       color: colors.success,
-      footerText: "It probably didn't. If you actually wanna resume playback just skip the song.",
     });
   }
 }

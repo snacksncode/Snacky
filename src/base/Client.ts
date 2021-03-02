@@ -36,10 +36,8 @@ class CustomClient extends Client implements BotClient {
     //create music player
     this.player = new MusicPlayer(this);
     //log that client has been created
-    this.logger.log(
-      { name: "Client: Start", color: "info" },
-      `Created client. Using node ${process.version}`
-    );
+    this.logger.log({ name: "Node: Version", color: "warning" }, process.version);
+    this.logger.log({ name: "Client: Start", color: "info" }, `Created client`);
   }
 
   async _loadClasses(type: "command" | "event", pathToLoadFrom: string) {

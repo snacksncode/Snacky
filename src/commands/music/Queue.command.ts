@@ -2,13 +2,13 @@ import Command from "../../base/Command";
 import {
   Message,
   MessageReaction,
-  CommandInterface,
   BotClient,
   Song,
   User,
   MessageEmbed,
   GuildMusicQueue,
-  ReactionCollector,
+  QueueCommandInterface,
+  QueueMessageData,
 } from "discord.js";
 import {
   getEmojiById,
@@ -20,17 +20,6 @@ import {
 } from "../../utils/generic";
 import formatSongLength from "../../utils/music/formatSongLength";
 import getTotalLengthOfSongs from "../../utils/music/getTotalLengthOfSongs";
-
-interface QueueMessageData {
-  ref: Message;
-  collector: ReactionCollector;
-  generatedPages: MessageEmbed[];
-}
-interface QueueCommandInterface extends CommandInterface {
-  guildQueue: GuildMusicQueue;
-  queueMessage: QueueMessageData;
-  songsPerPage: number;
-}
 
 class Queue extends Command implements QueueCommandInterface {
   queueMessage: QueueMessageData;
@@ -48,6 +37,7 @@ class Queue extends Command implements QueueCommandInterface {
       ref: null,
       collector: null,
       generatedPages: null,
+      authorId: null,
     };
     this.songsPerPage = 5;
   }
@@ -118,8 +108,10 @@ class Queue extends Command implements QueueCommandInterface {
         }
       );
       await this.outputQueueEmbed(msg);
+      this.queueMessage.authorId = msg.author.id;
       const editQueueCommandsFilter = (m: Message) =>
-        m.content.startsWith(this.client.config.prefix) && m.author.id === msg.author.id;
+        m.content.startsWith(this.client.config.prefix) &&
+        m.author.id === this.queueMessage.authorId;
       const timeLimit = 5 * 60 * 1000; //5min
       const collector = msg.channel.createMessageCollector(editQueueCommandsFilter, {
         time: timeLimit,
@@ -275,7 +267,7 @@ class Queue extends Command implements QueueCommandInterface {
     //remove old reaction collector
     this.queueMessage.collector?.stop();
     await this.queueMessage.ref.edit(this.queueMessage.generatedPages[0]);
-    await this.attachCollectorToEmbed(this.queueMessage.ref, msg.author.id);
+    await this.attachCollectorToEmbed(this.queueMessage.ref);
     if (!pleaseWaitMessage.deleted) await pleaseWaitMessage.delete();
   }
 
@@ -312,12 +304,14 @@ class Queue extends Command implements QueueCommandInterface {
     this.queueMessage.generatedPages = queueEmbeds.slice();
   }
 
-  async attachCollectorToEmbed(queueMessageRef: Message, authorId: string) {
+  async attachCollectorToEmbed(queueMessageRef: Message) {
     const reactionCollectorIdleTimout = 60000;
     let currentPageIndex = 0;
 
     const queueControlsFilter = (reaction: MessageReaction, user: User) => {
-      return ["⬅️", "⏹", "➡️"].includes(reaction.emoji.name) && authorId === user.id;
+      return (
+        ["⬅️", "⏹", "➡️"].includes(reaction.emoji.name) && this.queueMessage.authorId === user.id
+      );
     };
 
     if (this.queueMessage.generatedPages.length > 1) {
@@ -354,7 +348,7 @@ class Queue extends Command implements QueueCommandInterface {
               break;
             }
           }
-          await reaction.users.remove(authorId);
+          await reaction.users.remove(this.queueMessage.authorId);
         })
         .on("end", (_) => {
           this.queueMessage.ref.reactions.removeAll();
@@ -365,13 +359,13 @@ class Queue extends Command implements QueueCommandInterface {
   async outputQueueEmbed(msg: Message) {
     this.generateQueueEmbeds(this.guildQueue.songs, this.songsPerPage);
     this.queueMessage.ref = await msg.channel.send(this.queueMessage.generatedPages[0]);
-    this.attachCollectorToEmbed(this.queueMessage.ref, msg.author.id);
+    this.attachCollectorToEmbed(this.queueMessage.ref);
   }
 
   generateQueuePageString(page: Song[], songs: Song[]): string {
     let outputString: string = "";
     for (let song of page) {
-      outputString += `${songs.indexOf(song) + 1}. [**${song.title}**](${song.url}) [${
+      outputString += `${songs.indexOf(song) + 1}. **[${song.title}](${song.url})** [${
         song.isLive ? "LIVE" : song.formattedLength
       }]\n`;
     }
@@ -411,7 +405,7 @@ class Queue extends Command implements QueueCommandInterface {
         const emojiAnswerFilter = (reaction: MessageReaction, user: User) => {
           return (
             [reactionEmojis.success, reactionEmojis.error].includes(reaction.emoji.id) &&
-            msg.author.id === user.id
+            this.queueMessage.authorId === user.id
           );
         };
         const collectorInstance = messageObject.createReactionCollector(emojiAnswerFilter, {

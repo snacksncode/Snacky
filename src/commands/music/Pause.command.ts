@@ -39,7 +39,6 @@ class Pause extends Command implements CommandInterface {
     guildQueue.isPlaying = false;
     outputEmbed(msg.channel, "Paused current player", {
       color: colors.success,
-      footerText: "Pausing is broken. I cannot fix it...",
     });
   }
 }

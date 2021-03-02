@@ -77,6 +77,9 @@ class MusicPlayer implements MusicPlayerInterface {
           //if looping is disabled remove current song from queue
           if (guildQueue.loopMode === "off") {
             guildQueue.songs.shift();
+          } else if (guildQueue.loopMode === "queue") {
+            const song = guildQueue.songs.shift();
+            guildQueue.songs.push(song);
           }
           this.playSong(msg, guildQueue.songs[0]);
         })
