@@ -6,7 +6,7 @@
     "start": "ts-node --files ."
   },
   "engines": {
-    "node": "15.x"
+    "node": "14.x"
   },
   "author": "snacksncode",
   "license": "MIT",
