@@ -86,14 +86,17 @@ class Earrape extends Command implements CommandInterface {
         .on("collect", async (reaction: MessageReaction) => {
           switch (reaction.emoji.name) {
             case "🔂": {
+              if (this.guildQueue.loopMode === "song") break;
               this.enableSongLooping(msg);
               break;
             }
             case "🔁": {
+              if (this.guildQueue.loopMode === "queue") break;
               this.enableQueueLooping(msg);
               break;
             }
             case "⛔": {
+              if (this.guildQueue.loopMode === "off") break;
               this.disableLooping(msg);
               break;
             }
@@ -137,6 +140,12 @@ class Earrape extends Command implements CommandInterface {
     messageReference.edit(embedRef);
   }
   enableQueueLooping(msg: Message) {
+    if (this.guildQueue.loopMode === "queue") {
+      outputEmbed(msg.channel, `Looping is **already** set to queue`, {
+        color: this.client.config.colors.info,
+      });
+      return;
+    }
     this.guildQueue.loopMode = "queue";
     outputEmbed(msg.channel, `Queue will now loop :3`, {
       color: this.client.config.colors.success,
@@ -155,6 +164,12 @@ class Earrape extends Command implements CommandInterface {
     }
   }
   enableSongLooping(msg: Message) {
+    if (this.guildQueue.loopMode === "song") {
+      outputEmbed(msg.channel, `Looping is **already** set to song`, {
+        color: this.client.config.colors.info,
+      });
+      return;
+    }
     this.guildQueue.loopMode = "song";
     const song = this.guildQueue.songs[0];
     outputEmbed(msg.channel, `**[${song.title}](${this.guildQueue.songs[0].url})** will now loop`, {
@@ -162,6 +177,12 @@ class Earrape extends Command implements CommandInterface {
     });
   }
   disableLooping(msg: Message) {
+    if (this.guildQueue.loopMode === "off") {
+      outputEmbed(msg.channel, `Looping is **already** disabled`, {
+        color: this.client.config.colors.info,
+      });
+      return;
+    }
     this.guildQueue.loopMode = "off";
     outputEmbed(msg.channel, `Looping is disabled`, {
       color: this.client.config.colors.success,
