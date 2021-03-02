@@ -45,7 +45,7 @@ npm install
 Also create a `.env` file in root directory with those contents
 
 ```
-TOKEN=[PUT YOUR TOKEN HERE]
+TOKEN_STABLE=[PUT YOUR TOKEN HERE]
 ```
 
 After that your own instance of the bot should be ready to launch. To start the bot just use the start script.
@@ -61,5 +61,7 @@ Don't forgot to invite him to your testing server.<br/>
 
 <a name="issues"><h1>Known issues</h1></a>
 
-1. ~~Pausing works but resuming doesn't.~~ **Fixed!** Had to switch to LTS version of NodeJS. Version 15 was causing problems for some reason, version 14 on the other hand doesn't
+1. ~~Pausing works but resuming doesn't.~~
+   **Fixed!** Had to switch to LTS version of NodeJS. Version 15 was causing problems for some reason, version 14 on the other hand doesn't
+
 2. Because Snacky is hosted on Heroku. Sometimes after bot has been playing music for a long time heroku "clears" websocket connections and the bot stops playing. In this case whilst still in voice chat use `stop` command to disconnect him and then add songs back to queue. I'll implement a command that will "rescue" the queue in this case.
