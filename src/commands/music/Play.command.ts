@@ -130,6 +130,7 @@ class Play extends Command implements PlayCommandInterface {
       try {
         const containsListFlag = !!extractedUrl.match(/list=.*/);
         const containsWatchFlag = !!extractedUrl.match(/watch\?v=.*/);
+        const containsRandomFlag = !!userInput.match(/--random/);
 
         if (!containsWatchFlag && !containsListFlag) {
           //list don't have list? or watch?v flags. | NONE
@@ -145,7 +146,7 @@ class Play extends Command implements PlayCommandInterface {
           this.processSong(extractedUrl, msg);
         } else if (containsListFlag && !containsWatchFlag) {
           //link contains only list=<id> flag | PLAYLIST
-          this.processPlaylist(extractedUrl, msg, false, false);
+          this.processPlaylist(extractedUrl, msg, false, containsRandomFlag);
         } else if (containsWatchFlag && containsListFlag) {
           //link contains watch flag as well as playlist | LET USER CHOOSE
           const playlistId = await ytpl.getPlaylistID(extractedUrl);
@@ -204,14 +205,14 @@ class Play extends Command implements PlayCommandInterface {
                 }
                 case "2️⃣": {
                   //Add the playlist to queue
-                  this.processPlaylist(extractedUrl, msg, false, false);
+                  this.processPlaylist(extractedUrl, msg, false, containsRandomFlag);
                   userSelectedOptionText = "You have chosen 2nd option";
                   collectorInstance.stop();
                   break;
                 }
                 case "3️⃣": {
                   //Add the playlist to queue
-                  this.processPlaylist(extractedUrl, msg, true, false);
+                  this.processPlaylist(extractedUrl, msg, true, containsRandomFlag);
                   userSelectedOptionText = "You have chosen 3rd option";
                   collectorInstance.stop();
                   break;

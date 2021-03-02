@@ -128,7 +128,8 @@ class Eval extends Command implements CommandInterface {
       if (this.checkIfInputContainsTokenPiece(input, privateToken)) {
         tokenPieceDetected = true;
       }
-      censoredOutput = input.replaceAll(privateToken, "[ Private ]");
+      const privateTokenRegex = new RegExp(privateToken, "g");
+      censoredOutput = input.replace(privateTokenRegex, "[ Private ]");
     });
     return { censoredOutput, tokenPieceDetected };
   }
