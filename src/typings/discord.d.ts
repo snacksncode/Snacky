@@ -158,6 +158,7 @@ declare module "discord.js" {
     reactionEmojis: {
       success: string;
       error: string;
+      pepeNote: string;
     };
   }
 

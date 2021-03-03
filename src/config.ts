@@ -19,7 +19,7 @@ function getPrefix() {
 const config: Config = {
   prefix: getPrefix(),
   token: getToken(),
-  version: "2.9.2",
+  version: "2.9.3",
   paths: {
     commands: "/commands/**/*.command.ts", //you can use pattern matching here
     events: "/events/**/*.event.ts",
@@ -33,6 +33,7 @@ const config: Config = {
   reactionEmojis: {
     error: "776486161836277781",
     success: "776484399038464022",
+    pepeNote: "808753640793047080",
   },
   ownerId: "430795391265406990",
   mainServerId: "763094235217657876",

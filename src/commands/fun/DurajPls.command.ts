@@ -1,6 +1,6 @@
 import { Message, CommandInterface, BotClient } from "discord.js";
 import Command from "../../base/Command";
-import { getRandomInt, outputEmbed } from "../../utils/generic";
+import { getEmojiById, getRandomInt, outputEmbed } from "../../utils/generic";
 
 class DurajPls extends Command implements CommandInterface {
   quotes: string[];
@@ -50,14 +50,13 @@ class DurajPls extends Command implements CommandInterface {
 
   async run(msg: Message) {
     let randomQuoteIndex = getRandomInt(0, this.quotes.length - 1);
-    outputEmbed(
-      msg.channel,
-      `The great Piotr Duraj once said...\n> **${this.quotes[randomQuoteIndex]}**`,
-      {
-        color: this.client.config.colors.info,
-        footerText: Math.random() > 0.95 ? "And then everyone clapped" : "",
-      }
-    );
+    const [messageReference] = await outputEmbed(msg.channel, `The great Piotr Duraj once said`, {
+      color: this.client.config.colors.info,
+      footerText: Math.random() > 0.9 ? "And then everyone clapped" : "",
+      fields: [{ name: this.quotes[randomQuoteIndex], value: "\u200B" }],
+    });
+    const pepeNote = getEmojiById(this.client.config.reactionEmojis.pepeNote, this.client);
+    messageReference.react(pepeNote);
   }
 }
 
