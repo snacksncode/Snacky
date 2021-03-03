@@ -41,6 +41,8 @@ class DurajPls extends Command implements CommandInterface {
       "Well done!",
       "Alright!",
       "Correct!",
+      "Thank you gentlemen! Class dismissed.",
+      "Thank you for taking part in the test :D",
       "Easy peasy lemon squeezy",
       "Szanowni panowie na jakiej stronie pdf skończyliśmy?",
       "You got ... yyy you got exercise 5 on page 36 pdf",
