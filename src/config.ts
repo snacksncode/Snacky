@@ -19,7 +19,7 @@ function getPrefix() {
 const config: Config = {
   prefix: getPrefix(),
   token: getToken(),
-  version: "2.9.1",
+  version: "2.9.2",
   paths: {
     commands: "/commands/**/*.command.ts", //you can use pattern matching here
     events: "/events/**/*.event.ts",
