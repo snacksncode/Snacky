@@ -50,11 +50,14 @@ class DurajPls extends Command implements CommandInterface {
 
   async run(msg: Message) {
     let randomQuoteIndex = getRandomInt(0, this.quotes.length - 1);
-    const [messageReference] = await outputEmbed(msg.channel, `The great Piotr Duraj once said`, {
-      color: this.client.config.colors.info,
-      footerText: Math.random() > 0.9 ? "And then everyone clapped" : "",
-      fields: [{ name: this.quotes[randomQuoteIndex], value: "\u200B" }],
-    });
+    const [messageReference] = await outputEmbed(
+      msg.channel,
+      `The great Piotr Duraj once said\n\n> **${this.quotes[randomQuoteIndex]}**`,
+      {
+        color: this.client.config.colors.info,
+        footerText: Math.random() > 0.9 ? "And then everyone clapped" : "",
+      }
+    );
     const pepeNote = getEmojiById(this.client.config.reactionEmojis.pepeNote, this.client);
     messageReference.react(pepeNote);
   }
