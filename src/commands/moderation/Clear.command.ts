@@ -8,7 +8,7 @@ class Clear extends Command implements CommandInterface {
       name: "clear",
       description:
         "Removes [number] amount of messages. You can also mention a user to only delete his messages",
-      usage: "<prefix>clear [member?] [number]",
+      usage: "<prefix>clear [number] [member?] [--self?]",
       aliases: ["c", "purge"],
       category: "Moderation",
       permissions: ["MANAGE_MESSAGES"],
@@ -20,7 +20,7 @@ class Clear extends Command implements CommandInterface {
     const userInput: string = msg.content;
     const mentionedUsers: Collection<string, User> = msg.mentions.users;
     const channel = msg.channel;
-    let withCommandFlag: boolean = !!userInput.match(/--include-command/g);
+    let withCommandFlag: boolean = !!userInput.match(/--(include-command|cs|self)/g);
     const successMsgDelTimeout = 10000;
     let msgsToDel: number = userInput
       .match(/\s\d{1,}\s?/g)

@@ -36,7 +36,6 @@ class MusicPlayer implements MusicPlayerInterface {
   */
   finishedQueueTimeoutId: ReturnType<typeof setTimeout>;
   queueEditMode: boolean;
-  filterEnabled: boolean;
   dispatchedStartingSeek: number;
   constructor(client: BotClient) {
     this.client = client;
@@ -45,7 +44,6 @@ class MusicPlayer implements MusicPlayerInterface {
     this.finishedQueueTimeoutId = null;
     this.queueEditMode = false;
     this.filtersManager = new FiltersManager(this);
-    this.filterEnabled = false;
     this.dispatchedStartingSeek = null;
   }
 
@@ -86,8 +84,7 @@ class MusicPlayer implements MusicPlayerInterface {
           opusEncoded: true,
           seek: options?.seek || 0,
           highWaterMark: 1 << 25,
-          // encoderArgs: ["-af", "bass=g=20,dynaudnorm=f=200"],
-          encoderArgs: this.filterEnabled ? ["-af", this.filtersManager.ffmpegArgs] : null,
+          encoderArgs: guildQueue.filter.isEnabled ? ["-af", guildQueue.filter.ffmpegArgs] : null,
         });
       }
       //play the audioStream and repeatedly call itself
@@ -110,7 +107,7 @@ class MusicPlayer implements MusicPlayerInterface {
         });
       guildQueue.isPlaying = true;
       this.dispatchedStartingSeek = options?.seek || 0;
-      voiceChannelDispatcher.setVolume(guildQueue.bassboost ? 10.0 : 1.0);
+      voiceChannelDispatcher.setVolume(guildQueue.earRape ? 10.0 : 1.0);
       if (!options?.noOutput) {
         outputEmbed(
           msg.channel,
@@ -187,9 +184,13 @@ class MusicPlayer implements MusicPlayerInterface {
       connection: null,
       songs: [],
       volume: 1.0,
-      bassboost: false,
+      earRape: false,
       loopMode: "off",
       isPlaying: false,
+      filter: {
+        isEnabled: false,
+        ffmpegArgs: null,
+      },
     };
 
     this.guildsQueue.set(guildId, defaultQueueObject);

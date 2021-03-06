@@ -1,8 +1,35 @@
-import { Message, CommandInterface, BotClient, MessageReaction, User } from "discord.js";
+import {
+  Message,
+  CommandInterface,
+  BotClient,
+  MessageReaction,
+  User,
+  FilterData,
+} from "discord.js";
 import Command from "../../base/Command";
 import { outputEmbed } from "../../utils/generic";
 
+const DEFAULT_FILTER_DATA: FilterData = {
+  bass: {
+    status: "disabled",
+    value: 0,
+  },
+  normalization: {
+    status: "disabled",
+    value: 200,
+  },
+  rotate: {
+    status: "disabled",
+    value: 0,
+  },
+  speed: {
+    status: "disabled",
+    value: 1,
+  },
+};
+
 class Filter extends Command implements CommandInterface {
+  filterData: FilterData;
   constructor(client: BotClient) {
     super(client, {
       name: "filter",
@@ -10,6 +37,7 @@ class Filter extends Command implements CommandInterface {
       usage: "<prefix>filter",
       category: "Music",
     });
+    this.filterData = DEFAULT_FILTER_DATA;
   }
   async run(msg: Message) {
     const guildQueue = this.client.player.getQueue(msg.guild.id);
@@ -34,6 +62,7 @@ class Filter extends Command implements CommandInterface {
       two: "2️⃣",
       three: "3️⃣",
       custom: "🛠️",
+      off: "⛔",
     };
     const [messageReference] = await outputEmbed(
       msg.channel,
@@ -58,6 +87,10 @@ class Filter extends Command implements CommandInterface {
             name: ":tools: Create your own",
             value: "Enter a more advanced mode and create your own filter without any restrictions",
           },
+          {
+            name: ":no_entry: Turn Off",
+            value: "Disable any currently running filter",
+          },
         ],
       }
     );
@@ -81,18 +114,23 @@ class Filter extends Command implements CommandInterface {
         switch (reaction.emoji.name) {
           case answerEmojis.one: {
             //enable bassboost preset
+            this.client.player.filtersManager.generateAndApplyFilter(msg, null, "bassboost");
             break;
           }
           case answerEmojis.two: {
-            outputEmbed(msg.channel, `Clicked on two`, {});
+            this.client.player.filtersManager.generateAndApplyFilter(msg, "bassboost");
             break;
           }
           case answerEmojis.three: {
-            outputEmbed(msg.channel, `Clicked on three`, {});
+            this.client.player.filtersManager.generateAndApplyFilter(msg, "bassboost");
             break;
           }
           case answerEmojis.custom: {
             outputEmbed(msg.channel, `Clicked on tools`, {});
+            break;
+          }
+          case answerEmojis.off: {
+            this.client.player.filtersManager.generateAndApplyFilter(msg, "bassboost");
             break;
           }
         }
@@ -101,13 +139,6 @@ class Filter extends Command implements CommandInterface {
       .on("end", (_) => {
         messageReference.reactions.removeAll();
       });
-  }
-  async generateAndApplyFilter(msg: Message) {
-    //generate ffmpeg args string
-    this.client.player.filtersManager.generateFFMpegArgs();
-    this.client.player.filterEnabled = true;
-    //restart our audio stream but now with filters enabled
-    await this.client.player.restartAudioStream(msg);
   }
 }
 

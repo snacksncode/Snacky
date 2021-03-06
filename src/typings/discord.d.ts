@@ -1,5 +1,3 @@
-import { Message } from "discord.js";
-
 declare module "discord.js" {
   export interface CommandInterface extends CommandBaseInterface {
     run(msg: Message): Promise<any>;
@@ -115,9 +113,13 @@ declare module "discord.js" {
     textChannel: null | TextChannel;
     voiceChannel: null | VoiceChannel;
     connection: null | VoiceConnection;
-    bassboost: boolean;
+    earRape: boolean;
     loopMode: "song" | "queue" | "off";
     songs: Song[];
+    filter: {
+      isEnabled: boolean;
+      ffmpegArgs: string;
+    };
     volume: number;
     isPlaying: boolean;
   }
@@ -170,7 +172,6 @@ declare module "discord.js" {
     leaveVCTimeoutId: ReturnType<typeof setTimeout>;
     finishedQueueTimeoutId: ReturnType<typeof setTimeout>;
     queueEditMode: boolean;
-    filterEnabled: boolean;
     dispatchedStartingSeek: number;
     filtersManager: FiltersManagerInterface;
     createQueue(guildId: string): GuildMusicQueue;
@@ -187,9 +188,6 @@ declare module "discord.js" {
     // guildsQueue: Map<string, GuildMusicQueue>;
     player: MusicPlayerInterface;
     config: Config;
-    _login(token: string): Promise<string>;
-    _loadCommands(path: string): void;
-    _loadEvents(path: string): void;
     init(): void;
   }
 
@@ -206,22 +204,28 @@ declare module "discord.js" {
   }
 
   export interface FiltersManagerInterface {
-    filterData: {
-      bass: FilterDataObject;
-      normalization: FilterDataObject;
-      speed: FilterDataObject;
-      rotate: FilterDataObject;
-    };
     filterPresets: DefaultFilterPresets;
-    ffmpegArgs: string;
-    _generateFFMpegArgs(): void;
-    generateAndApplyFilter(msg: Message, usePreset?: string): Promise<void>;
+    generateAndApplyFilter(
+      msg: Message,
+      filterData: FilterData,
+      usePreset?: PresetName
+    ): Promise<void>;
+    getFilterArgs(guildId: string): string;
   }
+
+  export type PresetName = "bassboost" | "nightcore" | "rotate";
 
   export interface DefaultFilterPresets {
     bassboost: string;
     rotate: string;
     nightcore: string;
+  }
+
+  export interface FilterData {
+    bass: FilterDataObject;
+    normalization: FilterDataObject;
+    speed: FilterDataObject;
+    rotate: FilterDataObject;
   }
 
   export type FilterDataObject = {

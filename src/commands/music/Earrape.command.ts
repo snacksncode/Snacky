@@ -35,7 +35,7 @@ class Earrape extends Command implements CommandInterface {
     }
     let isEnabled: boolean;
     //toggle the value on current player
-    guildQueue.bassboost = isEnabled = !guildQueue.bassboost;
+    guildQueue.earRape = isEnabled = !guildQueue.earRape;
     guildQueue.connection.dispatcher.setVolume(isEnabled ? 10.0 : 1.0);
     outputEmbed(
       msg.channel,
