@@ -1,3 +1,5 @@
+import { Message } from "discord.js";
+
 declare module "discord.js" {
   export interface CommandInterface extends CommandBaseInterface {
     run(msg: Message): Promise<any>;
@@ -168,9 +170,13 @@ declare module "discord.js" {
     leaveVCTimeoutId: ReturnType<typeof setTimeout>;
     finishedQueueTimeoutId: ReturnType<typeof setTimeout>;
     queueEditMode: boolean;
+    filterEnabled: boolean;
+    dispatchedStartingSeek: number;
+    filtersManager: FiltersManagerInterface;
     createQueue(guildId: string): GuildMusicQueue;
     getQueue(guildId: string): GuildMusicQueue;
     playSong(msg: Message, song: Song): Promise<void>;
+    restartAudioStream(msg: Message, customSeek?: number): Promise<void>;
     leaveVCIfEmpty(guildId: string): void;
   }
 
@@ -198,4 +204,28 @@ declare module "discord.js" {
     name: string;
     color: FlagColor;
   }
+
+  export interface FiltersManagerInterface {
+    filterData: {
+      bass: FilterDataObject;
+      normalization: FilterDataObject;
+      speed: FilterDataObject;
+      rotate: FilterDataObject;
+    };
+    filterPresets: DefaultFilterPresets;
+    ffmpegArgs: string;
+    _generateFFMpegArgs(): void;
+    generateAndApplyFilter(msg: Message, usePreset?: string): Promise<void>;
+  }
+
+  export interface DefaultFilterPresets {
+    bassboost: string;
+    rotate: string;
+    nightcore: string;
+  }
+
+  export type FilterDataObject = {
+    status: "disabled" | "enabled";
+    value: number;
+  };
 }

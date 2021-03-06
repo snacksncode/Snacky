@@ -33,7 +33,7 @@ class DurajPls extends Command implements CommandInterface {
       "Zajezusiście",
       "Kto mnie tutaj tarabani",
       "Albo będziecie punktualni albo będziecie ocieplać chiński mur",
-      "Let's check it out!",
+      "Let's check this out!",
       "Take your shot!",
       "You're great!",
       "Thank you so much!",
@@ -41,13 +41,13 @@ class DurajPls extends Command implements CommandInterface {
       "Well done!",
       "Alright!",
       "Correct!",
+      "Let's go to the next part",
       "Thank you gentlemen! Class dismissed.",
       "Thank you for taking part in the test :D",
       "Easy peasy lemon squeezy",
       "Szanowni panowie na jakiej stronie pdf skończyliśmy?",
       "You got ... yyy you got exercise 5 on page 36 pdf",
     ];
-    this.previousQuoteIndex = null;
   }
 
   async run(msg: Message) {

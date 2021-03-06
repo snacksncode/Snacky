@@ -23,6 +23,7 @@ import {
 } from "../../utils/generic";
 class Play extends Command implements PlayCommandInterface {
   colors: Config["colors"];
+  hasNextFlag: boolean;
   constructor(client: BotClient) {
     super(client, {
       name: "play",
@@ -32,6 +33,7 @@ class Play extends Command implements PlayCommandInterface {
       category: "Music",
     });
     this.colors = this.client.config.colors;
+    this.hasNextFlag = false;
   }
 
   async run(msg: Message) {
@@ -68,6 +70,12 @@ class Play extends Command implements PlayCommandInterface {
     }
     //extract user input and create / read current guildQueue
     const userInput = removePrefix(msg.content, this.client.config.prefix);
+    //check if message has --next flag
+    const containsNextFlag = !!userInput.match(/--next/g);
+    if (containsNextFlag) {
+      this.hasNextFlag = true;
+      userInput.replace(/--next/g, "");
+    }
     //check if message contains youtube url. If no assume it's a video title
     const urlRegex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/g;
     const containsUrl = !!msg.content.match(urlRegex);
@@ -264,7 +272,7 @@ class Play extends Command implements PlayCommandInterface {
       return;
     }
     const userVoiceChannel = msg.member.voice.channel;
-    ytpl(playlistId)
+    ytpl(playlistId, { limit: 500 })
       .then(async (playlist) => {
         outputEmbed(
           msg.channel,
@@ -325,10 +333,29 @@ class Play extends Command implements PlayCommandInterface {
       guildQueue.voiceChannel = userVoiceChannel;
       invokeNewDispatcher = true;
     }
-    //add the songs to the songs queue
-    songsToAdd.forEach((song) => {
-      guildQueue.songs.push(song);
-    });
+    //if user whats to add just one song check for --next
+    if (songsToAdd.length === 1) {
+      const song = songsToAdd[0];
+      if (this.hasNextFlag) {
+        guildQueue.songs.splice(1, 0, song);
+      } else {
+        guildQueue.songs.push(song);
+      }
+    } else {
+      if (this.hasNextFlag) {
+        outputEmbed(
+          msg.channel,
+          `I've detected \`--next\` flag but you're trying to add multiple songs. Unfortunately you can use this flag only whilst adding one song`,
+          {
+            color: this.colors.warn,
+          }
+        );
+      }
+      //add the songs to the songs queue
+      songsToAdd.forEach((song) => {
+        guildQueue.songs.push(song);
+      });
+    }
     //check the length of songsToAddToQueue and output different embeds based on the length
     let embedMessage: string = "";
     //playlistName variable won't be undefined only if I'm processing a playlist
