@@ -47,9 +47,8 @@ class Rewind extends Command implements CommandInterface {
       });
       return;
     }
-    const dispatcher = guildQueue.connection.dispatcher;
-    const currentSeek =
-      Math.floor(dispatcher.streamTime / 1000) + this.client.player.dispatchedStartingSeek;
+    const currentSpeedMod = this.client.player.filtersManager.detectFilterSpeedMod(guildQueue);
+    const currentSeek = this.client.player.getDispatcherStreamTime(guildQueue, currentSpeedMod);
     let newSeek = 0;
     switch (sign) {
       case "+":
@@ -66,7 +65,10 @@ class Rewind extends Command implements CommandInterface {
         color: colors.success,
       }
     );
-    await this.client.player.restartAudioStream(msg, newSeek);
+    await this.client.player.restartAudioStream(msg, {
+      customSeek: newSeek,
+      applyFilter: !!guildQueue.filterArgs,
+    });
   }
 }
 

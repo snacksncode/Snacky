@@ -73,15 +73,16 @@ class Filter extends Command implements CommandInterface {
         fields: [
           {
             name: ":one: Bassboost",
-            value: "Add more bass to your songs. Audio normalization is also enabled",
+            value:
+              "Add more bass to your songs. Audio normalization is also enabled which may make audio a little bit quieter",
           },
           {
-            name: ":two: Nightcore",
+            name: ":two: Vaporwave",
+            value: "Slows down the song",
+          },
+          {
+            name: ":three: Nightcore",
             value: "Convert any song to nightcore version on a fly",
-          },
-          {
-            name: ":three: 8D",
-            value: "Makes a song go in circles around your head",
           },
           {
             name: ":tools: Create your own",
@@ -118,19 +119,19 @@ class Filter extends Command implements CommandInterface {
             break;
           }
           case answerEmojis.two: {
-            this.client.player.filtersManager.generateAndApplyFilter(msg, "bassboost");
+            this.client.player.filtersManager.generateAndApplyFilter(msg, null, "vaporwave");
             break;
           }
           case answerEmojis.three: {
-            this.client.player.filtersManager.generateAndApplyFilter(msg, "bassboost");
+            this.client.player.filtersManager.generateAndApplyFilter(msg, null, "nightcore");
             break;
           }
           case answerEmojis.custom: {
-            outputEmbed(msg.channel, `Clicked on tools`, {});
+            outputEmbed(msg.channel, `Still under development`, { color: colors.warn });
             break;
           }
           case answerEmojis.off: {
-            this.client.player.filtersManager.generateAndApplyFilter(msg, "bassboost");
+            this.client.player.filtersManager.disableFilter(msg);
             break;
           }
         }

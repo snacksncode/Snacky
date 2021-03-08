@@ -1,7 +1,9 @@
 import {
   DefaultFilterPresets,
   FilterData,
+  FilterDataObject,
   FiltersManagerInterface,
+  GuildMusicQueue,
   Message,
   MusicPlayerInterface,
   PresetName,
@@ -14,7 +16,8 @@ class FiltersManager implements FiltersManagerInterface {
   constructor(_musicPlayer: MusicPlayerInterface) {
     this.musicPlayer = _musicPlayer;
     this.filterPresets = {
-      bassboost: "bass=g=20,dynaudnorm=f=200",
+      bassboost: "bass=g=15,dynaudnorm=f=200",
+      vaporwave: "aresample=48000,asetrate=48000*0.8",
       nightcore: "aresample=48000,asetrate=48000*1.25",
       rotate: "apulsator=hz=0.08",
     };
@@ -34,13 +37,22 @@ class FiltersManager implements FiltersManagerInterface {
   _generateFFMpegArgs(filterData: FilterData) {
     let outputArgs = [];
     for (let [name, property] of Object.entries(filterData)) {
-      if (property.status === "enabled") {
+      if ((property as FilterDataObject).status === "enabled") {
         let arg = this._getFFMpegArgName(name);
         outputArgs.push(`${arg}${property.value}`);
       }
     }
     return outputArgs.join(",");
   }
+
+  //this one is called by the ffmpegArgs generator. I use it to update seed modifier for every guild
+  //it's used to correctly calculate amount of "seconds" music has been played for
+  detectFilterSpeedMod(guildQueue: GuildMusicQueue) {
+    const speedModRegex = /asetrate=48000\*(\d{1,}\.?(\d{1,})?)/;
+    const detectedSpeedMod = guildQueue?.filterArgs?.match(speedModRegex)?.[1];
+    return detectedSpeedMod ? Number(detectedSpeedMod) : 1;
+  }
+
   async generateAndApplyFilter(msg: Message, filterData: FilterData, usePreset?: PresetName) {
     const guildQueue = this.musicPlayer.getQueue(msg.guild.id);
     if (!guildQueue) return;
@@ -51,30 +63,29 @@ class FiltersManager implements FiltersManagerInterface {
     } else {
       ffmpegArgs = this._generateFFMpegArgs(filterData);
     }
-    //set the filter
-    this._setFilterArgs(ffmpegArgs, msg.guild.id);
+    //set the filter & update it's state
+    this._setFilterArgs(ffmpegArgs, guildQueue);
+    const speedMod = this.detectFilterSpeedMod(guildQueue);
     //restart our audio stream but now with filters enabled
-    await this.musicPlayer.restartAudioStream(msg);
+    await this.musicPlayer.restartAudioStream(msg, {
+      applyFilter: true,
+      filterSpeedModifier: speedMod,
+    });
   }
   async disableFilter(msg: Message) {
     const guildQueue = this.musicPlayer.getQueue(msg.guild.id);
     if (!guildQueue) return;
-    //toggle filter state to OFF
-    guildQueue.filter.isEnabled = false;
-    guildQueue.filter.ffmpegArgs = null;
+    //detect speedMod of current filter
+    const speedMod = this.detectFilterSpeedMod(guildQueue);
+    //reset filterArgs on guildQueue
+    guildQueue.filterArgs = null;
     //restart stream
-    await this.musicPlayer.restartAudioStream(msg);
+    await this.musicPlayer.restartAudioStream(msg, {
+      filterSpeedModifier: speedMod,
+    });
   }
-  _setFilterArgs(ffmpegFilterString: string, guildId: string) {
-    const guildQueue = this.musicPlayer.getQueue(guildId);
-    if (!guildQueue) return;
-    guildQueue.filter.isEnabled = true;
-    guildQueue.filter.ffmpegArgs = ffmpegFilterString;
-  }
-  getFilterArgs(guildId: string) {
-    const guildQueue = this.musicPlayer.getQueue(guildId);
-    if (!guildQueue) return;
-    return guildQueue.filter.ffmpegArgs;
+  _setFilterArgs(ffmpegFilterString: string, guildQueue: GuildMusicQueue) {
+    guildQueue.filterArgs = ffmpegFilterString;
   }
 }
 

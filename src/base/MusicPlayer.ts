@@ -4,6 +4,7 @@ import {
   GuildMusicQueue,
   Message,
   MusicPlayerInterface,
+  RestartStreamOptions,
   Song,
 } from "discord.js";
 import ytdl from "discord-ytdl-core";
@@ -15,6 +16,7 @@ import FiltersManager from "./FiltersManager";
 interface PlaySongOptions {
   seek?: number;
   noOutput?: boolean;
+  applyFiler?: boolean;
 }
 
 class MusicPlayer implements MusicPlayerInterface {
@@ -45,6 +47,15 @@ class MusicPlayer implements MusicPlayerInterface {
     this.queueEditMode = false;
     this.filtersManager = new FiltersManager(this);
     this.dispatchedStartingSeek = null;
+  }
+
+  calculateSeekBasedOnSpeed(seek: number, guildQueue: GuildMusicQueue): number {
+    if (seek) {
+      const speedMod = this.filtersManager.detectFilterSpeedMod(guildQueue);
+      return seek / speedMod;
+    } else {
+      return 0;
+    }
   }
 
   async playSong(msg: Message, song: Song, options?: PlaySongOptions) {
@@ -82,9 +93,9 @@ class MusicPlayer implements MusicPlayerInterface {
           quality: "highestaudio",
           filter: "audioonly",
           opusEncoded: true,
-          seek: options?.seek || 0,
+          seek: this.calculateSeekBasedOnSpeed(options?.seek, guildQueue),
           highWaterMark: 1 << 25,
-          encoderArgs: guildQueue.filter.isEnabled ? ["-af", guildQueue.filter.ffmpegArgs] : null,
+          encoderArgs: options?.applyFiler ? ["-af", guildQueue.filterArgs] : null,
         });
       }
       //play the audioStream and repeatedly call itself
@@ -143,17 +154,22 @@ class MusicPlayer implements MusicPlayerInterface {
     this.playSong(msg, guildQueue.songs[0]);
   }
 
-  async restartAudioStream(msg: Message, customSeek?: number) {
+  async restartAudioStream(msg: Message, options?: RestartStreamOptions) {
     const guildQueue = this.getQueue(msg.guild.id);
     if (!guildQueue) return; //I'll put this one just in case
     //amount of seconds song has been playing for
-    const dispatcher = guildQueue.connection.dispatcher;
-    const seekAmount = Math.floor(dispatcher.streamTime / 1000);
+    const seekAmount = this.getDispatcherStreamTime(guildQueue, options?.filterSpeedModifier || 1);
     //kill current audio stream
     await this.playSong(msg, guildQueue.songs[0], {
-      seek: customSeek || seekAmount,
+      seek: options?.customSeek || seekAmount,
       noOutput: true,
+      applyFiler: options?.applyFilter,
     });
+  }
+
+  getDispatcherStreamTime(guildQueue: GuildMusicQueue, speedMod: number = 1) {
+    const dispatcher = guildQueue.connection.dispatcher;
+    return Math.floor((dispatcher.streamTime / 1000) * speedMod + this.dispatchedStartingSeek);
   }
 
   deleteQueue(guildId: string): boolean {
@@ -170,6 +186,7 @@ class MusicPlayer implements MusicPlayerInterface {
 
   _leaveVC(guildId: string) {
     const guildQueue = this.guildsQueue.get(guildId);
+    if (!guildQueue) return;
     guildQueue.voiceChannel.leave();
     this.deleteQueue(guildId);
     outputEmbed(guildQueue.textChannel, `Snacky has left voice chat`, {
@@ -185,12 +202,9 @@ class MusicPlayer implements MusicPlayerInterface {
       songs: [],
       volume: 1.0,
       earRape: false,
+      filterArgs: null,
       loopMode: "off",
       isPlaying: false,
-      filter: {
-        isEnabled: false,
-        ffmpegArgs: null,
-      },
     };
 
     this.guildsQueue.set(guildId, defaultQueueObject);

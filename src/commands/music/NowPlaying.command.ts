@@ -31,9 +31,11 @@ class NowPlaying extends Command implements CommandInterface {
     }
     //get currently playing song and fetch some info about it
     const song = guildQueue.songs[0]; //get song at first position in queue
-    const songDispatcher = guildQueue.connection.dispatcher;
-    const amountOfSecondsPlayed =
-      Math.floor(songDispatcher.streamTime / 1000) + this.client.player.dispatchedStartingSeek;
+    const currentSpeedMod = this.client.player.filtersManager.detectFilterSpeedMod(guildQueue);
+    const amountOfSecondsPlayed = this.client.player.getDispatcherStreamTime(
+      guildQueue,
+      currentSpeedMod
+    );
     const songLength = song.length;
     const progress = progressBar({
       current: amountOfSecondsPlayed,

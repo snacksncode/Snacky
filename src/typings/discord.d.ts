@@ -116,10 +116,7 @@ declare module "discord.js" {
     earRape: boolean;
     loopMode: "song" | "queue" | "off";
     songs: Song[];
-    filter: {
-      isEnabled: boolean;
-      ffmpegArgs: string;
-    };
+    filterArgs: string;
     volume: number;
     isPlaying: boolean;
   }
@@ -177,8 +174,15 @@ declare module "discord.js" {
     createQueue(guildId: string): GuildMusicQueue;
     getQueue(guildId: string): GuildMusicQueue;
     playSong(msg: Message, song: Song): Promise<void>;
-    restartAudioStream(msg: Message, customSeek?: number): Promise<void>;
+    restartAudioStream(msg: Message, options?: RestartStreamOptions): Promise<void>;
     leaveVCIfEmpty(guildId: string): void;
+    getDispatcherStreamTime(guildQueue: GuildMusicQueue, speedMod: number): number;
+  }
+
+  export interface RestartStreamOptions {
+    customSeek?: number;
+    filterSpeedModifier?: number;
+    applyFilter?: boolean;
   }
 
   export interface BotClient extends Client {
@@ -210,14 +214,16 @@ declare module "discord.js" {
       filterData: FilterData,
       usePreset?: PresetName
     ): Promise<void>;
-    getFilterArgs(guildId: string): string;
+    detectFilterSpeedMod(guildQueue: GuildMusicQueue): number;
+    disableFilter(msg: Message): Promise<void>;
   }
 
-  export type PresetName = "bassboost" | "nightcore" | "rotate";
+  export type PresetName = "bassboost" | "nightcore" | "vaporwave" | "rotate";
 
   export interface DefaultFilterPresets {
     bassboost: string;
     rotate: string;
+    vaporwave: string;
     nightcore: string;
   }
 
