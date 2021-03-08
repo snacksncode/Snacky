@@ -20,25 +20,23 @@ declare module "discord.js" {
   }
 
   export interface QueueCommandInterface extends CommandInterface {
-    guildQueue: GuildMusicQueue;
-    queueMessage: QueueMessageData;
+    generatedPages: Collection<string, MessageEmbed[]>;
+    queueMessages: Collection<string, QueueMessageObject>;
     songsPerPage: number;
     swapSongsInQueue(msg: Message, args: string[]): Promise<void>;
     playSongNextInQueue(msg: Message, args: string[]): Promise<void>;
-    playSongNextInQueue(msg: Message, args: string[]): Promise<void>;
     moveSongInQueue(msg: Message, args: string[]): Promise<void>;
-    updateRefQueueEmbed(msg: Message): Promise<void>;
-    generateQueueEmbeds(songs: Song[], songsLimit: number): void;
-    attachCollectorToEmbed(queueMessageRef: Message): Promise<void>;
-    outputQueueEmbed(msg: Message): Promise<void>;
-    generateQueuePageString(page: Song[], songs: Song[]): string;
     removeSongFromQueue(msg: Message, args: string[]): Promise<void>;
+    updateRefQueueEmbed(msg: Message): Promise<void>;
+    generateQueueEmbeds(guildId: string, songs: Song[], songsLimit: number): MessageEmbed[];
+    attachCollectorToEmbed(authorId: string, guildId: string): Promise<void>;
+    outputQueueEmbed(msg: Message, queueEditEmbed?: boolean): Promise<void>;
+    generateQueuePageString(page: Song[], songs: Song[]): string;
   }
 
-  export interface QueueMessageData {
+  export interface QueueMessageObject {
     ref: Message;
     collector: ReactionCollector;
-    generatedPages: MessageEmbed[];
     authorId: string;
   }
 
