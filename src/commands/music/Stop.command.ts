@@ -29,11 +29,7 @@ class Stop extends Command implements CommandInterface {
         color: this.client.config.colors.error,
       });
     }
-    guildQueue.voiceChannel.leave();
-    this.client.player.guildsQueue.delete(msg.guild.id);
-    outputEmbed(msg.channel, "Bot has stopped playback, left voice chat and deleted server queue", {
-      color: this.client.config.colors.success,
-    });
+    this.client.player._leaveVC(msg.guild.id, "Stop Command");
   }
 }
 

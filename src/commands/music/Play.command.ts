@@ -29,7 +29,7 @@ class Play extends Command implements PlayCommandInterface {
       name: "play",
       aliases: ["p"],
       description: "Plays specified song",
-      usage: `<prefix>play [YT Search | YT Video link | YT Playlist]`,
+      usage: `<prefix>play (YT Search [--next?] or YT Video link [--next?] or YT Playlist [--random?])`,
       category: "Music",
     });
     this.colors = this.client.config.colors;
@@ -62,8 +62,8 @@ class Play extends Command implements PlayCommandInterface {
     }
     if (this.client.player.finishedQueueTimeoutId) {
       this.client.logger.log(
-        { color: "warning", name: "Music Player: Debug" },
-        "Added new song during timeout. Removing timeout..."
+        { color: "info", name: "Music Player: Added Song" },
+        "Added new song during to empty queue. Removing timeout..."
       );
       clearTimeout(this.client.player.finishedQueueTimeoutId);
       this.client.player.finishedQueueTimeoutId = null;
@@ -208,24 +208,22 @@ class Play extends Command implements PlayCommandInterface {
                   //Just play the song, ignore playlist
                   this.processSong(extractedUrl, msg);
                   userSelectedOptionText = "You have chosen 1st option";
-                  collectorInstance.stop();
                   break;
                 }
                 case "2️⃣": {
                   //Add the playlist to queue
                   this.processPlaylist(extractedUrl, msg, false, containsRandomFlag);
                   userSelectedOptionText = "You have chosen 2nd option";
-                  collectorInstance.stop();
                   break;
                 }
                 case "3️⃣": {
                   //Add the playlist to queue
                   this.processPlaylist(extractedUrl, msg, true, containsRandomFlag);
                   userSelectedOptionText = "You have chosen 3rd option";
-                  collectorInstance.stop();
                   break;
                 }
               }
+              collectorInstance.stop();
             })
             .on("end", async (_) => {
               messageObject.reactions.removeAll();

@@ -174,6 +174,8 @@ declare module "discord.js" {
     createQueue(guildId: string): GuildMusicQueue;
     getQueue(guildId: string): GuildMusicQueue;
     playSong(msg: Message, song: Song): Promise<void>;
+    deleteQueue(guildId: string): boolean;
+    _leaveVC(guildId: string, reason?: string): void;
     restartAudioStream(msg: Message, options?: RestartStreamOptions): Promise<void>;
     leaveVCIfEmpty(guildId: string): void;
     getDispatcherStreamTime(guildQueue: GuildMusicQueue, speedMod: number): number;

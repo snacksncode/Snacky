@@ -69,11 +69,11 @@ class MusicPlayer implements MusicPlayerInterface {
       //queue is empty
       const QUEUE_FINISH_LEAVE_DELAY = 60 * 1000; //60s
       this.client.logger.log(
-        { color: "warning", name: "Music Player: Debug" },
-        "Queue is now empty. Setting up 60s timer"
+        { color: "info", name: "Music Player: Queue Empty" },
+        "Setting up 60s timer"
       );
       this.finishedQueueTimeoutId = setTimeout(() => {
-        this._leaveVC(msg.guild.id);
+        this._leaveVC(msg.guild.id, "Empty Queue Timeout");
         this.deleteQueue(msg.guild.id);
       }, QUEUE_FINISH_LEAVE_DELAY);
       return;
@@ -179,15 +179,23 @@ class MusicPlayer implements MusicPlayerInterface {
   leaveVCIfEmpty(guildId: string) {
     const guildQueue = this.guildsQueue.get(guildId);
     if (!guildQueue) return;
+    this.client.logger.log(
+      { color: "info", name: `Music Player: Timeout Fired` },
+      `Server: ${guildQueue.voiceChannel.guild.name}`
+    );
     const voiceChannel = guildQueue.voiceChannel;
     if (voiceChannel.members.size > 1) return;
-    this._leaveVC(guildId);
+    this._leaveVC(guildId, "Empty VC Timeout");
   }
 
-  _leaveVC(guildId: string) {
+  _leaveVC(guildId: string, reason: string = "Not Provided") {
     const guildQueue = this.guildsQueue.get(guildId);
     if (!guildQueue) return;
     guildQueue.voiceChannel.leave();
+    this.client.logger.log(
+      { color: "info", name: `Music Player: Left VC` },
+      `Server: ${guildQueue.voiceChannel.guild.name} | Reason: ${reason} | From: ${guildQueue.voiceChannel.name}`
+    );
     this.deleteQueue(guildId);
     outputEmbed(guildQueue.textChannel, `Snacky has left voice chat`, {
       color: this.client.config.colors.info,
