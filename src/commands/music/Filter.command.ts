@@ -5,6 +5,8 @@ import {
   MessageReaction,
   User,
   FilterData,
+  PresetName,
+  GuildMusicQueue,
 } from "discord.js";
 import Command from "../../base/Command";
 import { outputEmbed } from "../../utils/generic";
@@ -114,16 +116,15 @@ class Filter extends Command implements CommandInterface {
       .on("collect", async (reaction: MessageReaction) => {
         switch (reaction.emoji.name) {
           case answerEmojis.one: {
-            //enable bassboost preset
-            this.client.player.filtersManager.generateAndApplyFilter(msg, null, "bassboost");
+            this.enablePreset(msg, "bassboost", guildQueue);
             break;
           }
           case answerEmojis.two: {
-            this.client.player.filtersManager.generateAndApplyFilter(msg, null, "vaporwave");
+            this.enablePreset(msg, "vaporwave", guildQueue);
             break;
           }
           case answerEmojis.three: {
-            this.client.player.filtersManager.generateAndApplyFilter(msg, null, "nightcore");
+            this.enablePreset(msg, "nightcore", guildQueue);
             break;
           }
           case answerEmojis.custom: {
@@ -131,7 +132,12 @@ class Filter extends Command implements CommandInterface {
             break;
           }
           case answerEmojis.off: {
-            this.client.player.filtersManager.disableFilter(msg);
+            if (guildQueue.filter.selectedPreset === null) {
+              outputEmbed(msg.channel, `Filter is **already** disabled`, { color: colors.info });
+              break;
+            }
+            await this.client.player.filtersManager.disableFilter(msg);
+            guildQueue.filter.selectedPreset = null;
             break;
           }
         }
@@ -140,6 +146,27 @@ class Filter extends Command implements CommandInterface {
       .on("end", (_) => {
         messageReference.reactions.removeAll();
       });
+  }
+  async enablePreset(msg: Message, presetName: PresetName, guildQueue: GuildMusicQueue) {
+    if (presetName === guildQueue.filter.selectedPreset) {
+      outputEmbed(
+        msg.channel,
+        `Preset ${presetName === "rotate" ? "8D" : presetName} is **already** enabled`,
+        {
+          color: this.client.config.colors.info,
+        }
+      );
+      return;
+    }
+    await this.client.player.filtersManager.generateAndApplyFilter(msg, null, presetName);
+    guildQueue.filter.selectedPreset = presetName;
+    outputEmbed(
+      msg.channel,
+      `Preset **${presetName === "rotate" ? "8D" : presetName}** has been enabed`,
+      {
+        color: this.client.config.colors.success,
+      }
+    );
   }
 }
 

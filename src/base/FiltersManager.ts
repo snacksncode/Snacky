@@ -49,7 +49,7 @@ class FiltersManager implements FiltersManagerInterface {
   //it's used to correctly calculate amount of "seconds" music has been played for
   detectFilterSpeedMod(guildQueue: GuildMusicQueue) {
     const speedModRegex = /asetrate=48000\*(\d{1,}\.?(\d{1,})?)/;
-    const detectedSpeedMod = guildQueue?.filterArgs?.match(speedModRegex)?.[1];
+    const detectedSpeedMod = guildQueue?.filter?.args?.match(speedModRegex)?.[1];
     return detectedSpeedMod ? Number(detectedSpeedMod) : 1;
   }
 
@@ -78,14 +78,14 @@ class FiltersManager implements FiltersManagerInterface {
     //detect speedMod of current filter
     const speedMod = this.detectFilterSpeedMod(guildQueue);
     //reset filterArgs on guildQueue
-    guildQueue.filterArgs = null;
+    guildQueue.filter.args = null;
     //restart stream
     await this.musicPlayer.restartAudioStream(msg, {
       filterSpeedModifier: speedMod,
     });
   }
   _setFilterArgs(ffmpegFilterString: string, guildQueue: GuildMusicQueue) {
-    guildQueue.filterArgs = ffmpegFilterString;
+    guildQueue.filter.args = ffmpegFilterString;
   }
 }
 

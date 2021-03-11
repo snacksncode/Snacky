@@ -114,7 +114,10 @@ declare module "discord.js" {
     earRape: boolean;
     loopMode: "song" | "queue" | "off";
     songs: Song[];
-    filterArgs: string;
+    filter: {
+      args: string;
+      selectedPreset: PresetName | null;
+    };
     volume: number;
     isPlaying: boolean;
   }

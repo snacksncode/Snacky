@@ -62,8 +62,8 @@ class Play extends Command implements PlayCommandInterface {
     }
     if (this.client.player.finishedQueueTimeoutId) {
       this.client.logger.log(
-        { color: "info", name: "Music Player: Added Song" },
-        "Added new song during to empty queue. Removing timeout..."
+        { color: "info", name: "Music Player: Queue" },
+        "\nAdded song to empty queue. Removing timeout..."
       );
       clearTimeout(this.client.player.finishedQueueTimeoutId);
       this.client.player.finishedQueueTimeoutId = null;

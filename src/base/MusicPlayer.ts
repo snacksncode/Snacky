@@ -69,8 +69,8 @@ class MusicPlayer implements MusicPlayerInterface {
       //queue is empty
       const QUEUE_FINISH_LEAVE_DELAY = 60 * 1000; //60s
       this.client.logger.log(
-        { color: "info", name: "Music Player: Queue Empty" },
-        "Setting up 60s timer"
+        { color: "info", name: "Music Player: Queue" },
+        "\nQueue is empty! Setting up 60s timer..."
       );
       this.finishedQueueTimeoutId = setTimeout(() => {
         this._leaveVC(msg.guild.id, "Empty Queue Timeout");
@@ -95,7 +95,7 @@ class MusicPlayer implements MusicPlayerInterface {
           opusEncoded: true,
           seek: this.calculateSeekBasedOnSpeed(options?.seek, guildQueue),
           highWaterMark: 1 << 25,
-          encoderArgs: options?.applyFiler ? ["-af", guildQueue.filterArgs] : null,
+          encoderArgs: options?.applyFiler ? ["-af", guildQueue.filter.args] : null,
         });
       }
       //play the audioStream and repeatedly call itself
@@ -104,11 +104,7 @@ class MusicPlayer implements MusicPlayerInterface {
           type: song.isLive ? "unknown" : "opus",
         })
         .on("finish", () => {
-          this.client.logger.log(
-            { name: "Music Player: Debug", color: "info" },
-            "Finish event triggered on dispatcher"
-          );
-          this.songFinishedPlaying(msg);
+          this.songFinishedPlaying(msg, options?.applyFiler);
         })
         // .on("debug", (debugInfo) => {
         //   console.log(debugInfo);
@@ -140,7 +136,7 @@ class MusicPlayer implements MusicPlayerInterface {
     }
   }
 
-  songFinishedPlaying(msg: Message) {
+  songFinishedPlaying(msg: Message, keepFilter?: boolean) {
     const guildQueue = this.getQueue(msg.guild.id);
     if (!guildQueue) return;
     guildQueue.isPlaying = false;
@@ -151,7 +147,7 @@ class MusicPlayer implements MusicPlayerInterface {
       const song = guildQueue.songs.shift();
       guildQueue.songs.push(song);
     }
-    this.playSong(msg, guildQueue.songs[0]);
+    this.playSong(msg, guildQueue.songs[0], { applyFiler: keepFilter });
   }
 
   async restartAudioStream(msg: Message, options?: RestartStreamOptions) {
@@ -181,7 +177,7 @@ class MusicPlayer implements MusicPlayerInterface {
     if (!guildQueue) return;
     this.client.logger.log(
       { color: "info", name: `Music Player: Timeout Fired` },
-      `Server: ${guildQueue.voiceChannel.guild.name}`
+      `\nServer: ${guildQueue.voiceChannel.guild.name}`
     );
     const voiceChannel = guildQueue.voiceChannel;
     if (voiceChannel.members.size > 1) return;
@@ -193,8 +189,8 @@ class MusicPlayer implements MusicPlayerInterface {
     if (!guildQueue) return;
     guildQueue.voiceChannel.leave();
     this.client.logger.log(
-      { color: "info", name: `Music Player: Left VC` },
-      `Server: ${guildQueue.voiceChannel.guild.name} | Reason: ${reason} | From: ${guildQueue.voiceChannel.name}`
+      { color: "info", name: `Voice State: Left VC` },
+      `\nServer: ${guildQueue.voiceChannel.guild.name}\nReason: ${reason}\nVC: ${guildQueue.voiceChannel.name}`
     );
     this.deleteQueue(guildId);
     outputEmbed(guildQueue.textChannel, `Snacky has left voice chat`, {
@@ -210,7 +206,10 @@ class MusicPlayer implements MusicPlayerInterface {
       songs: [],
       volume: 1.0,
       earRape: false,
-      filterArgs: null,
+      filter: {
+        args: null,
+        selectedPreset: null,
+      },
       loopMode: "off",
       isPlaying: false,
     };

@@ -42,7 +42,7 @@ class VoiceStateUpdate extends EventBase implements Event {
         //create timeout if someone left
         this.client.logger.log(
           { color: "info", name: `Music Player: User Left VC` },
-          `Setting up timeout 30s... | Server: ${oldVoiceState.guild.name} | User: ${oldVoiceState.member.user.tag}`
+          `\nServer: ${oldVoiceState.guild.name}\nUser: ${oldVoiceState.member.user.tag}\nSetting up timeout 30s...`
         );
         player.leaveVCTimeoutId = setTimeout(() => {
           player.leaveVCIfEmpty(newVoiceState.guild.id);
@@ -52,7 +52,7 @@ class VoiceStateUpdate extends EventBase implements Event {
         if (player.leaveVCTimeoutId) {
           this.client.logger.log(
             { color: "info", name: `Music Player: User Joined VC` },
-            `Clearing timeout... | Server: ${oldVoiceState.guild.name} | User: ${oldVoiceState.member.user.tag}`
+            `\nServer: ${oldVoiceState.guild.name}\nUser: ${oldVoiceState.member.user.tag}\nClearing timeout...`
           );
           clearTimeout(player.leaveVCTimeoutId);
           player.leaveVCTimeoutId = null;
@@ -73,7 +73,7 @@ class VoiceStateUpdate extends EventBase implements Event {
       if (!newVoiceState.channel) {
         this.client.logger.log(
           { color: "info", name: `Music Player: Kicked from VC` },
-          `Server: ${oldVoiceState?.guild.name} | From: ${oldVoiceState?.channel.name}`
+          `\nServer: ${oldVoiceState?.guild.name}\nVC: ${oldVoiceState?.channel.name}`
         );
         this.client.player.deleteQueue(oldVoiceState.guild.id);
         return;
@@ -88,7 +88,7 @@ class VoiceStateUpdate extends EventBase implements Event {
         if (player.leaveVCTimeoutId && guildQueue.voiceChannel.members.size === 1) {
           this.client.logger.log(
             { color: "info", name: `Music Player: Moved During Timeout` },
-            `Clearing old one & Setting up a new one... | Server: ${oldVoiceState.guild.name}`
+            `\nServer: ${oldVoiceState.guild.name}\nClearing old one & Setting up a new one...`
           );
           clearTimeout(player.leaveVCTimeoutId);
           player.leaveVCTimeoutId = setTimeout(() => {
@@ -97,14 +97,14 @@ class VoiceStateUpdate extends EventBase implements Event {
         } else {
           this.client.logger.log(
             { color: "info", name: `Music Player: Moved` },
-            `Server: ${oldVoiceState?.guild.name} | ${oldVoiceState?.channel.name} => ${newVoiceState?.channel.name}`
+            `\nServer: ${oldVoiceState?.guild.name}\nVC: ${oldVoiceState?.channel.name} 🢂 ${newVoiceState?.channel.name}`
           );
           if (player.leaveVCTimeoutId) {
             clearTimeout(player.leaveVCTimeoutId);
           }
           this.client.logger.log(
             { color: "info", name: `Music Player: Moved to Empty Channel` },
-            `Server: ${oldVoiceState?.guild.name} | Setting up timer`
+            `\nServer: ${oldVoiceState?.guild.name}\nSetting up 30s timer`
           );
           player.leaveVCTimeoutId = setTimeout(() => {
             player.leaveVCIfEmpty(newVoiceState.guild.id);
