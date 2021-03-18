@@ -103,7 +103,7 @@ class VoiceStateUpdate extends EventBase implements Event {
             clearTimeout(player.leaveVCTimeoutId);
           }
           this.client.logger.log(
-            { color: "info", name: `Music Player: Moved to Empty Channel` },
+            { color: "warning", name: `Music Player: Moved to Empty Channel` },
             `\nServer: ${oldVoiceState?.guild.name}\nSetting up 30s timer`
           );
           player.leaveVCTimeoutId = setTimeout(() => {

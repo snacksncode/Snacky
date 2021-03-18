@@ -21,6 +21,11 @@ const config: Config = {
   token: getToken(),
   ignoreUnknownCommands: false,
   version: "2.10.0-Beta",
+  debugMode: false,
+  database: {
+    user: process.env.DATABASE_USER,
+    password: process.env.DATABASE_PASSWORD,
+  },
   paths: {
     commands: "/commands/**/*.command.ts", //you can use pattern matching here
     events: "/events/**/*.event.ts",

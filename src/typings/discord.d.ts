@@ -1,3 +1,4 @@
+import { Connection } from "mongoose";
 declare module "discord.js" {
   export interface CommandInterface extends CommandBaseInterface {
     run(msg: Message): Promise<any>;
@@ -92,6 +93,7 @@ declare module "discord.js" {
   export interface EventBaseInterface {
     client: BotClient;
     eventName: string;
+    ignoreEvent?: boolean;
   }
 
   export interface CustomReactionEmoji {
@@ -141,11 +143,23 @@ declare module "discord.js" {
     requestedBy: User;
     isLive: boolean;
   }
+
+  export interface DatabaseManagerInterface {
+    client: BotClient;
+    connection: Connection | null;
+    testConnection(): Promise<void>;
+  }
+
   export interface Config {
     token: string;
     version: string;
     prefix: string;
     ignoreUnknownCommands: boolean;
+    debugMode: boolean;
+    database: {
+      user: string;
+      password: string;
+    };
     paths: {
       commands: string;
       events: string;
@@ -195,6 +209,7 @@ declare module "discord.js" {
     commands: Collection<string, CommandInterface>;
     // guildsQueue: Map<string, GuildMusicQueue>;
     player: MusicPlayerInterface;
+    database: DatabaseManagerInterface;
     config: Config;
     init(): void;
   }

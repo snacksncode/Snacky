@@ -128,6 +128,7 @@ class Filter extends Command implements CommandInterface {
             break;
           }
           case answerEmojis.custom: {
+            this.handleCustomFilterCreation(msg);
             break;
           }
           case answerEmojis.off: {
@@ -166,6 +167,79 @@ class Filter extends Command implements CommandInterface {
         color: this.client.config.colors.success,
       }
     );
+  }
+  async handleCustomFilterCreation(msg: Message) {
+    //set client to ignore unknown commands
+    this.client.config.ignoreUnknownCommands = true;
+    //some fancy output
+    await outputEmbed(
+      msg.channel,
+      "You can now create your own filter from scratch. You can add bass, normalization and change speed",
+      {
+        color: this.client.config.colors.info,
+        title: "Create your own filter!",
+        fields: [
+          {
+            name: "Bass",
+            value: "Use `s!bass <amount>` to set bass-boost amount (in dB)",
+          },
+          {
+            name: "Audio Normalization",
+            value:
+              "Use `s!norm <on|off>` to enable audio normalizaion. It'll try to lower audio volume to remove any distortions that may be caused by bass-boost",
+          },
+          {
+            name: "Swapping",
+            value: "Use `s!swap <song1> <song2>` to swap positions of two songs",
+          },
+          {
+            name: "Play next",
+            value: "Use `s!next <position>` to play that song after currently playing one",
+          },
+        ],
+      }
+    );
+    // const editQueueCommandsFilter = (m: Message) => {
+    //   return (
+    //     m.content.startsWith(this.client.config.prefix) && m.author.id === queueMessage.authorId
+    //   );
+    // };
+    // const timeLimit = 5 * 60 * 1000; //5min
+    // const collector = msg.channel.createMessageCollector(editQueueCommandsFilter, {
+    //   time: timeLimit,
+    // });
+    // collector
+    //   .on("collect", async (m: Message) => {
+    //     const userInput = removePrefix(m.content.trim(), this.client.config.prefix);
+    //     const args = userInput.split(" ");
+    //     const command = args.shift().toLowerCase();
+    //     switch (command) {
+    //       case "remove":
+    //         break;
+    //       case "move":
+    //         break;
+    //       case "swap":
+    //         break;
+    //       case "next":
+    //         break;
+    //       case "exit":
+    //         collector.stop();
+    //         return;
+    //       default:
+    //         break;
+    //     }
+    //   })
+    //   .on("end", (collected) => {
+    //     this.client.player.queueEditMode = false;
+    //     this.client.config.ignoreUnknownCommands = false;
+    //     let exitString = "Exiting queue edit mode";
+    //     if (collected.size < 1) {
+    //       exitString = "Exiting queue edit mode due to inactivity";
+    //     }
+    //     outputEmbed(msg.channel, exitString, {
+    //       color: colors.info,
+    //     });
+    //   });
   }
 }
 
