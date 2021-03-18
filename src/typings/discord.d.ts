@@ -145,6 +145,7 @@ declare module "discord.js" {
     token: string;
     version: string;
     prefix: string;
+    ignoreUnknownCommands: boolean;
     paths: {
       commands: string;
       events: string;

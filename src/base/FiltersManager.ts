@@ -18,7 +18,7 @@ class FiltersManager implements FiltersManagerInterface {
     this.filterPresets = {
       bassboost: "bass=g=15,dynaudnorm=f=200",
       vaporwave: "aresample=48000,asetrate=48000*0.8",
-      nightcore: "aresample=48000,asetrate=48000*1.25",
+      nightcore: "bass=g=15,aresample=48000,asetrate=48000*1.4",
       rotate: "apulsator=hz=0.08",
     };
   }

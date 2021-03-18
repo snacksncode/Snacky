@@ -35,7 +35,7 @@ class MessageEvent extends EventBase implements Event {
       well they are mini commands and dont have their own classes
     */
     if (!commandClass) {
-      if (!this.client.player.queueEditMode) {
+      if (!this.client.config.ignoreUnknownCommands) {
         outputEmbed(msg.channel, `Command \`${requestedCommand}\` doesn't exist`, {
           color: this.client.config.colors.error,
         });

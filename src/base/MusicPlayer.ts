@@ -175,13 +175,13 @@ class MusicPlayer implements MusicPlayerInterface {
   leaveVCIfEmpty(guildId: string) {
     const guildQueue = this.guildsQueue.get(guildId);
     if (!guildQueue) return;
+    const voiceChannel = guildQueue.voiceChannel;
+    if (voiceChannel.members.size > 1) return;
+    this._leaveVC(guildId, "Empty VC Timeout");
     this.client.logger.log(
       { color: "info", name: `Music Player: Timeout Fired` },
       `\nServer: ${guildQueue.voiceChannel.guild.name}`
     );
-    const voiceChannel = guildQueue.voiceChannel;
-    if (voiceChannel.members.size > 1) return;
-    this._leaveVC(guildId, "Empty VC Timeout");
   }
 
   _leaveVC(guildId: string, reason: string = "Not Provided") {

@@ -77,6 +77,7 @@ class Queue extends Command implements QueueCommandInterface {
 
     if (queueEditMode) {
       this.client.player.queueEditMode = true;
+      this.client.config.ignoreUnknownCommands = true;
       //some fancy output
       await outputEmbed(
         msg.channel,
@@ -142,6 +143,7 @@ class Queue extends Command implements QueueCommandInterface {
         })
         .on("end", (collected) => {
           this.client.player.queueEditMode = false;
+          this.client.config.ignoreUnknownCommands = false;
           let exitString = "Exiting queue edit mode";
           if (collected.size < 1) {
             exitString = "Exiting queue edit mode due to inactivity";
@@ -460,8 +462,6 @@ class Queue extends Command implements QueueCommandInterface {
               outputEmbed(msg.channel, "Understood, cancelling the request", {
                 color: colors.info,
               });
-              break;
-            default:
               break;
           }
         });

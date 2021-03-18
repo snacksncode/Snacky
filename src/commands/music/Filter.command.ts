@@ -128,7 +128,6 @@ class Filter extends Command implements CommandInterface {
             break;
           }
           case answerEmojis.custom: {
-            outputEmbed(msg.channel, `Still under development`, { color: colors.warn });
             break;
           }
           case answerEmojis.off: {
