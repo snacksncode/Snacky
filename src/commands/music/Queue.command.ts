@@ -137,16 +137,14 @@ class Queue extends Command implements QueueCommandInterface {
             case "exit":
               collector.stop();
               return;
-            default:
-              break;
           }
         })
         .on("end", (collected) => {
           this.client.player.queueEditMode = false;
           this.client.config.ignoreUnknownCommands = false;
-          let exitString = "Exiting queue edit mode";
+          let exitString = "Exited queue edit mode";
           if (collected.size < 1) {
-            exitString = "Exiting queue edit mode due to inactivity";
+            exitString = "Exited queue edit mode due to inactivity";
           }
           outputEmbed(msg.channel, exitString, {
             color: colors.info,

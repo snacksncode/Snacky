@@ -9,7 +9,7 @@ import {
   GuildMusicQueue,
 } from "discord.js";
 import Command from "../../base/Command";
-import { outputEmbed } from "../../utils/generic";
+import { outputEmbed, removePrefix } from "../../utils/generic";
 
 const DEFAULT_FILTER_DATA: FilterData = {
   bass: {
@@ -88,7 +88,7 @@ class Filter extends Command implements CommandInterface {
           },
           {
             name: ":tools: Create your own",
-            value: "Enter a more advanced mode and create your own filter without any restrictions",
+            value: "Enter a more advanced mode and create your own filter",
           },
           {
             name: ":no_entry: Turn Off",
@@ -181,65 +181,63 @@ class Filter extends Command implements CommandInterface {
         fields: [
           {
             name: "Bass",
-            value: "Use `s!bass <amount>` to set bass-boost amount (in dB)",
+            value:
+              "Use `s!bass <amount>` to set bass-boost amount (in dB).\n**Allowed values: 5 - 25**",
           },
           {
             name: "Audio Normalization",
             value:
-              "Use `s!norm <on|off>` to enable audio normalizaion. It'll try to lower audio volume to remove any distortions that may be caused by bass-boost",
+              "Use `s!norm <on|off>` to enable audio normalizaion. It'll try to lower audio volume to remove any distortions that may be caused by bass-boost. If you want to make some distorted bass don't enable this feature",
           },
           {
-            name: "Swapping",
-            value: "Use `s!swap <song1> <song2>` to swap positions of two songs",
+            name: "Custom Speed",
+            value:
+              "Use `s!speed <custom-speed>` to set custom speed.\n**Allowed values: 0.05 - 4.00**",
           },
           {
-            name: "Play next",
-            value: "Use `s!next <position>` to play that song after currently playing one",
+            name: "8D",
+            value:
+              'Use `s!rotation <number|off>` to enable "8D" effect. Audio will spin around your head with specified speed.\n**Recommended values: 0.01 - 2**',
           },
         ],
       }
     );
-    // const editQueueCommandsFilter = (m: Message) => {
-    //   return (
-    //     m.content.startsWith(this.client.config.prefix) && m.author.id === queueMessage.authorId
-    //   );
-    // };
-    // const timeLimit = 5 * 60 * 1000; //5min
-    // const collector = msg.channel.createMessageCollector(editQueueCommandsFilter, {
-    //   time: timeLimit,
-    // });
-    // collector
-    //   .on("collect", async (m: Message) => {
-    //     const userInput = removePrefix(m.content.trim(), this.client.config.prefix);
-    //     const args = userInput.split(" ");
-    //     const command = args.shift().toLowerCase();
-    //     switch (command) {
-    //       case "remove":
-    //         break;
-    //       case "move":
-    //         break;
-    //       case "swap":
-    //         break;
-    //       case "next":
-    //         break;
-    //       case "exit":
-    //         collector.stop();
-    //         return;
-    //       default:
-    //         break;
-    //     }
-    //   })
-    //   .on("end", (collected) => {
-    //     this.client.player.queueEditMode = false;
-    //     this.client.config.ignoreUnknownCommands = false;
-    //     let exitString = "Exiting queue edit mode";
-    //     if (collected.size < 1) {
-    //       exitString = "Exiting queue edit mode due to inactivity";
-    //     }
-    //     outputEmbed(msg.channel, exitString, {
-    //       color: colors.info,
-    //     });
-    //   });
+    const editQueueCommandsFilter = (m: Message) => {
+      return m.content.startsWith(this.client.config.prefix) && m.author.id === msg.author.id;
+    };
+    const timeLimit = 5 * 60 * 1000; //5min
+    const collector = msg.channel.createMessageCollector(editQueueCommandsFilter, {
+      time: timeLimit,
+    });
+    collector
+      .on("collect", async (m: Message) => {
+        const userInput = removePrefix(m.content.trim(), this.client.config.prefix);
+        const args = userInput.split(" ");
+        const command = args.shift().toLowerCase();
+        switch (command) {
+          case "bass":
+            break;
+          case "norm":
+            break;
+          case "speed":
+            break;
+          case "rotation":
+            break;
+          case "exit":
+            collector.stop();
+            return;
+        }
+      })
+      .on("end", (collected) => {
+        this.client.config.ignoreUnknownCommands = false;
+        let exitString = "Exited filter creation mode";
+        if (collected.size < 1) {
+          exitString = "Exited filter creation mode due to inactivity";
+        }
+        outputEmbed(msg.channel, exitString, {
+          color: this.client.config.colors.info,
+        });
+      });
   }
 }
 
