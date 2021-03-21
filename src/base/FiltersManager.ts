@@ -8,6 +8,7 @@ import {
   MusicPlayerInterface,
   PresetName,
 } from "discord.js";
+import { outputEmbed } from "../utils/generic";
 
 class FiltersManager implements FiltersManagerInterface {
   musicPlayer: MusicPlayerInterface;
@@ -26,7 +27,7 @@ class FiltersManager implements FiltersManagerInterface {
     switch (input) {
       case "bass":
         return "bass=g=";
-      case "normalization":
+      case "norm":
         return "dynaudnorm=f=";
       case "speed":
         return "aresample=48000,asetrate=48000*";
@@ -70,6 +71,9 @@ class FiltersManager implements FiltersManagerInterface {
     await this.musicPlayer.restartAudioStream(msg, {
       applyFilter: true,
       filterSpeedModifier: speedMod,
+    });
+    outputEmbed(msg.channel, "Applying filter...", {
+      color: this.musicPlayer.client.config.colors.info,
     });
   }
   async disableFilter(msg: Message) {
