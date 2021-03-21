@@ -20,7 +20,7 @@ const config: Config = {
   prefix: getPrefix(),
   token: getToken(),
   ignoreUnknownCommands: false,
-  version: "2.10.0-Beta",
+  version: "2.10.0",
   debugMode: false,
   database: {
     user: process.env.DATABASE_USER,
