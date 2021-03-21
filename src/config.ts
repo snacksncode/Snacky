@@ -19,7 +19,13 @@ function getPrefix() {
 const config: Config = {
   prefix: getPrefix(),
   token: getToken(),
-  version: "2.10.0-Alpha",
+  ignoreUnknownCommands: false,
+  version: "2.10.0",
+  debugMode: false,
+  database: {
+    user: process.env.DATABASE_USER,
+    password: process.env.DATABASE_PASSWORD,
+  },
   paths: {
     commands: "/commands/**/*.command.ts", //you can use pattern matching here
     events: "/events/**/*.event.ts",

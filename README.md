@@ -17,12 +17,12 @@ Snacky is a little bot that I've written for my own server and overall just for 
 
 ### Avaible commands
 
-| Category    | Commands                                                                   |
-| ----------- | -------------------------------------------------------------------------- |
-| Information | avatar, help, ping, uptime                                                 |
-| Moderation  | clear, mute, unmute                                                        |
-| Music       | play, queue, shuffle, skip, loop, stop, earrape, nowplaying, pause, resume |
-| Fun         | roll, jd                                                                   |
+| Category    | Commands                                                                           |
+| ----------- | ---------------------------------------------------------------------------------- |
+| Information | avatar, help, ping, uptime                                                         |
+| Moderation  | clear, mute, unmute                                                                |
+| Music       | play, queue, shuffle, skip, loop, stop, earrape, nowplaying, pause, resume, rewind |
+| Fun         | roll, jd                                                                           |
 
 <a name="invite"><h1>Invite Snacky to your discord server</h1></a>
 

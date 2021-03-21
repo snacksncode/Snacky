@@ -29,10 +29,20 @@ class VoiceStateUpdate extends EventBase implements Event {
           clearTimeout(player.leaveVCTimeoutId);
           player.leaveVCTimeoutId = null;
         }
+        if (!oldVoiceState.channel) {
+          this.client.logger.log(
+            { color: "warning", name: "Music Player: Debug" },
+            `User's oldVoiceState.channel is missing. Logging stuff`
+          );
+          this.client.logger.log(
+            { color: "warning", name: `oldVoiceState | ${oldVoiceState.member.user.tag}` },
+            `\n${oldVoiceState}`
+          );
+        }
         //create timeout if someone left
         this.client.logger.log(
-          { color: "warning", name: "Music Player: Debug" },
-          `${oldVoiceState.member.user.tag} left VC (${oldVoiceState.channel.name}). I'll check it's state after 30s`
+          { color: "info", name: `Music Player: User Left VC` },
+          `\nServer: ${oldVoiceState.guild.name}\nUser: ${oldVoiceState.member.user.tag}\nSetting up timeout 30s...`
         );
         player.leaveVCTimeoutId = setTimeout(() => {
           player.leaveVCIfEmpty(newVoiceState.guild.id);
@@ -41,54 +51,73 @@ class VoiceStateUpdate extends EventBase implements Event {
         //clear timeout if someone joined
         if (player.leaveVCTimeoutId) {
           this.client.logger.log(
-            { color: "warning", name: "Music Player: Debug" },
-            `${newVoiceState.member.user.tag} joined VC (${newVoiceState.channel.name}). Clearing timeout...`
+            { color: "info", name: `Music Player: User Joined VC` },
+            `\nServer: ${oldVoiceState.guild.name}\nUser: ${oldVoiceState.member.user.tag}\nClearing timeout...`
           );
           clearTimeout(player.leaveVCTimeoutId);
           player.leaveVCTimeoutId = null;
         }
       }
-    }
-    //===================================================
-    //Deal with bot getting moved from channel to channel
-    //===================================================
-    if (oldVoiceState.member.id !== this.client.user.id) {
-      return;
-    }
-    //bot just joined the voice chat
-    if (!oldVoiceState.channel) {
-      return;
-    }
-    //new voice state might not have a channel if bot was disconnected by someone
-    if (!newVoiceState.channel) {
-      return;
-    }
-    const oldChannelId = oldVoiceState.channel.id;
-    const newChannelId = newVoiceState.channel.id;
-
-    if (oldChannelId !== newChannelId) {
-      //edge case: bot can be moved during "timeout" period
-      if (player.leaveVCTimeoutId && guildQueue.voiceChannel.members.size === 1) {
-        if (player.leaveVCTimeoutId) {
-          clearTimeout(player.leaveVCTimeoutId);
-        }
-        //if channel object disappeared in newState this means that user has left
-        this.client.logger.log(
-          { color: "warning", name: "Music Player: Debug" },
-          `Snacky was moved to an empty VC (${newVoiceState.channel.name}). I'll check this channel's status after 30s`
-        );
-        player.leaveVCTimeoutId = setTimeout(() => {
-          player.leaveVCIfEmpty(newVoiceState.guild.id);
-        }, DEFAULT_LEAVE_VC_IF_EMPTY_DELAY);
+    } else {
+      //=======================================================
+      //Deal with bot getting moved to another channel & kicked
+      //=======================================================
+      if (oldVoiceState.member.id !== this.client.user.id) {
+        return;
       }
-      guildQueue.voiceChannel = newVoiceState.channel;
-      outputEmbed(
-        guildQueue.textChannel,
-        `Snacky was moved to **${newVoiceState.channel.name}**. Updating voice-channel informations...`,
-        {
-          color: this.client.config.colors.info,
+      //bot just joined the voice chat
+      if (!oldVoiceState.channel) {
+        return;
+      }
+      //new voice state might not have a channel if bot was disconnected by someone
+      if (!newVoiceState.channel) {
+        this.client.logger.log(
+          { color: "info", name: `Music Player: Kicked from VC` },
+          `\nServer: ${oldVoiceState?.guild.name}\nVC: ${oldVoiceState?.channel.name}`
+        );
+        this.client.player.deleteQueue(oldVoiceState.guild.id);
+        return;
+      }
+      const oldChannelId = oldVoiceState.channel.id;
+      const newChannelId = newVoiceState.channel.id;
+
+      if (oldChannelId !== newChannelId) {
+        //update info about current channel
+        guildQueue.voiceChannel = newVoiceState.channel;
+        //edge case: bot can be moved during "timeout" period
+        if (player.leaveVCTimeoutId && guildQueue.voiceChannel.members.size === 1) {
+          this.client.logger.log(
+            { color: "info", name: `Music Player: Moved During Timeout` },
+            `\nServer: ${oldVoiceState.guild.name}\nClearing old one & Setting up a new one...`
+          );
+          clearTimeout(player.leaveVCTimeoutId);
+          player.leaveVCTimeoutId = setTimeout(() => {
+            player.leaveVCIfEmpty(newVoiceState.guild.id);
+          }, DEFAULT_LEAVE_VC_IF_EMPTY_DELAY);
+        } else {
+          this.client.logger.log(
+            { color: "info", name: `Music Player: Moved` },
+            `\nServer: ${oldVoiceState?.guild.name}\nVC: ${oldVoiceState?.channel.name} 🢂 ${newVoiceState?.channel.name}`
+          );
+          if (player.leaveVCTimeoutId) {
+            clearTimeout(player.leaveVCTimeoutId);
+          }
+          this.client.logger.log(
+            { color: "warning", name: `Music Player: Moved to Empty Channel` },
+            `\nServer: ${oldVoiceState?.guild.name}\nSetting up 30s timer`
+          );
+          player.leaveVCTimeoutId = setTimeout(() => {
+            player.leaveVCIfEmpty(newVoiceState.guild.id);
+          }, DEFAULT_LEAVE_VC_IF_EMPTY_DELAY);
         }
-      );
+        outputEmbed(
+          guildQueue.textChannel,
+          `Snacky was moved to **${newVoiceState?.channel.name}**. Updating voice-channel informations...`,
+          {
+            color: this.client.config.colors.info,
+          }
+        );
+      }
     }
   }
 }

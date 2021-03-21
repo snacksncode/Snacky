@@ -1,3 +1,4 @@
+import { Connection } from "mongoose";
 declare module "discord.js" {
   export interface CommandInterface extends CommandBaseInterface {
     run(msg: Message): Promise<any>;
@@ -20,25 +21,27 @@ declare module "discord.js" {
   }
 
   export interface QueueCommandInterface extends CommandInterface {
-    guildQueue: GuildMusicQueue;
-    queueMessage: QueueMessageData;
+    generatedPages: Collection<string, MessageEmbed[]>;
+    queueMessages: Collection<string, QueueMessageObject>;
     songsPerPage: number;
     swapSongsInQueue(msg: Message, args: string[]): Promise<void>;
     playSongNextInQueue(msg: Message, args: string[]): Promise<void>;
-    playSongNextInQueue(msg: Message, args: string[]): Promise<void>;
     moveSongInQueue(msg: Message, args: string[]): Promise<void>;
-    updateRefQueueEmbed(msg: Message): Promise<void>;
-    generateQueueEmbeds(songs: Song[], songsLimit: number): void;
-    attachCollectorToEmbed(queueMessageRef: Message): Promise<void>;
-    outputQueueEmbed(msg: Message): Promise<void>;
-    generateQueuePageString(page: Song[], songs: Song[]): string;
     removeSongFromQueue(msg: Message, args: string[]): Promise<void>;
+    updateRefQueueEmbed(msg: Message): Promise<void>;
+    generateQueueEmbeds(
+      guildId: string,
+      songs: Song[],
+      songsLimit: number
+    ): MessageEmbed[];
+    attachCollectorToEmbed(authorId: string, guildId: string): Promise<void>;
+    outputQueueEmbed(msg: Message, queueEditEmbed?: boolean): Promise<void>;
+    generateQueuePageString(page: Song[], songs: Song[]): string;
   }
 
-  export interface QueueMessageData {
+  export interface QueueMessageObject {
     ref: Message;
     collector: ReactionCollector;
-    generatedPages: MessageEmbed[];
     authorId: string;
   }
 
@@ -94,6 +97,7 @@ declare module "discord.js" {
   export interface EventBaseInterface {
     client: BotClient;
     eventName: string;
+    ignoreEvent?: boolean;
   }
 
   export interface CustomReactionEmoji {
@@ -116,7 +120,10 @@ declare module "discord.js" {
     earRape: boolean;
     loopMode: "song" | "queue" | "off";
     songs: Song[];
-    filterArgs: string;
+    filter: {
+      args: string;
+      selectedPreset: PresetName | null;
+    };
     volume: number;
     isPlaying: boolean;
   }
@@ -140,10 +147,23 @@ declare module "discord.js" {
     requestedBy: User;
     isLive: boolean;
   }
+
+  export interface DatabaseManagerInterface {
+    client: BotClient;
+    connection: Connection | null;
+    testConnection(): Promise<void>;
+  }
+
   export interface Config {
     token: string;
     version: string;
     prefix: string;
+    ignoreUnknownCommands: boolean;
+    debugMode: boolean;
+    database: {
+      user: string;
+      password: string;
+    };
     paths: {
       commands: string;
       events: string;
@@ -174,9 +194,17 @@ declare module "discord.js" {
     createQueue(guildId: string): GuildMusicQueue;
     getQueue(guildId: string): GuildMusicQueue;
     playSong(msg: Message, song: Song): Promise<void>;
-    restartAudioStream(msg: Message, options?: RestartStreamOptions): Promise<void>;
+    deleteQueue(guildId: string): boolean;
+    _leaveVC(guildId: string, reason?: string): void;
+    restartAudioStream(
+      msg: Message,
+      options?: RestartStreamOptions
+    ): Promise<void>;
     leaveVCIfEmpty(guildId: string): void;
-    getDispatcherStreamTime(guildQueue: GuildMusicQueue, speedMod: number): number;
+    getDispatcherStreamTime(
+      guildQueue: GuildMusicQueue,
+      speedMod: number
+    ): number;
   }
 
   export interface RestartStreamOptions {
@@ -191,6 +219,7 @@ declare module "discord.js" {
     commands: Collection<string, CommandInterface>;
     // guildsQueue: Map<string, GuildMusicQueue>;
     player: MusicPlayerInterface;
+    database: DatabaseManagerInterface;
     config: Config;
     init(): void;
   }
@@ -229,7 +258,7 @@ declare module "discord.js" {
 
   export interface FilterData {
     bass: FilterDataObject;
-    normalization: FilterDataObject;
+    norm: FilterDataObject;
     speed: FilterDataObject;
     rotate: FilterDataObject;
   }

@@ -10,6 +10,7 @@ import {
 import fg from "fast-glob";
 import path from "path";
 import { capitalizeFirstLetter } from "../utils/generic";
+import DatabaseManager from "./DatabaseManager";
 import Logger from "./Logger";
 import MusicPlayer from "./MusicPlayer";
 
@@ -25,6 +26,7 @@ class CustomClient extends Client implements BotClient {
   config: Config;
   logger: Logger;
   player: MusicPlayer;
+  database: DatabaseManager;
   commands: Collection<string, CommandInterface>;
 
   constructor(options: InternalClientOptions) {
@@ -35,6 +37,7 @@ class CustomClient extends Client implements BotClient {
     this.config = options.config; //this will store config file
     //create music player
     this.player = new MusicPlayer(this);
+    this.database = new DatabaseManager(this);
     //log that client has been created
     this.logger.log({ name: "Node: Version", color: "warning" }, process.version);
     this.logger.log({ name: "Client: Start", color: "info" }, `Created client`);
@@ -52,6 +55,7 @@ class CustomClient extends Client implements BotClient {
         } else if (type === "event") {
           //type is "events"
           let e = loadedClass as Event;
+          if (e.ignoreEvent) return;
           super.on(e.eventName, async (...args) => {
             try {
               await e.run(...args);
@@ -104,6 +108,7 @@ class CustomClient extends Client implements BotClient {
     this.logger.log({ name: "Client: Init", color: "info" }, "Started initiation process");
     await this._loadCommands(path.join(global.appRoot, this.config.paths.commands));
     await this._loadEvents(path.join(global.appRoot, this.config.paths.events));
+    await this.database.testConnection();
     await this._login(this.config.token);
   }
 }

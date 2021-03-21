@@ -67,7 +67,7 @@ class Rewind extends Command implements CommandInterface {
     );
     await this.client.player.restartAudioStream(msg, {
       customSeek: newSeek,
-      applyFilter: !!guildQueue.filterArgs,
+      applyFilter: !!guildQueue.filter.args,
     });
   }
 }
