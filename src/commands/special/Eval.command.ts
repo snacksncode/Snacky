@@ -40,10 +40,12 @@ class Eval extends Command implements CommandInterface {
       );
     }
     const outputAsEmbed = msg.content.includes("--use-embed");
+    const noOutput = msg.content.includes("--no-output");
     const discordMessageLimit = 1950;
     const codeToExecute = msg.content
       .replace(`${this.client.config.prefix}eval `, "")
-      .replace("--use-embed", "");
+      .replace("--use-embed", "")
+      .replace("--no-output", "");
     if (codeToExecute.length === 0) {
       return utils.outputEmbed(
         msg.channel,
@@ -57,7 +59,9 @@ class Eval extends Command implements CommandInterface {
     }
     try {
       const embed = new MessageEmbed();
-      let executedCode = await eval(codeToExecute);
+      let executedCode = eval(codeToExecute);
+
+      if (noOutput) return;
 
       if (typeof executedCode !== "string") {
         executedCode = this.convertObjectToString(executedCode);

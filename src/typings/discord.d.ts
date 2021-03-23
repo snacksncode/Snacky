@@ -29,11 +29,7 @@ declare module "discord.js" {
     moveSongInQueue(msg: Message, args: string[]): Promise<void>;
     removeSongFromQueue(msg: Message, args: string[]): Promise<void>;
     updateRefQueueEmbed(msg: Message): Promise<void>;
-    generateQueueEmbeds(
-      guildId: string,
-      songs: Song[],
-      songsLimit: number
-    ): MessageEmbed[];
+    generateQueueEmbeds(guildId: string, songs: Song[], songsLimit: number): MessageEmbed[];
     attachCollectorToEmbed(authorId: string, guildId: string): Promise<void>;
     outputQueueEmbed(msg: Message, queueEditEmbed?: boolean): Promise<void>;
     generateQueuePageString(page: Song[], songs: Song[]): string;
@@ -181,6 +177,11 @@ declare module "discord.js" {
       error: string;
       pepeNote: string;
     };
+    _testDatabaseConnection: boolean;
+    _logApproximateMemoryUsage: {
+      enabled: boolean;
+      intervalSec: number;
+    };
   }
 
   export interface MusicPlayerInterface {
@@ -196,21 +197,14 @@ declare module "discord.js" {
     playSong(msg: Message, song: Song): Promise<void>;
     deleteQueue(guildId: string): boolean;
     _leaveVC(guildId: string, reason?: string): void;
-    restartAudioStream(
-      msg: Message,
-      options?: RestartStreamOptions
-    ): Promise<void>;
+    restartAudioStream(msg: Message, options?: RestartStreamOptions): Promise<void>;
     leaveVCIfEmpty(guildId: string): void;
-    getDispatcherStreamTime(
-      guildQueue: GuildMusicQueue,
-      speedMod: number
-    ): number;
+    getDispatcherStreamTime(guildQueue: GuildMusicQueue, speedMod: number): number;
   }
 
   export interface RestartStreamOptions {
     customSeek?: number;
     filterSpeedModifier?: number;
-    applyFilter?: boolean;
   }
 
   export interface BotClient extends Client {

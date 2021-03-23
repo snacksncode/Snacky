@@ -69,7 +69,6 @@ class FiltersManager implements FiltersManagerInterface {
     const speedMod = this.detectFilterSpeedMod(guildQueue);
     //restart our audio stream but now with filters enabled
     await this.musicPlayer.restartAudioStream(msg, {
-      applyFilter: true,
       filterSpeedModifier: speedMod,
     });
     outputEmbed(msg.channel, "Applying filter...", {

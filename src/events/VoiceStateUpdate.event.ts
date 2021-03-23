@@ -30,20 +30,21 @@ class VoiceStateUpdate extends EventBase implements Event {
           player.leaveVCTimeoutId = null;
         }
         if (!oldVoiceState.channel) {
-          this.client.logger.log(
-            { color: "warning", name: "Music Player: Debug" },
-            `User's oldVoiceState.channel is missing. Logging stuff`
-          );
-          this.client.logger.log(
-            { color: "warning", name: `oldVoiceState | ${oldVoiceState.member.user.tag}` },
-            `\n${oldVoiceState}`
-          );
+          //another user just joined another voice channel for the first time while was is in another
+          return;
         }
         //create timeout if someone left
-        this.client.logger.log(
-          { color: "info", name: `Music Player: User Left VC` },
-          `\nServer: ${oldVoiceState.guild.name}\nUser: ${oldVoiceState.member.user.tag}\nSetting up timeout 30s...`
-        );
+        if (newVoiceState?.channel) {
+          this.client.logger.log(
+            { color: "info", name: "User Activity: User Changed VC" },
+            `\nServer: ${oldVoiceState.guild.name}\nUser: ${oldVoiceState.member.user.tag}\nVC: ${oldVoiceState?.channel.name} 🢂 ${newVoiceState?.channel.name}\nSetting up timeout 30s...`
+          );
+        } else {
+          this.client.logger.log(
+            { color: "info", name: `User Activity: User Left VC` },
+            `\nServer: ${oldVoiceState.guild.name}\nUser: ${oldVoiceState.member.user.tag}\nSetting up timeout 30s...`
+          );
+        }
         player.leaveVCTimeoutId = setTimeout(() => {
           player.leaveVCIfEmpty(newVoiceState.guild.id);
         }, DEFAULT_LEAVE_VC_IF_EMPTY_DELAY);
@@ -51,7 +52,7 @@ class VoiceStateUpdate extends EventBase implements Event {
         //clear timeout if someone joined
         if (player.leaveVCTimeoutId) {
           this.client.logger.log(
-            { color: "info", name: `Music Player: User Joined VC` },
+            { color: "info", name: `User Activity: User Joined VC` },
             `\nServer: ${oldVoiceState.guild.name}\nUser: ${oldVoiceState.member.user.tag}\nClearing timeout...`
           );
           clearTimeout(player.leaveVCTimeoutId);
@@ -72,7 +73,7 @@ class VoiceStateUpdate extends EventBase implements Event {
       //new voice state might not have a channel if bot was disconnected by someone
       if (!newVoiceState.channel) {
         this.client.logger.log(
-          { color: "info", name: `Music Player: Kicked from VC` },
+          { color: "info", name: `Bot Voice State: Kicked from VC` },
           `\nServer: ${oldVoiceState?.guild.name}\nVC: ${oldVoiceState?.channel.name}`
         );
         this.client.player.deleteQueue(oldVoiceState.guild.id);
@@ -87,7 +88,7 @@ class VoiceStateUpdate extends EventBase implements Event {
         //edge case: bot can be moved during "timeout" period
         if (player.leaveVCTimeoutId && guildQueue.voiceChannel.members.size === 1) {
           this.client.logger.log(
-            { color: "info", name: `Music Player: Moved During Timeout` },
+            { color: "info", name: `Bot Voice State: Moved During Timeout` },
             `\nServer: ${oldVoiceState.guild.name}\nClearing old one & Setting up a new one...`
           );
           clearTimeout(player.leaveVCTimeoutId);
@@ -96,14 +97,14 @@ class VoiceStateUpdate extends EventBase implements Event {
           }, DEFAULT_LEAVE_VC_IF_EMPTY_DELAY);
         } else {
           this.client.logger.log(
-            { color: "info", name: `Music Player: Moved` },
+            { color: "info", name: `Bot Voice State: Moved` },
             `\nServer: ${oldVoiceState?.guild.name}\nVC: ${oldVoiceState?.channel.name} 🢂 ${newVoiceState?.channel.name}`
           );
           if (player.leaveVCTimeoutId) {
             clearTimeout(player.leaveVCTimeoutId);
           }
           this.client.logger.log(
-            { color: "warning", name: `Music Player: Moved to Empty Channel` },
+            { color: "warning", name: `Bot Voice State: Moved to Empty Channel` },
             `\nServer: ${oldVoiceState?.guild.name}\nSetting up 30s timer`
           );
           player.leaveVCTimeoutId = setTimeout(() => {

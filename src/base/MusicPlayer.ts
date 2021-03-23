@@ -16,7 +16,6 @@ import FiltersManager from "./FiltersManager";
 interface PlaySongOptions {
   seek?: number;
   noOutput?: boolean;
-  applyFiler?: boolean;
 }
 
 class MusicPlayer implements MusicPlayerInterface {
@@ -95,7 +94,7 @@ class MusicPlayer implements MusicPlayerInterface {
           opusEncoded: true,
           seek: this.calculateSeekBasedOnSpeed(options?.seek, guildQueue),
           highWaterMark: 1 << 25,
-          encoderArgs: options?.applyFiler ? ["-af", guildQueue.filter.args] : null,
+          encoderArgs: guildQueue.filter.args ? ["-af", guildQueue.filter.args] : null,
         });
       }
       //play the audioStream and repeatedly call itself
@@ -104,7 +103,7 @@ class MusicPlayer implements MusicPlayerInterface {
           type: song.isLive ? "unknown" : "opus",
         })
         .on("finish", () => {
-          this.songFinishedPlaying(msg, options?.applyFiler);
+          this.songFinishedPlaying(msg);
         })
         // .on("debug", (debugInfo) => {
         //   console.log(debugInfo);
@@ -136,7 +135,7 @@ class MusicPlayer implements MusicPlayerInterface {
     }
   }
 
-  songFinishedPlaying(msg: Message, keepFilter?: boolean) {
+  songFinishedPlaying(msg: Message) {
     const guildQueue = this.getQueue(msg.guild.id);
     if (!guildQueue) return;
     guildQueue.isPlaying = false;
@@ -147,7 +146,7 @@ class MusicPlayer implements MusicPlayerInterface {
       const song = guildQueue.songs.shift();
       guildQueue.songs.push(song);
     }
-    this.playSong(msg, guildQueue.songs[0], { applyFiler: keepFilter });
+    this.playSong(msg, guildQueue.songs[0]);
   }
 
   async restartAudioStream(msg: Message, options?: RestartStreamOptions) {
@@ -159,7 +158,6 @@ class MusicPlayer implements MusicPlayerInterface {
     await this.playSong(msg, guildQueue.songs[0], {
       seek: options?.customSeek || seekAmount,
       noOutput: true,
-      applyFiler: options?.applyFilter,
     });
   }
 

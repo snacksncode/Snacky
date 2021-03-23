@@ -1,24 +1,10 @@
 import { Config } from "discord.js";
 
-function getToken() {
-  if (process.env.VERSION === "CANARY") {
-    return process.env.TOKEN_CANARY;
-  } else {
-    return process.env.TOKEN_STABLE;
-  }
-}
-
-function getPrefix() {
-  if (process.env.VERSION === "CANARY") {
-    return "sc!";
-  } else {
-    return "s!";
-  }
-}
+let useCanary = Boolean(process.env.USE_CANARY);
 
 const config: Config = {
-  prefix: getPrefix(),
-  token: getToken(),
+  prefix: useCanary ? "sc!" : "s!",
+  token: useCanary ? process.env.TOKEN_CANARY : process.env.TOKEN_STABLE,
   ignoreUnknownCommands: false,
   version: "2.10.0",
   debugMode: false,
@@ -43,6 +29,11 @@ const config: Config = {
   },
   ownerId: "430795391265406990",
   mainServerId: "763094235217657876",
+  _testDatabaseConnection: false,
+  _logApproximateMemoryUsage: {
+    enabled: true,
+    intervalSec: 60 * 10, //10min
+  },
 };
 
 export default config;

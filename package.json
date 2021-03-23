@@ -4,7 +4,7 @@
   "main": "src/index.ts",
   "scripts": {
     "start": "ts-node --files .",
-    "start-canary": "VERSION=CANARY ts-node --files ."
+    "start-canary": "USE_CANARY=true ts-node --files ."
   },
   "engines": {
     "node": "14.x"

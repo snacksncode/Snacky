@@ -66,25 +66,37 @@ interface EmbedOptions {
   fields?: EmbedFieldData[];
   footerText?: string;
   includeTimestamp?: boolean;
+  selfDestructAfter?: number;
+  mainImage?: string;
+  thumbnailImage?: string;
 }
 export async function outputEmbed(dest: destType, message: string, options: EmbedOptions) {
-  const { color, title, fields, includeTimestamp, footerText } = options;
-  const isRunningLocally = process.env.SHOW_LOCALHOST === "enabled";
+  const {
+    color,
+    title,
+    fields,
+    includeTimestamp,
+    footerText,
+    selfDestructAfter,
+    mainImage,
+    thumbnailImage,
+  } = options;
   const embed: MessageEmbed = new MessageEmbed().setDescription(message).setColor("#1b1b1b");
 
   if (fields) embed.addFields(fields);
   if (title) embed.setTitle(title);
   if (color) embed.setColor(color);
-  if (footerText) {
-    let _footerText = footerText;
-    if (isRunningLocally) _footerText += " | Bot is under development";
-    embed.setFooter(_footerText);
-  } else {
-    if (isRunningLocally) embed.setFooter(`Bot is under development`);
-  }
+  if (footerText) embed.setFooter(footerText);
   if (includeTimestamp) embed.setTimestamp();
+  if (mainImage) embed.setImage(mainImage);
+  if (thumbnailImage) embed.setThumbnail(thumbnailImage);
 
   const sentMessage = await sendMsg(dest, embed);
+  if (selfDestructAfter) {
+    setTimeout(() => {
+      if (!sentMessage.deleted) sentMessage.delete();
+    }, selfDestructAfter * 1000);
+  }
   return [sentMessage, embed] as [Message, MessageEmbed];
 }
 

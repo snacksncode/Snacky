@@ -37,7 +37,9 @@ class CustomClient extends Client implements BotClient {
     this.config = options.config; //this will store config file
     //create music player
     this.player = new MusicPlayer(this);
-    this.database = new DatabaseManager(this);
+    if (this.config._testDatabaseConnection) {
+      this.database = new DatabaseManager(this);
+    }
     //log that client has been created
     this.logger.log({ name: "Node: Version", color: "warning" }, process.version);
     this.logger.log({ name: "Client: Start", color: "info" }, `Created client`);
@@ -108,7 +110,9 @@ class CustomClient extends Client implements BotClient {
     this.logger.log({ name: "Client: Init", color: "info" }, "Started initiation process");
     await this._loadCommands(path.join(global.appRoot, this.config.paths.commands));
     await this._loadEvents(path.join(global.appRoot, this.config.paths.events));
-    await this.database.testConnection();
+    if (this.config._testDatabaseConnection) {
+      await this.database.testConnection();
+    }
     await this._login(this.config.token);
   }
 }
