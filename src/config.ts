@@ -29,7 +29,7 @@ const config: Config = {
   },
   ownerId: "430795391265406990",
   mainServerId: "763094235217657876",
-  _testDatabaseConnection: false,
+  _testDatabaseConnection: true,
   _logApproximateMemoryUsage: {
     enabled: true,
     intervalSec: 60 * 10, //10min

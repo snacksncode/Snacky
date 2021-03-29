@@ -24,7 +24,6 @@ class DatabaseManager implements DatabaseManagerInterface {
         { name: "*Database: Connection", color: "error" },
         `Error connecting to database:\n${e.stack}`
       );
-      return;
     }
   }
   async _closeConnection() {
@@ -38,6 +37,7 @@ class DatabaseManager implements DatabaseManagerInterface {
         { name: "*Database: Testing", color: "success" },
         `Test connection to database was successful. Closing connection...`
       );
+      await this._closeConnection();
     }
   }
 }
