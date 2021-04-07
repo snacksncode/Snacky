@@ -27,6 +27,7 @@ class DurajPls extends Command implements CommandInterface {
       "Wy dziabągi",
       "Ferioświęta albo Świętoferie",
       "Co? Gucio w zoo",
+      "Przygoda sie budzi to wy tez sie budzicie",
       "Are you done? Not yet. Okkay so let's start",
       "Złudne ciepło",
       "Nie bądź burak, przywitaj się!",
