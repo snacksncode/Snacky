@@ -36,6 +36,7 @@ class DurajPls extends Command implements CommandInterface {
       "Let's check this out!",
       "Take your shot!",
       "You're great!",
+      "Kto jest następny? Przynawać się bez bicia",
       "Thank you so much!",
       "Would you like to listen to this once again?",
       "Well done!",
