@@ -1,1 +1,1 @@
-Worker: ts-node --transpileOnly --files .
+Worker: ts-node --transpile-only --files .
