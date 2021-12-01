@@ -1,68 +1,63 @@
 [![GitHub license](https://badgen.net/github/license/ottrone/lexbot)](LICENSE)
-![Maintained](https://img.shields.io/badge/maintained-yes-brightgreen)
-[![GitHub open issues](https://badgen.net/github/open-issues/ottrone/lexbot)](https://github.com/OttrOne/lexbot/issues)
 
-# LexBot
-A port of the LexBot Discord bot template to discord.js v13 and TypeScript.
+<p align="center">
+  <img src="https://i.imgur.com/8uMInN6.png" alt="Avatar">
+</p>
+<h1 align="center">Snacky v3</h1>
+<p align="center">**Now with Slash Commands!**</p>
+<p align="center">My first ever Discord Bot written in TypeScript</p>
 
-## Setup
-1. Install all dependencies via `npm install` after cloning the repo.
+# Table of Contents
 
-1. Rename the `example.env` file to `.env` and add your Discord bot token.
+- [Features](#features)
+- [Invite](#invite)
+- [Running locally](#running)
+- [Known issues](#issues)
+
+<a name="features"><h1>Features</h1></a>
+
+Snacky is a little bot that I've written for my own server and overall just for the sake of working with Discord.js, TypeScript and Node.js. It's not super complicated as of right now but I'll be adding features as I go.
+
+### Avaible commands
+
+| Category    | Commands |
+| ----------- | -------- |
+| Information | ping     |
+
+<a name="invite"><h1>Invite Snacky to your discord server</h1></a>
+
+You can use [this](https://discord.com/oauth2/authorize?client_id=765660664956977182&scope=bot&permissions=8) link to invite him to your server. Currently bot has only one instance running on Heroku. Sometimes when I'm developing new features he'll be offline.
+
+<a name="running"><h1>Running Snacky locally</h1></a>
+
+If you want to get your own version of the bot up and running you can use this section to guide you.
+
+1. Go to [Discord's Dev Portal](https://discord.com/developers) and create a new application there. Then add a bot to this application and copy your bot token from there.
+2. Clone Snacky's code and install all needed packages
+
+```bash
+# by using yarn
+yarn install
+# or npm
+npm install
 ```
-TOKEN=
-DEBUG=True
+
+Also create a `.env` file in root directory with those contents
+
+```env
+TOKEN=[PUT YOUR TOKEN HERE]
 ```
-`.env` is part of the `.gitignore` file so changes won't be committed.
 
-**Production environment:** remove the `DEBUG` line in the `.env`
+After that your own instance of the bot should be ready to launch. To start the bot just use the start script.
 
-## npm Commands
-| Command             | Description                             |
-| ------------------- | --------------------------------------- |
-| `npm run prebuild`  | Extract version from package.json.      |
-| `npm run build`     | Build the typescript code.              |
-| `npm run lint`      | Runs the linter on the code.            |
-| `npm run start`     | Runs the bot from the built JavaScript. |
-| `npm run debug`     | Debug the TypeScript in watch mode.     |
-
-
-## Adding new commands
-To add new commands add a `.ts` file in `/commands/` or any subdirectory of `/commands/`.
-The command implements the `Command` interface with the following required properties:
-```javascript
-export = {
-    name: '',
-    category: '',
-    description: '',
-    run: ({  }: CallbackOptions) => {
-        // do stuff
-    }
-} as Command;
+```bash
+yarn start
+# or
+npm run start
 ```
-Check the `CallbackOptions` interface for possible properties.
-`member` is available for every `CommandType`. `message` and `args` are only available for `NORMAL` commands aka `!command`s while `interaction` is only available for `SLASH` commands.
 
-**Its mandatory to define the type if it's supposed to be `SLASH` command only**
+Don't forgot to invite him to your testing server.<br/>
+<sup>If you're on windows you might get an error about `ts-node` not being defined. In this case install this package globally</sup>
 
-Example:
-```javascript
-import { Command, CommandType } from '../interfaces/command';
-import { CallbackOptions } from '../interfaces/CallbackOptions';
-
-export = {
-    name: 'ping',
-    type: CommandType.SLASH,
-    category: 'LexBot',
-    description: 'Sends back pong',
-    run: ({ interaction }: CallbackOptions) => {
-
-        if (!interaction) return;
-        interaction.reply('Pong!');
-    },
-} as Command;
-```
-Is the `type` set to `SLASH` or `BOTH` it will be added dynamically to the Discord command list. (Remember to set up a proper `run` function for it)
-
-## Writing a mod
-*(coming soon)*
+<a name="issues"><h1>Known issues</h1></a>
+To be written
